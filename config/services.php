@@ -41,4 +41,10 @@ return [
         'publishable_key' => env('THAWANI_PUBLISHABLE_KEY'),
         'webhook_secret' => env('THAWANI_WEBHOOK_SECRET'),
     ],
+    'paypal' => [
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'secret' => env('PAYPAL_SECRET'),
+        'mode' => env('PAYPAL_MODE', 'sandbox'),
+    ],
+
 ];

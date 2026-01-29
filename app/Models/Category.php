@@ -13,9 +13,20 @@ class Category extends Model
 
     protected $fillable = [
         'name',
+        'name_ar',
         'slug',
         'icon',
     ];
+
+    protected $appends = ['localized_name'];
+
+    public function getLocalizedNameAttribute()
+    {
+        if (app()->getLocale() === 'ar' && $this->name_ar) {
+            return $this->name_ar;
+        }
+        return $this->name;
+    }
 
     // Relationship: A category can have many courses
     public function courses(): HasMany

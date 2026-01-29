@@ -12,15 +12,18 @@ class Course extends Model
 {
     use HasFactory;
     
-    protected $appends = ['thumbnail_url'];
+    protected $appends = ['thumbnail_url', 'localized_title', 'localized_description', 'localized_learning_outcomes'];
 
     protected $fillable = [
         'user_id',
         'category_id',
         'title',
+        'title_ar',
         'slug',
         'description',
+        'description_ar',
         'learning_outcomes',
+        'learning_outcomes_ar',
         'price',
         'is_published',
         'thumbnail',
@@ -28,9 +31,37 @@ class Course extends Model
         'average_rating',
         'reviews_count',
     ];
+    
+    // Add localized_title to appends so it's always available in JSON
+    // Note: We need to update $appends property which is defined earlier
+    
+    public function getLocalizedTitleAttribute()
+    {
+        if (app()->getLocale() === 'ar' && $this->title_ar) {
+            return $this->title_ar;
+        }
+        return $this->title;
+    }
+
+    public function getLocalizedDescriptionAttribute()
+    {
+        if (app()->getLocale() === 'ar' && $this->description_ar) {
+            return $this->description_ar;
+        }
+        return $this->description;
+    }
+
+    public function getLocalizedLearningOutcomesAttribute()
+    {
+        if (app()->getLocale() === 'ar' && $this->learning_outcomes_ar) {
+            return $this->learning_outcomes_ar;
+        }
+        return $this->learning_outcomes;
+    }
 
     protected $casts = [
         'learning_outcomes' => 'array', // Cast to array for JSON column
+        'learning_outcomes_ar' => 'array',
         'is_published' => 'boolean',
         'average_rating' => 'float',
     ];
@@ -83,8 +114,15 @@ class Course extends Model
     public function getThumbnailUrlAttribute(): ?string
     {
         if ($this->thumbnail) {
+            if (str_starts_with($this->thumbnail, 'http')) {
+                return $this->thumbnail;
+            }
+            // If it starts with images/, it's likely in the public/images folder
+            if (str_starts_with($this->thumbnail, 'images/')) {
+                return '/' . $this->thumbnail;
+            }
             return \Illuminate\Support\Facades\Storage::url($this->thumbnail);
         }
-        return null; // Or return a default image path if desired
+        return null;
     }
 }

@@ -264,90 +264,91 @@ export default function CoursePlayerIndex({
 
                             <div className="prose prose-slate dark:prose-invert max-w-none">
                                 <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/50 dark:border-slate-800/50 leading-relaxed text-lg whitespace-pre-wrap">
-                                    {currentLesson.description || "No description provided for this lesson."}
+                                    {currentLesson.text_lesson?.content || currentLesson.description || "No content provided for this lesson."}
                                 </div>
                             </div>
-
-                            {currentLesson.type === 'quiz' && currentLesson.quiz && (
-                                <div className="mt-12 p-8 rounded-3xl bg-amber-50 dark:bg-amber-900/10 border border-amber-200/50 dark:border-amber-900/50 flex flex-col items-center text-center">
-                                    <HelpCircle className="size-16 text-amber-500 mb-6" />
-                                    <h3 className="text-2xl font-bold mb-2">Quiz Time!</h3>
-                                    <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-sm">Test your knowledge on the concepts covered in this section.</p>
-                                    <Button size="lg" variant="default" className="bg-amber-600 hover:bg-amber-700 px-12" asChild>
-                                        <Link href={route('quizzes.show', currentLesson.quiz.id)}>Start Quiz Now</Link>
-                                    </Button>
-                                </div>
-                            )}
                         </div>
+
+                        {currentLesson.type === 'quiz' && currentLesson.quiz && (
+                            <div className="mt-12 p-8 rounded-3xl bg-amber-50 dark:bg-amber-900/10 border border-amber-200/50 dark:border-amber-900/50 flex flex-col items-center text-center">
+                                <HelpCircle className="size-16 text-amber-500 mb-6" />
+                                <h3 className="text-2xl font-bold mb-2">Quiz Time!</h3>
+                                <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-sm">Test your knowledge on the concepts covered in this section.</p>
+                                <Button size="lg" variant="default" className="bg-amber-600 hover:bg-amber-700 px-12" asChild>
+                                    <Link href={route('quizzes.show', currentLesson.quiz.id)}>Start Quiz Now</Link>
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
-
-                {/* LESSON SIDEBAR */}
-                <aside className={cn(
-                    "w-80 bg-white dark:bg-slate-900 border-l border-slate-200/50 dark:border-slate-800/50 flex flex-col transition-all duration-300 z-40 lg:static fixed inset-y-0 right-0",
-                    isSidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
-                )}>
-                    <div className="p-6 border-b flex items-center justify-between">
-                        <div className="flex flex-col">
-                            <h3 className="font-bold text-lg">Curriculum</h3>
-                            <div className="flex items-center gap-2 mt-1">
-                                <div className="flex-1 h-2 w-24 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-primary" style={{ width: `${enrollment?.progress || 0}%` }} />
-                                </div>
-                                <span className="text-xs font-bold text-muted-foreground">{Math.round(enrollment?.progress || 0)}%</span>
-                            </div>
-                        </div>
-                        <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsSidebarOpen(false)}>
-                            <X className="size-5" />
-                        </Button>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto scrollbar-hide py-2">
-                        {lessons.map((lesson, idx) => {
-                            const isActive = lesson.id === currentLesson.id;
-                            return (
-                                <button
-                                    key={lesson.id}
-                                    onClick={() => handleLessonClick(lesson)}
-                                    className={cn(
-                                        "w-full group px-6 py-4 flex items-start gap-3 transition-colors text-left",
-                                        isActive ? "bg-primary/5 active-lesson border-r-4 border-primary" : "hover:bg-slate-50 dark:hover:bg-slate-800/30"
-                                    )}
-                                >
-                                    <div className="mt-0.5 shrink-0 transition-transform group-hover:scale-110">
-                                        {getLessonIcon(lesson, isActive)}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between mb-0.5">
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Lesson {idx + 1}</span>
-                                            <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
-                                                <Clock className="size-3" />
-                                                Video
-                                            </span>
-                                        </div>
-                                        <h4 className={cn(
-                                            "text-sm font-bold line-clamp-2 transition-colors",
-                                            isActive ? "text-primary" : "text-slate-700 dark:text-slate-300"
-                                        )}>
-                                            {lesson.title}
-                                        </h4>
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    <div className="p-6 border-t bg-slate-50/50 dark:bg-slate-800/20">
-                        <Link href={route('courses.show', course.slug)}>
-                            <Button variant="outline" className="w-full border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400">
-                                <ArrowLeft className="mr-2 size-4" />
-                                Return to Details
-                            </Button>
-                        </Link>
-                    </div>
-                </aside>
             </div>
-        </AppLayout>
+
+            {/* LESSON SIDEBAR */}
+            <aside className={cn(
+                "w-80 bg-white dark:bg-slate-900 border-l border-slate-200/50 dark:border-slate-800/50 flex flex-col transition-all duration-300 z-40 lg:static fixed inset-y-0 right-0",
+                isSidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
+            )}>
+                <div className="p-6 border-b flex items-center justify-between">
+                    <div className="flex flex-col">
+                        <h3 className="font-bold text-lg">Curriculum</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                            <div className="flex-1 h-2 w-24 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div className="h-full bg-primary" style={{ width: `${enrollment?.progress || 0}%` }} />
+                            </div>
+                            <span className="text-xs font-bold text-muted-foreground">{Math.round(enrollment?.progress || 0)}%</span>
+                        </div>
+                    </div>
+                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsSidebarOpen(false)}>
+                        <X className="size-5" />
+                    </Button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto scrollbar-hide py-2">
+                    {lessons.map((lesson, idx) => {
+                        const isActive = lesson.id === currentLesson.id;
+                        return (
+                            <button
+                                key={lesson.id}
+                                onClick={() => handleLessonClick(lesson)}
+                                className={cn(
+                                    "w-full group px-6 py-4 flex items-start gap-3 transition-colors text-left",
+                                    isActive ? "bg-primary/5 active-lesson border-r-4 border-primary" : "hover:bg-slate-50 dark:hover:bg-slate-800/30"
+                                )}
+                            >
+                                <div className="mt-0.5 shrink-0 transition-transform group-hover:scale-110">
+                                    {getLessonIcon(lesson, isActive)}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-0.5">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Lesson {idx + 1}</span>
+                                        <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
+                                            <Clock className="size-3" />
+                                            Video
+                                        </span>
+                                    </div>
+                                    <h4 className={cn(
+                                        "text-sm font-bold line-clamp-2 transition-colors",
+                                        isActive ? "text-primary" : "text-slate-700 dark:text-slate-300"
+                                    )}>
+                                        {lesson.title}
+                                    </h4>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <div className="p-6 border-t bg-slate-50/50 dark:bg-slate-800/20">
+                    <Link href={route('courses.show', course.slug)}>
+                        <Button variant="outline" className="w-full border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400">
+                            <ArrowLeft className="mr-2 size-4" />
+                            Return to Details
+                        </Button>
+                    </Link>
+                </div>
+            </aside>
+        </div>
+        </AppLayout >
     );
 }
 

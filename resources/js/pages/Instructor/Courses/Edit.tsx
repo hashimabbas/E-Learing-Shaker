@@ -184,10 +184,33 @@ const CurriculumBuilder = ({ lessons, courseId, onUpdate, onContentEdit }: Curri
 export default function InstructorCoursesEdit({ course, categories }: InstructorCoursesEditProps) {
     const { data, setData, patch, processing, errors } = useForm({
         title: course.title || '',
+        title_ar: course.title_ar || '',
         description: course.description || '',
+        description_ar: course.description_ar || '',
         category_id: course.category_id ? course.category_id.toString() : '',
         price: course.price || 0,
+        learning_outcomes: (course.learning_outcomes?.length > 0 ? course.learning_outcomes : ['']) as string[],
+        learning_outcomes_ar: (course.learning_outcomes_ar?.length > 0 ? course.learning_outcomes_ar : ['']) as string[],
     });
+
+    const handleAddOutcome = (language: 'en' | 'ar') => {
+        const field = language === 'en' ? 'learning_outcomes' : 'learning_outcomes_ar';
+        setData(field, [...data[field], '']);
+    };
+
+    const handleRemoveOutcome = (language: 'en' | 'ar', index: number) => {
+        const field = language === 'en' ? 'learning_outcomes' : 'learning_outcomes_ar';
+        const updated = [...data[field]];
+        updated.splice(index, 1);
+        setData(field, updated);
+    };
+
+    const handleOutcomeChange = (language: 'en' | 'ar', index: number, value: string) => {
+        const field = language === 'en' ? 'learning_outcomes' : 'learning_outcomes_ar';
+        const updated = [...data[field]];
+        updated[index] = value;
+        setData(field, updated);
+    };
 
     const [contentModalOpen, setContentModalOpen] = useState(false);
     const [lessonForContent, setLessonForContent] = useState<any>(null);
@@ -345,6 +368,16 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                             <InputError message={errors.title} />
                                         </div>
                                         <div className="space-y-3">
+                                            <Label htmlFor="title_ar" className="text-base font-bold tracking-tight text-right block">Title (Arabic)</Label>
+                                            <Input
+                                                id="title_ar"
+                                                dir="rtl"
+                                                className="h-14 text-lg font-bold border-muted-foreground/20 rounded-xl px-5 bg-muted/10 shadow-inner"
+                                                value={data.title_ar}
+                                                onChange={(e) => setData('title_ar', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-3">
                                             <Label htmlFor="description" className="text-base font-bold tracking-tight">Description</Label>
                                             <Textarea
                                                 id="description"
@@ -354,6 +387,98 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                                 required
                                             />
                                             <InputError message={errors.description} />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <Label htmlFor="description_ar" className="text-base font-bold tracking-tight text-right block">Description (Arabic)</Label>
+                                            <Textarea
+                                                id="description_ar"
+                                                dir="rtl"
+                                                className="min-h-[160px] text-lg font-medium border-muted-foreground/20 rounded-xl p-5 bg-muted/10 shadow-inner resize-none leading-relaxed"
+                                                value={data.description_ar}
+                                                onChange={(e) => setData('description_ar', e.target.value)}
+                                            />
+                                        </div>
+
+                                        <Separator className="my-8 border-dashed" />
+
+                                        {/* Learning Outcomes (English) */}
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <Label className="text-base font-bold tracking-tight">What will students learn?</Label>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-primary font-bold"
+                                                    onClick={() => handleAddOutcome('en')}
+                                                >
+                                                    <PlusCircle className="w-4 h-4 mr-1" /> Add Outcome
+                                                </Button>
+                                            </div>
+                                            <div className="space-y-3">
+                                                {data.learning_outcomes.map((outcome, index) => (
+                                                    <div key={index} className="flex gap-2">
+                                                        <Input
+                                                            placeholder={`Outcome #${index + 1}`}
+                                                            className="h-12 border-muted-foreground/20 rounded-xl bg-muted/5 shadow-inner"
+                                                            value={outcome}
+                                                            onChange={(e) => handleOutcomeChange('en', index, e.target.value)}
+                                                        />
+                                                        {data.learning_outcomes.length > 1 && (
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-12 w-12 rounded-xl text-muted-foreground hover:text-destructive"
+                                                                onClick={() => handleRemoveOutcome('en', index)}
+                                                            >
+                                                                <Trash2 className="w-5 h-5" />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <InputError message={errors.learning_outcomes} />
+                                        </div>
+
+                                        {/* Learning Outcomes (Arabic) */}
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <Label className="text-base font-bold tracking-tight text-right block w-full">ماذا سيتعلم الطلاب؟ (بالعربية)</Label>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-primary font-bold"
+                                                    onClick={() => handleAddOutcome('ar')}
+                                                >
+                                                    <PlusCircle className="w-4 h-4 mr-1" /> إضافة مخرجات
+                                                </Button>
+                                            </div>
+                                            <div className="space-y-3">
+                                                {data.learning_outcomes_ar.map((outcome, index) => (
+                                                    <div key={index} className="flex gap-2">
+                                                        <Input
+                                                            dir="rtl"
+                                                            placeholder={`المخرج #${index + 1}`}
+                                                            className="h-12 border-muted-foreground/20 rounded-xl bg-muted/5 shadow-inner"
+                                                            value={outcome}
+                                                            onChange={(e) => handleOutcomeChange('ar', index, e.target.value)}
+                                                        />
+                                                        {data.learning_outcomes_ar.length > 1 && (
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-12 w-12 rounded-xl text-muted-foreground hover:text-destructive"
+                                                                onClick={() => handleRemoveOutcome('ar', index)}
+                                                            >
+                                                                <Trash2 className="w-5 h-5" />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <div className="space-y-3">

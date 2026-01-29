@@ -38,10 +38,15 @@ class Lesson extends Model
         return $this->hasOne(Video::class);
     }
 
-    // Relationship: A lesson can have one quiz (if type is quiz)
     public function quiz(): HasOne
     {
         return $this->hasOne(Quiz::class);
+    }
+
+    // Relationship: A lesson can have text content (if type is text)
+    public function textLesson(): HasOne
+    {
+        return $this->hasOne(TextLesson::class);
     }
 
     // Relationship: To track user progress on this lesson

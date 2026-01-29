@@ -16,13 +16,16 @@ class CourseStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255', 'unique:courses,title'], // Ensure title is unique
+            'title' => ['required', 'string', 'max:255', 'unique:courses,title'],
+            'title_ar' => ['nullable', 'string', 'max:255'],
             'description' => ['required', 'string'],
+            'description_ar' => ['nullable', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'price' => ['required', 'numeric', 'min:0', 'max:999.99'],
-            'thumbnail_file' => ['nullable', 'image', 'max:5000'], // 5MB max image size
+            'thumbnail_file' => ['nullable', 'image', 'max:5000'],
             'preview_video_url' => ['nullable', 'url', 'max:255'],
             'learning_outcomes' => ['nullable', 'array'],
+            'learning_outcomes_ar' => ['nullable', 'array'],
         ];
     }
 }

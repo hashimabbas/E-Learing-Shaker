@@ -12,6 +12,7 @@
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-cairo: 'Cairo', sans-serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -144,6 +145,10 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    [dir='rtl'] body, [dir='rtl'] * {
+        font-family: 'Cairo', sans-serif !important;
     }
     .sidebar-position {
         left: 0; /* Default LTR */

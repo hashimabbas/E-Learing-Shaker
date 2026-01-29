@@ -1,6 +1,6 @@
 // resources/js/pages/Courses/Show.tsx
 import AppLayout from '@/layouts/app-layout';
-import { Course, Instructor, Lesson } from '@/types';
+import { Course, Instructor, Lesson, type SharedData } from '@/types';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -35,7 +35,7 @@ interface CoursesShowProps {
     course: Course & {
         lessons: Lesson[],
         reviews: any[],
-        instructor: Instructor[],
+        instructor: Instructor,
         discussions: any[],
         reviews_count: number,
         average_rating: number,
@@ -45,6 +45,7 @@ interface CoursesShowProps {
     instructor: Instructor;
     isEnrolled: boolean;
     inWishlist: boolean;
+    lockedUntil: string | null;
 }
 
 const StarRating = ({ rating, size = 4 }: { rating: number, size?: number }) => {
@@ -129,9 +130,9 @@ function ReviewForm({ courseSlug, hasSubmittedReview }: { courseSlug: string, ha
     );
 }
 
-export default function CoursesShow({ course, instructor, isEnrolled, inWishlist }: CoursesShowProps) {
+export default function CoursesShow({ course, instructor, isEnrolled, inWishlist, lockedUntil }: CoursesShowProps) {
     const [activeTab, setActiveTab] = useState<'description' | 'curriculum' | 'reviews' | 'instructor' | 'discussions'>('description');
-    const { auth } = usePage().props;
+    const { auth, translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
     const outcomes = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
     const userHasReviewed = (course as any).user_has_reviewed || false;
 
@@ -228,22 +229,22 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                     {/* Content Column */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* TABS NAVIGATION */}
-                        <div className="sticky top-20 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-800/50 p-1 flex overflow-x-auto scrollbar-hide">
+                        <div className="sticky top-20 z-30 bg-white/40 dark:bg-slate-950/40 backdrop-blur-xl rounded-[2rem] border border-slate-200/50 dark:border-slate-800/50 p-1.5 flex overflow-x-auto scrollbar-hide shadow-2xl shadow-slate-200/20 dark:shadow-none mb-10" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                             {[
-                                { id: 'description', label: 'Description' },
-                                { id: 'curriculum', label: `Curriculum (${course.lessons.length})` },
-                                { id: 'reviews', label: `Reviews (${course.reviews_count})` },
-                                { id: 'instructor', label: 'Instructor' },
-                                { id: 'discussions', label: 'Community' },
+                                { id: 'description', label: translations.tab_description || 'Description' },
+                                { id: 'curriculum', label: `${translations.tab_curriculum || 'Curriculum'} (${course.lessons.length})` },
+                                { id: 'reviews', label: `${translations.tab_reviews || 'Reviews'} (${course.reviews_count})` },
+                                { id: 'instructor', label: translations.tab_instructor || 'Instructor' },
+                                { id: 'discussions', label: translations.tab_community || 'Community' },
                             ].map((tab) => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id as any)}
                                     className={cn(
-                                        "flex-1 min-w-fit px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap",
+                                        "flex-1 min-w-fit px-8 py-4 rounded-[1.5rem] text-sm font-black transition-all duration-500 whitespace-nowrap tracking-wide",
                                         activeTab === tab.id
-                                            ? "bg-primary text-white shadow-lg shadow-primary/25"
-                                            : "text-muted-foreground hover:text-foreground hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                                            ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl"
+                                            : "text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
                                     )}
                                 >
                                     {tab.label}
@@ -252,19 +253,29 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                         </div>
 
                         {/* TAB CONTENT */}
-                        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/50 dark:border-slate-800/50 p-8 shadow-sm">
+                        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm rounded-[3rem] border border-slate-200/50 dark:border-slate-800/50 p-10 shadow-sm" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                             {activeTab === 'description' && (
-                                <div className="animate-in fade-in duration-500">
-                                    <div className="mb-12">
-                                        <h3 className="text-2xl font-black mb-6 flex items-center gap-2">
-                                            <PlayCircle className="size-8 text-primary" />
-                                            What you will master
-                                        </h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {outcomes.map((outcome, index) => (
-                                                <div key={index} className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/30 ring-1 ring-inset ring-slate-200/50 dark:ring-slate-700/50 group hover:ring-primary/50 transition-all duration-300">
-                                                    <CheckCircle2 className="size-5 text-primary mt-0.5 group-hover:scale-110 transition-transform" />
-                                                    <span className="text-sm font-medium leading-relaxed">{outcome}</span>
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                    <div className="mb-16">
+                                        <div className="flex items-center justify-between mb-10">
+                                            <h3 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                                                {translations.what_you_will_master || "What you will master"}
+                                            </h3>
+                                            <div className="size-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                                                <PlayCircle className="size-6" />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            {(locale === 'ar' ? (course.learning_outcomes_ar || []) : outcomes).map((outcome: string, index: number) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:border-primary/20 hover:bg-white dark:hover:bg-slate-800/40 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none group"
+                                                >
+                                                    <span className="text-base font-bold text-slate-700 dark:text-slate-300 transition-colors group-hover:text-slate-900 dark:group-hover:text-white">{outcome}</span>
+                                                    <div className="size-6 rounded-full border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all group-hover:border-primary group-hover:bg-primary/5">
+                                                        <CheckCircle2 className="size-3.5 text-slate-300 dark:text-slate-600 transition-colors group-hover:text-primary" />
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -274,7 +285,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                                     <h3 className="text-2xl font-black mb-6">Course overview</h3>
                                     <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-400 leading-loose">
-                                        {course.description}
+                                        {locale === 'ar' ? course.description_ar : course.description}
                                     </div>
                                 </div>
                             )}
@@ -286,7 +297,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                         <span className="text-sm font-bold text-muted-foreground">{course.lessons.length} sections</span>
                                     </div>
                                     <div className="space-y-2">
-                                        {course.lessons.map((lesson, index) => (
+                                        {course.lessons.map((lesson: Lesson, index: number) => (
                                             <div key={lesson.id} className="group flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all duration-300">
                                                 <div className="flex items-center gap-4">
                                                     <div className="size-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
@@ -442,10 +453,22 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                                     <div className="space-y-3">
                                         {isEnrolled ? (
-                                            <Button size="lg" className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30" onClick={() => router.get(route('student.resume-course', { course: course.slug }))}>
-                                                Continue Masterclass
-                                                <ArrowRight className="ml-3 size-6" />
-                                            </Button>
+                                            lockedUntil ? (
+                                                <div className="space-y-2">
+                                                    <Button size="lg" disabled className="w-full h-16 rounded-2xl text-lg font-black bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed shadow-none">
+                                                        <Clock className="mr-3 size-6 animate-pulse" />
+                                                        Verifying Payment...
+                                                    </Button>
+                                                    <p className="text-center text-xs font-bold text-amber-500 bg-amber-500/10 py-2 rounded-lg">
+                                                        Access unlocks on {new Date(lockedUntil).toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <Button size="lg" className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30" onClick={() => router.get(route('student.resume-course', { course: course.slug }))}>
+                                                    Continue Masterclass
+                                                    <ArrowRight className="ml-3 size-6" />
+                                                </Button>
+                                            )
                                         ) : (
                                             <>
                                                 <Button size="lg" className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30" onClick={handleEnrollOrPurchase}>

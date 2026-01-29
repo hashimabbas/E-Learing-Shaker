@@ -30,14 +30,14 @@ export function NavUser() {
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="group flex items-center gap-3 p-2 rounded-xl border border-transparent hover:bg-sidebar-accent/50 hover:border-sidebar-border/50 transition-all duration-300 data-[state=open]:bg-sidebar-accent/80 data-[state=open]:backdrop-blur-md"
+                            className="group flex items-center gap-3 p-2 rounded-xl transition-all duration-300 data-[state=open]:bg-sidebar-accent"
                             data-test="sidebar-menu-button"
                         >
                             <div className="flex-1 flex items-center min-w-0">
                                 {auth.user ? (
                                     <UserInfo user={auth.user} />
                                 ) : (
-                                    <Link href={route('login')} className="text-sm font-medium">Log In</Link>
+                                    <Link href={route('login')} className="text-sm font-bold text-foreground">Log In</Link>
                                 )}
                             </div>
                             <ChevronsUpDown className="ml-auto size-4 text-muted-foreground group-hover:text-foreground transition-colors" />

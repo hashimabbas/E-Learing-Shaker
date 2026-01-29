@@ -1,6 +1,7 @@
 // resources/js/pages/Cart/Index.tsx
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, router } from '@inertiajs/react';
+import React from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -18,6 +19,8 @@ import { route } from 'ziggy-js';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { type SharedData } from '@/types';
+import { cn } from '@/lib/utils';
 
 interface CartItem {
     id: number;
@@ -26,6 +29,7 @@ interface CartItem {
     quantity: number;
     course: {
         title: string;
+        localized_title?: string;
         slug: string;
         price: number;
         thumbnail: string;
@@ -41,10 +45,15 @@ interface CartIndexProps {
 }
 
 export default function CartIndex({ cart }: CartIndexProps) {
+    const { translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
+    const isRtl = locale === 'ar';
+
     useFlash();
+    const [paymentMethod, setPaymentMethod] = React.useState('Thawani');
+    const [processing, setProcessing] = React.useState(false);
 
     const handleRemove = (slug: string) => {
-        if (confirm('Are you sure you want to remove this course from your cart?')) {
+        if (confirm(translations.cart_remove_confirm || 'Are you sure you want to remove this course from your cart?')) {
             router.delete(route('cart.destroy', slug), {
                 preserveScroll: true,
             });
@@ -52,7 +61,12 @@ export default function CartIndex({ cart }: CartIndexProps) {
     };
 
     const handleCheckout = () => {
-        router.post(route('payment.initiate')); // Placeholder route
+        setProcessing(true);
+        router.post(route('payment.initiate'), {
+            payment_method: paymentMethod
+        }, {
+            onFinish: () => setProcessing(false)
+        });
     };
 
     const cartTotal = cart.items.reduce((sum, item) => sum + item.price_at_purchase * item.quantity, 0);
@@ -60,19 +74,19 @@ export default function CartIndex({ cart }: CartIndexProps) {
     const totalSavings = originalTotal - cartTotal;
 
     return (
-        <AppLayout title="Shopping Cart">
-            <Head title="My Shopping Cart" />
+        <AppLayout title={translations.cart_page_title || "Shopping Cart"}>
+            <Head title={translations.cart_meta_title || "My Shopping Cart"} />
 
-            <div className="bg-background min-h-screen pb-20">
+            <div className="bg-background min-h-screen pb-20" dir={isRtl ? "rtl" : "ltr"}>
                 {/* Header / Breadcrumb */}
                 <div className="border-b bg-muted/30 py-6">
                     <div className="container mx-auto px-4">
                         <Link href={route('courses.index')} className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Courses
+                            <ArrowLeft className={cn("h-4 w-4", isRtl ? "ml-2 rotate-180" : "mr-2")} /> {translations.cart_back_to_courses || "Back to Catalog"}
                         </Link>
                         <h1 className="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl flex items-center gap-3">
-                            <ShoppingCart className="h-8 w-8 text-primary" /> Shopping Cart
-                            <Badge variant="secondary" className="ml-2 text-lg px-3 rounded-full">
+                            <ShoppingCart className="h-8 w-8 text-primary" /> {translations.cart_items_count || "Shopping Cart"}
+                            <Badge variant="secondary" className={cn("text-lg px-3 rounded-full", isRtl ? "mr-2" : "ml-2")}>
                                 {cart.items.length}
                             </Badge>
                         </h1>
@@ -99,33 +113,33 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                                     <div className="flex justify-between gap-4">
                                                         <div className="space-y-1">
                                                             <Link href={route('courses.show', item.course.slug)} className="text-xl font-bold hover:text-primary transition-colors line-clamp-2">
-                                                                {item.course.title}
+                                                                {item.course.localized_title || item.course.title}
                                                             </Link>
-                                                            <p className="text-sm text-muted-foreground">By {item.course.instructor?.name || 'Expert Instructor'}</p>
+                                                            <p className="text-sm text-muted-foreground">{translations.cart_by || "By"} {item.course.instructor?.name || 'Expert Instructor'}</p>
                                                             <div className="flex items-center gap-1 mt-1 text-sm font-medium">
                                                                 <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
                                                                 <span>{item.course.average_rating ? item.course.average_rating.toFixed(1) : '4.8'}</span>
-                                                                <span className="text-muted-foreground font-normal">(1,234 ratings)</span>
+                                                                <span className="text-muted-foreground font-normal">(1,234 {translations.cart_ratings || "ratings"})</span>
                                                             </div>
                                                         </div>
-                                                        <div className="text-right shrink-0">
+                                                        <div className={cn("shrink-0", isRtl ? "text-left" : "text-right")}>
                                                             <div className="text-2xl font-black text-primary">
-                                                                OMR {item.price_at_purchase.toFixed(2)}
+                                                                {item.price_at_purchase.toFixed(2)} {translations.course_price_currency || 'OMR'}
                                                             </div>
                                                             <div className="text-sm text-muted-foreground line-through">
-                                                                OMR {(item.price_at_purchase * 1.2).toFixed(2)}
+                                                                {(item.price_at_purchase * 1.2).toFixed(2)} {translations.course_price_currency || 'OMR'}
                                                             </div>
-                                                            <Badge variant="outline" className="mt-2 text-green-600 border-green-200 bg-green-50">20% Off</Badge>
+                                                            <Badge variant="outline" className="mt-2 text-green-600 border-green-200 bg-green-50">20% {translations.cart_off || "Off"}</Badge>
                                                         </div>
                                                     </div>
 
                                                     <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-4 border-t">
                                                         <div className="flex gap-4">
                                                             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive h-9" onClick={() => handleRemove(item.course.slug)}>
-                                                                <Trash2 className="mr-2 h-4 w-4" /> Remove
+                                                                <Trash2 className={cn("h-4 w-4", isRtl ? "ml-2" : "mr-2")} /> {translations.cart_remove || "Remove"}
                                                             </Button>
                                                             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary h-9">
-                                                                <Heart className="mr-2 h-4 w-4" /> Save for Later
+                                                                <Heart className={cn("h-4 w-4", isRtl ? "ml-2" : "mr-2")} /> {translations.cart_save_later || "Save for Later"}
                                                             </Button>
                                                         </div>
                                                     </div>
@@ -138,7 +152,7 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                 <div className="pt-4">
                                     <Link href={route('courses.index')}>
                                         <Button variant="ghost" className="font-bold">
-                                            <ArrowLeft className="mr-2 h-4 w-4" /> Keep Shopping
+                                            <ArrowLeft className={cn("h-4 w-4", isRtl ? "ml-2 rotate-180" : "mr-2")} /> {translations.cart_keep_shopping || "Keep Shopping"}
                                         </Button>
                                     </Link>
                                 </div>
@@ -149,43 +163,88 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                 <div className="sticky top-24 space-y-6">
                                     <Card className="shadow-xl border-none">
                                         <CardContent className="p-8">
-                                            <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
+                                            <h2 className="text-2xl font-bold mb-6">{translations.cart_order_summary || "Order Summary"}</h2>
 
                                             <div className="space-y-4">
                                                 <div className="flex justify-between text-muted-foreground">
-                                                    <span>Original Price</span>
-                                                    <span className="line-through">OMR {originalTotal.toFixed(2)}</span>
+                                                    <span>{translations.cart_original_price || "Original Price"}</span>
+                                                    <span className="line-through">{originalTotal.toFixed(2)} {translations.course_price_currency || 'OMR'}</span>
                                                 </div>
                                                 <div className="flex justify-between text-green-600 font-medium">
-                                                    <span>Platform Discount</span>
-                                                    <span>-OMR {totalSavings.toFixed(2)}</span>
+                                                    <span>{translations.cart_platform_discount || "Platform Discount"}</span>
+                                                    <span>-{totalSavings.toFixed(2)} {translations.course_price_currency || 'OMR'}</span>
                                                 </div>
                                                 <Separator />
                                                 <div className="flex justify-between items-end">
                                                     <div>
-                                                        <div className="text-lg font-bold">Total</div>
-                                                        <p className="text-xs text-muted-foreground">Including all taxes</p>
+                                                        <div className="text-lg font-bold">{translations.cart_total || "Total"}</div>
+                                                        <p className="text-xs text-muted-foreground">{translations.cart_including_taxes || "Including all taxes"}</p>
                                                     </div>
                                                     <div className="text-4xl font-black text-primary tracking-tight">
-                                                        OMR {cartTotal.toFixed(2)}
+                                                        {cartTotal.toFixed(2)} {translations.course_price_currency || 'OMR'}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4 mb-6 mt-8">
+                                                <h3 className="text-lg font-bold">{translations.cart_select_payment || "Select Payment Method"}</h3>
+                                                <div className="space-y-3">
+                                                    <div
+                                                        className={`flex items-center space-x-3 rtl:space-x-reverse border rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'Thawani' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'hover:bg-muted/50'}`}
+                                                        onClick={() => setPaymentMethod('Thawani')}
+                                                    >
+                                                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'Thawani' ? 'border-primary' : 'border-muted-foreground'}`}>
+                                                            {paymentMethod === 'Thawani' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold">{translations.cart_payment_card || "Credit / Debit Card"}</div>
+                                                            <div className="text-xs text-muted-foreground">{translations.cart_payment_card_desc || "Secure payment via Thawani"}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        className={`flex items-center space-x-3 rtl:space-x-reverse border rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'Bank Transfer' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'hover:bg-muted/50'}`}
+                                                        onClick={() => setPaymentMethod('Bank Transfer')}
+                                                    >
+                                                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'Bank Transfer' ? 'border-primary' : 'border-muted-foreground'}`}>
+                                                            {paymentMethod === 'Bank Transfer' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold">{translations.cart_payment_bank || "Bank Transfer"}</div>
+                                                            <div className="text-xs text-muted-foreground">{translations.cart_payment_bank_desc || "Manual verification required"}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        className={`flex items-center space-x-3 rtl:space-x-reverse border rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'PayPal' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'hover:bg-muted/50'}`}
+                                                        onClick={() => setPaymentMethod('PayPal')}
+                                                    >
+                                                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'PayPal' ? 'border-primary' : 'border-muted-foreground'}`}>
+                                                            {paymentMethod === 'PayPal' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold">{translations.cart_payment_paypal || "PayPal"}</div>
+                                                            <div className="text-xs text-muted-foreground">{translations.cart_payment_paypal_desc || "Secure online payment"}</div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <Button
                                                 onClick={handleCheckout}
-                                                className="w-full h-14 mt-8 text-lg font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-100"
+                                                disabled={processing}
+                                                className="w-full h-14 text-lg font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-100"
                                             >
-                                                Checkout Now
+                                                {processing ? (translations.cart_processing || 'Processing...') : (translations.cart_checkout || 'Checkout Now')}
                                             </Button>
 
                                             <div className="mt-6 space-y-4">
                                                 <div className="relative group">
-                                                    <Input placeholder="Enter Coupon Code" className="h-11 pr-20" />
-                                                    <Button variant="ghost" className="absolute right-1 top-1 h-9 font-bold text-primary px-4">Apply</Button>
+                                                    <Input placeholder={translations.cart_coupon_placeholder || "Enter Coupon Code"} className={cn("h-11", isRtl ? "pl-20" : "pr-20")} />
+                                                    <Button variant="ghost" className={cn("absolute top-1 h-9 font-bold text-primary px-4", isRtl ? "left-1" : "right-1")}>{translations.cart_apply_coupon || "Apply"}</Button>
                                                 </div>
                                                 <div className="flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground">
-                                                    <ShieldCheck className="h-4 w-4 text-green-600" /> 30-Day Money-Back Guarantee
+                                                    <ShieldCheck className="h-4 w-4 text-green-600" /> {translations.cart_guarantee || "30-Day Money-Back Guarantee"}
                                                 </div>
                                             </div>
                                         </CardContent>
@@ -199,7 +258,7 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                             <Tag className="h-6 w-6" />
                                         </div>
                                         <p className="text-sm font-medium text-muted-foreground">
-                                            Secure 256-bit SSL Encrypted Payments
+                                            {translations.cart_secure_payments || "Secure 256-bit SSL Encrypted Payments"}
                                         </p>
                                     </div>
                                 </div>
@@ -211,13 +270,13 @@ export default function CartIndex({ cart }: CartIndexProps) {
                             <div className="mx-auto mb-8 flex h-40 w-40 items-center justify-center rounded-full bg-muted shadow-inner">
                                 <ShoppingCart className="h-20 w-20 text-muted-foreground/40" />
                             </div>
-                            <h2 className="mb-4 text-4xl font-black tracking-tight">Your cart is feeling lonely.</h2>
+                            <h2 className="mb-4 text-4xl font-black tracking-tight">{translations.cart_empty_title || "Your cart is feeling lonely."}</h2>
                             <p className="mx-auto mb-10 max-w-lg text-lg text-muted-foreground">
-                                Your shopping cart is currently empty. Discover thousand of courses and start your learning journey today!
+                                {translations.cart_empty_desc || "Your shopping cart is currently empty. Discover our specialized engineering workshops and start your learning journey today!"}
                             </p>
                             <Link href={route('courses.index')}>
                                 <Button size="lg" className="h-14 rounded-full px-12 text-lg font-bold shadow-xl shadow-primary/20">
-                                    Explore Courses <Tag className="ml-2 h-5 w-5" />
+                                    {translations.cart_explore_courses || "Explore Courses"} <Tag className={cn("h-5 w-5", isRtl ? "mr-2" : "ml-2")} />
                                 </Button>
                             </Link>
                         </div>

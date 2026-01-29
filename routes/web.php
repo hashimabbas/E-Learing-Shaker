@@ -47,8 +47,12 @@ Route::get('language/{locale}', [LanguageController::class, 'switch'])->name('la
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
 
-// Public Routes for Support/FAQ
+// Public Routes for Support/FAQ/Legal
+Route::get('/about', [SupportController::class, 'about'])->name('about');
+Route::get('/portfolio', [SupportController::class, 'portfolio'])->name('portfolio');
 Route::get('/faq', [SupportController::class, 'faq'])->name('support.faq');
+Route::get('/privacy', [SupportController::class, 'privacy'])->name('support.privacy');
+Route::get('/terms-of-use', [SupportController::class, 'terms'])->name('support.terms');
 Route::get('/contact', [SupportController::class, 'contact'])->name('support.contact');
 Route::post('/contact', [SupportController::class, 'submitContact'])->name('support.contact.submit');
 
@@ -80,6 +84,10 @@ Route::middleware(['auth', 'block.suspicious', 'log.content'])->group(function (
     // Redirect/Callback Routes from Thawani
     Route::get('/checkout/success/{order:order_number}', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
     Route::get('/checkout/cancel/{order:order_number}', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');
+
+    // PayPal Callbacks
+    Route::get('/checkout/paypal/return', [PaymentController::class, 'paypalReturn'])->name('payment.paypal.return');
+    Route::get('/checkout/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
 
     // User Order History/View
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -247,6 +255,13 @@ Route::middleware(['auth', 'log.content',  'role:admin'])->prefix('admin')->name
         Route::post('/{user}/note', [SecurityController::class, 'addNote'])->name('note');
         Route::post('/{user}/unlock', [SecurityController::class, 'unlock'])->name('unlock');
         Route::post('/{user}/ban', [SecurityController::class, 'ban'])->name('ban');
+    });
+
+    // Payment Management Routes
+    Route::prefix('payments')->name('payments.')->group(function () {
+        Route::get('/pending', [\App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('pending');
+        Route::post('/{order}/approve', [\App\Http\Controllers\Admin\PaymentController::class, 'approve'])->name('approve');
+        Route::post('/{order}/reject', [\App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('reject');
     });
 });
 

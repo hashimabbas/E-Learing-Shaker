@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Video;
+use App\Models\TextLesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controller;
@@ -48,6 +49,8 @@ class InstructorLessonController extends Controller
         // Optional: Create the Video/Quiz record immediately for the newly created lesson
         if ($lesson->type === 'video') {
              Video::create(['lesson_id' => $lesson->id, 'path' => '']);
+        } elseif ($lesson->type === 'text') {
+             TextLesson::create(['lesson_id' => $lesson->id, 'content' => '']);
         }
 
         return back()->with('success', 'Lesson created! You can now upload content.');
@@ -64,6 +67,7 @@ class InstructorLessonController extends Controller
             'title' => 'required|string|max:255',
             'order' => 'required|integer',
             'is_free_preview' => 'boolean',
+            'content' => 'nullable|string',
         ]);
 
         $lesson->update([
@@ -72,6 +76,13 @@ class InstructorLessonController extends Controller
             'order' => $validated['order'],
             'is_free_preview' => $validated['is_free_preview'],
         ]);
+
+        if ($lesson->type === 'text' && $request->has('content')) {
+            $lesson->textLesson()->updateOrCreate(
+                ['lesson_id' => $lesson->id],
+                ['content' => $request->input('content')]
+            );
+        }
 
         return back()->with('success', 'Lesson updated successfully.');
     }

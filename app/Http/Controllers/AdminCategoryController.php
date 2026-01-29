@@ -4,87 +4,58 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Routing\Controller;
+use Inertia\Inertia;
 
 class AdminCategoryController extends Controller
 {
-    public function __construct()
+    public function index()
     {
-        // Only Admins can manage categories
-        $this->middleware(['auth', 'role:admin']);
-    }
-
-    /**
-     * Display a listing of the categories.
-     */
-    public function index(): Response
-    {
-        $categories = Category::withCount('courses')->latest()->get();
+        $categories = Category::orderBy('name')->get();
 
         return Inertia::render('Admin/Categories/Index', [
-            'categories' => $categories,
+            'categories' => $categories
         ]);
     }
 
-    /**
-     * Store a newly created category.
-     */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
-            'icon' => ['nullable', 'string', 'max:50'],
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            'icon' => 'nullable|string|max:255',
         ]);
 
         Category::create([
-            'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
-            'icon' => $validated['icon'],
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'icon' => $request->icon,
         ]);
 
-        Cache::forget('course_categories');
-        return back()->with('success', 'Category created successfully.');
+        return redirect()->back()->with('success', 'Category created successfully.');
     }
 
-    /**
-     * Update the specified category.
-     */
-    public function update(Request $request, Category $category): RedirectResponse
+    public function update(Request $request, Category $category)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($category->id)],
-            'icon' => ['nullable', 'string', 'max:50'],
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'icon' => 'nullable|string|max:255',
         ]);
 
         $category->update([
-            'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
-            'icon' => $validated['icon'],
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'icon' => $request->icon,
         ]);
 
-        Cache::forget('course_categories');
-        return back()->with('success', 'Category updated successfully.');
+        return redirect()->back()->with('success', 'Category updated successfully.');
     }
 
-    /**
-     * Remove the specified category.
-     */
-    public function destroy(Category $category): RedirectResponse
+    public function destroy(Category $category)
     {
-        // Optional: Prevent deletion if courses are linked
-        if ($category->courses()->exists()) {
-            return back()->with('error', 'Cannot delete category with existing courses.');
-        }
-
+        // Optional: Check if category has courses before deleting?
+        // For now, simple delete.
         $category->delete();
 
-        Cache::forget('course_categories');
-        return back()->with('success', 'Category deleted successfully.');
+        return redirect()->back()->with('success', 'Category deleted successfully.');
     }
 }

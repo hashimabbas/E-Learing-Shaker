@@ -8,12 +8,51 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Mail; // For contact form
+use Illuminate\Http\RedirectResponse;
 
 class SupportController extends Controller
 {
     /**
      * Display the FAQ page.
      */
+    public function about()
+    {
+        return Inertia::render('About');
+    }
+
+    public function portfolio()
+    {
+        // Get all images from the Portfolio directory
+        $portfolioPath = public_path('images/Portfolio');
+        $images = [];
+
+        if (is_dir($portfolioPath)) {
+            $files = scandir($portfolioPath);
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..' && preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $file)) {
+                    $images[] = [
+                        'filename' => $file,
+                        'path' => '/images/Portfolio/' . $file,
+                    ];
+                }
+            }
+        }
+
+        return Inertia::render('Portfolio', [
+            'images' => $images,
+        ]);
+    }
+
+    public function privacy()
+    {
+        return Inertia::render('PrivacyPolicy');
+    }
+
+    public function terms()
+    {
+        return Inertia::render('TermsOfUse');
+    }
+
     public function faq(): Response
     {
         $faqs = Faq::orderBy('category')->orderBy('order')->get()->groupBy('category');

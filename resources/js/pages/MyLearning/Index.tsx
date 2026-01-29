@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { BookOpen, Clock, BarChart3, ChevronRight, Search, Play, Trophy, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { route } from 'ziggy-js';
+import { SharedData } from '@/types';
 
 export interface PaginatedData<T> {
     data: T[];
@@ -17,6 +18,7 @@ export interface PaginatedData<T> {
 export interface Course {
     id: number;
     title: string;
+    localized_title?: string;
     slug: string;
     description: string;
     thumbnail: string | null;
@@ -39,6 +41,7 @@ interface MyLearningIndexProps {
 }
 
 const EnrolledCourseCard = ({ course }: { course: EnrolledCourse }) => {
+    const { translations } = usePage<SharedData & { translations: any }>().props;
     const isCompleted = !!course.pivot.completed_at;
     const progressValue = Math.min(Math.max(course.pivot.progress, 0), 100);
 
@@ -62,7 +65,7 @@ const EnrolledCourseCard = ({ course }: { course: EnrolledCourse }) => {
 
                 <div className="absolute bottom-3 left-3 right-3">
                     <div className="flex items-center justify-between text-xs text-white/90 mb-1.5">
-                        <span className="font-medium">{isCompleted ? 'Completed' : `${Math.round(progressValue)}% Complete`}</span>
+                        <span className="font-medium">{isCompleted ? (translations.completed || 'Completed') : `${Math.round(progressValue)}% ${translations.complete || 'Complete'}`}</span>
                     </div>
                     <Progress value={progressValue} className="h-1.5 bg-white/20" />
                 </div>
@@ -71,7 +74,7 @@ const EnrolledCourseCard = ({ course }: { course: EnrolledCourse }) => {
             <CardContent className="p-5">
                 <Link href={`/courses/${course.slug}/learn`} className="block group/title">
                     <h3 className="text-lg font-bold leading-tight group-hover/title:text-primary transition-colors line-clamp-2 min-h-[3rem]">
-                        {course.title}
+                        {course.localized_title || course.title}
                     </h3>
                 </Link>
                 <p className="mt-2 text-sm text-muted-foreground flex items-center">
@@ -87,13 +90,13 @@ const EnrolledCourseCard = ({ course }: { course: EnrolledCourse }) => {
                             onClick={() => router.post(route('student.certificate.generate', { course: course.slug }))}
                         >
                             <Sparkles className="mr-2 h-4 w-4 text-amber-500" />
-                            Get Certificate
+                            {translations.get_certificate || 'Get Certificate'}
                         </Button>
                     ) : (
                         <Link href={route('student.resume-course', { course: course.slug })}>
                             <Button className="w-full shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all">
                                 <Play className="mr-2 h-4 w-4 fill-current" />
-                                Resume
+                                {translations.resume || 'Resume'}
                                 <ChevronRight className="ml-1 h-4 w-4" />
                             </Button>
                         </Link>
@@ -105,14 +108,16 @@ const EnrolledCourseCard = ({ course }: { course: EnrolledCourse }) => {
 };
 
 export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed, recommendations }: MyLearningIndexProps) {
+    const { translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
     const mostRecent = recentlyViewed[0];
+    const isRtl = locale === 'ar';
 
     return (
         <AppLayout>
-            <Head title="My Learning" />
+            <Head title={translations.my_learning || "My Learning"} />
 
             {/* Hero Section */}
-            <div className="relative overflow-hidden bg-slate-950 py-16 lg:py-24">
+            <div className="relative overflow-hidden bg-slate-950 py-16 lg:py-24" dir={isRtl ? 'rtl' : 'ltr'}>
                 <div className="absolute inset-0 opacity-40">
                     <img
                         src="/images/learning-hero-bg.png"
@@ -127,27 +132,27 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                         <div>
                             <div className="inline-flex items-center space-x-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary ring-1 ring-inset ring-primary/20 mb-6">
                                 <Sparkles className="h-4 w-4" />
-                                <span>Welcome back, {auth.user.name.split(' ')[0]}!</span>
+                                <span>{translations.welcome_back || "Welcome back,"} {auth.user.name.split(' ')[0]}!</span>
                             </div>
                             <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
-                                Level up your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-violet-400">skills</span> today.
+                                {translations.hero_title || "Level up your skills today."}
                             </h1>
                             <p className="mt-6 text-xl text-slate-300 max-w-lg leading-relaxed">
-                                You have {enrolledCourses.total} active courses. Ready to pick up where you left off?
+                                {(translations.hero_desc || "You have :count active courses. Ready to pick up where you left off?").replace(':count', enrolledCourses.total.toString())}
                             </p>
 
                             <div className="mt-10 flex flex-col sm:flex-row gap-4">
                                 <div className="relative flex-1 max-w-sm">
-                                    <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                                    <Search className={`absolute ${isRtl ? 'right-3' : 'left-3'} top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400`} />
                                     <input
                                         type="text"
-                                        placeholder="Search your courses..."
-                                        className="h-12 w-full rounded-xl bg-white/10 pl-10 pr-4 text-white placeholder-slate-400 backdrop-blur-md outline-none border border-white/10 focus:border-primary/50 transition-colors"
+                                        placeholder={translations.search_placeholder || "Search your courses..."}
+                                        className={`h-12 w-full rounded-xl bg-white/10 ${isRtl ? 'pr-10 pl-4' : 'pl-10 pr-4'} text-white placeholder-slate-400 backdrop-blur-md outline-none border border-white/10 focus:border-primary/50 transition-colors`}
                                     />
                                 </div>
                                 <Link href={route('courses.index')}>
                                     <Button size="lg" className="h-12 px-8 rounded-xl font-bold bg-white text-slate-950 hover:bg-slate-200">
-                                        Explore All
+                                        {translations.explore_all || "Explore All"}
                                     </Button>
                                 </Link>
                             </div>
@@ -158,26 +163,26 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                                 <Card className="overflow-hidden border-none bg-white/10 backdrop-blur-xl ring-1 ring-white/20">
                                     <div className="p-6">
                                         <div className="flex items-center justify-between mb-4">
-                                            <span className="text-sm font-semibold uppercase tracking-wider text-primary/80">Continue Learning</span>
+                                            <span className="text-sm font-semibold uppercase tracking-wider text-primary/80">{translations.continue_learning || "Continue Learning"}</span>
                                             <span className="text-sm text-slate-400 flex items-center">
-                                                <Clock className="mr-1.5 h-4 w-4" />
-                                                Last active
+                                                <Clock className={`h-4 w-4 ${isRtl ? 'ml-1.5' : 'mr-1.5'}`} />
+                                                {translations.last_active || "Last active"}
                                             </span>
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white mb-6 line-clamp-1">{mostRecent.title}</h3>
+                                        <h3 className="text-2xl font-bold text-white mb-6 line-clamp-1">{mostRecent.localized_title || mostRecent.title}</h3>
 
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between text-sm">
-                                                <span className="text-slate-300">{mostRecent.pivot.progress}% Complete</span>
-                                                <span className="text-primary font-bold">Soon to finish!</span>
+                                                <span className="text-slate-300">{mostRecent.pivot.progress}% {translations.complete || "Complete"}</span>
+                                                <span className="text-primary font-bold">{translations.soon_to_finish || "Soon to finish!"}</span>
                                             </div>
                                             <Progress value={mostRecent.pivot.progress} className="h-3 bg-white/10" />
                                         </div>
 
                                         <Link href={route('student.resume-course', mostRecent.slug)} className="mt-8 block">
                                             <Button className="w-full h-12 rounded-xl text-lg font-bold group">
-                                                Resume Now
-                                                <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                                                {translations.resume_now || "Resume Now"}
+                                                <ChevronRight className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${isRtl ? 'rotate-180 mr-2' : 'ml-2'}`} />
                                             </Button>
                                         </Link>
                                     </div>
@@ -188,14 +193,14 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                 </div>
             </div>
 
-            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8" dir={isRtl ? 'rtl' : 'ltr'}>
                 {/* Recently Viewed - Horizontal Scroll */}
                 {recentlyViewed.length > 0 && (
                     <div className="mb-20">
                         <div className="flex items-end justify-between mb-8">
                             <div>
-                                <h2 className="text-3xl font-bold text-foreground">Jump back in</h2>
-                                <p className="text-muted-foreground mt-1">Pick up where you left off in these courses.</p>
+                                <h2 className="text-3xl font-bold text-foreground">{translations.jump_back_in || "Jump back in"}</h2>
+                                <p className="text-muted-foreground mt-1">{translations.jump_back_in_desc || "Pick up where you left off in these courses."}</p>
                             </div>
                         </div>
 
@@ -215,10 +220,10 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                                                     <Progress value={course.pivot.progress} className="h-1 bg-white/30" />
                                                 </div>
                                             </div>
-                                            <h4 className="font-bold text-lg line-clamp-1 group-hover:text-primary transition-colors">{course.title}</h4>
+                                            <h4 className="font-bold text-lg line-clamp-1 group-hover:text-primary transition-colors">{course.localized_title || course.title}</h4>
                                             <p className="text-sm text-muted-foreground mt-1 flex items-center">
-                                                <Clock className="mr-1.5 h-3.5 w-3.5" />
-                                                {course.pivot.progress}% progress
+                                                <Clock className={`h-3.5 w-3.5 ${isRtl ? 'ml-1.5' : 'mr-1.5'}`} />
+                                                {course.pivot.progress}% {translations.progress || "progress"}
                                             </p>
                                         </Link>
                                     </div>
@@ -232,12 +237,12 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                 <div className="mb-20">
                     <div className="flex items-end justify-between mb-8 border-b pb-4">
                         <div>
-                            <h2 className="text-3xl font-bold text-foreground">My Courses</h2>
-                            <p className="text-muted-foreground mt-1">A complete list of everything you're learning.</p>
+                            <h2 className="text-3xl font-bold text-foreground">{translations.my_courses_page_title || "My Courses"}</h2>
+                            <p className="text-muted-foreground mt-1">{translations.my_courses_page_desc || "A complete list of everything you're learning."}</p>
                         </div>
                         <div className="hidden sm:block">
                             <span className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full">
-                                {enrolledCourses.total} Courses Total
+                                {enrolledCourses.total} {translations.courses_total || "Courses Total"}
                             </span>
                         </div>
                     </div>
@@ -253,13 +258,13 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                             <div className="mx-auto h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
                                 <BookOpen className="h-10 w-10 text-primary" />
                             </div>
-                            <h3 className="text-2xl font-bold">No courses yet</h3>
+                            <h3 className="text-2xl font-bold">{translations.no_courses_enrolled || "No courses yet"}</h3>
                             <p className="mt-2 text-muted-foreground max-w-sm mx-auto">
-                                You haven't enrolled in any courses. Start exploring our library to find your next favorite course!
+                                {translations.no_courses_enrolled_desc || "You haven't enrolled in any courses. Start exploring our library to find your next favorite course!"}
                             </p>
                             <Link href={route('courses.index')} className="mt-8 inline-block">
                                 <Button size="lg" className="px-10 rounded-xl font-bold">
-                                    Browse Courses
+                                    {translations.browse_courses || "Browse Courses"}
                                 </Button>
                             </Link>
                         </div>
@@ -274,7 +279,7 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                         </div>
 
                         <div className="relative">
-                            <h2 className="text-3xl font-bold mb-8">Recommended for you</h2>
+                            <h2 className="text-3xl font-bold mb-8">{translations.recommended_for_you || "Recommended for you"}</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {recommendations.map((course) => (
                                     <Link key={course.id} href={route('courses.show', course.slug)} className="group">
@@ -287,13 +292,13 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                                                 />
                                             </div>
                                             <CardContent className="p-4">
-                                                <h5 className="font-bold line-clamp-2 group-hover:text-primary transition-colors">{course.title}</h5>
+                                                <h5 className="font-bold line-clamp-2 group-hover:text-primary transition-colors">{course.localized_title || course.title}</h5>
                                                 <div className="mt-4 flex items-center justify-between">
                                                     <span className="text-primary font-bold">
                                                         OMR {course.price ? parseFloat(course.price).toFixed(2) : '0.00'}
                                                     </span>
                                                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-                                                        <ChevronRight className="h-4 w-4" />
+                                                        <ChevronRight className={`h-4 w-4 ${isRtl ? 'rotate-180' : ''}`} />
                                                     </div>
                                                 </div>
                                             </CardContent>

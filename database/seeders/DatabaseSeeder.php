@@ -16,9 +16,9 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
-            CategorySeeder::class,
-            CourseSeeder::class,
-            ContentSeeder::class,
+            // CategorySeeder::class,
+            // CourseSeeder::class,
+            // ContentSeeder::class,
             TestUserSeeder::class,
         ]);
         User::firstOrCreate(
@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Test User',
                 'password' => 'password',
                 'email_verified_at' => now(),
-            ]
+            ],
+            
         );
     }
 }

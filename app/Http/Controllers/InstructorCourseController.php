@@ -74,14 +74,17 @@ class InstructorCourseController extends Controller
         $course = Course::create([
             'user_id' => auth()->id(),
             'title' => $validated['title'],
+            'title_ar' => $validated['title_ar'] ?? null,
             'slug' => Str::slug($validated['title']) . '-' . Str::random(5),
             'description' => $validated['description'],
+            'description_ar' => $validated['description_ar'] ?? null,
             'category_id' => $validated['category_id'],
             'price' => $validated['price'],
             'is_published' => false,
             'thumbnail' => $thumbnailPath,
             'preview_video_url' => $validated['preview_video_url'] ?? null,
-            // 'learning_outcomes' => $validated['learning_outcomes'] ?? null,
+            'learning_outcomes' => $validated['learning_outcomes'] ?? null,
+            'learning_outcomes_ar' => $validated['learning_outcomes_ar'] ?? null,
         ]);
 
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Course created! Now add lessons.');
@@ -130,9 +133,13 @@ class InstructorCourseController extends Controller
 
         $course->update([
             'title' => $request->title,
+            'title_ar' => $request->title_ar,
             'description' => $request->description,
+            'description_ar' => $request->description_ar,
             'category_id' => $request->category_id,
             'price' => $request->price,
+            'learning_outcomes' => $request->learning_outcomes,
+            'learning_outcomes_ar' => $request->learning_outcomes_ar,
         ]);
 
         return back()->with('success', 'Course updated successfully.');

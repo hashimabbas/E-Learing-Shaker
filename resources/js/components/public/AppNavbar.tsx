@@ -1,13 +1,21 @@
 // resources/js/components/public/AppNavbar.tsx (FINAL VERSION)
 import { Link, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Menu } from 'lucide-react';
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
+import { useState } from 'react';
 
 // --- NEW IMPORTS ---
-import { NotificationBell } from '@/components/notification-bell'; // Assumed to be created
-import { LanguageSwitcher } from '@/components/language-switcher'; // Assumed to be created
+import { NotificationBell } from '@/components/notification-bell';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
 // -------------------
 
 interface AppNavbarProps {
@@ -15,72 +23,144 @@ interface AppNavbarProps {
 }
 
 export default function AppNavbar({ canRegister }: AppNavbarProps) {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
+    const isRtl = locale === 'ar';
+    const [open, setOpen] = useState(false);
 
     const navItems = [
-        { name: 'Features', href: '#features' },
-        { name: 'Categories', href: '#categories' },
-        { name: 'About Us', href: '/about' },
+        { name: translations.home || 'Home', href: route('welcome') },
+        { name: translations.nav_portfolio || 'Portfolio', href: route('portfolio') },
+        { name: translations.nav_about || 'About Me', href: route('about') },
     ];
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b dark:bg-black/95">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                {/* Logo */}
-                <Link href="/" className="flex items-center text-xl font-bold text-gray-900 dark:text-white">
-                    {/* <GraduationCap className="w-6 h-6 mr-2 text-primary" /> */}
-                    {/* <img src="/images/identity.jpeg" alt="Logo" className="w-8 h-8 mr-2 rounded-full object-cover border border-gray-200 dark:border-gray-700" /> */}
-                    <img src="/images/logo.svg" alt="مهندس شاكر" className="h-10 w-auto mr-2" />
-                    {/* E-Learning */}
+        <header
+            className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/10"
+            dir={isRtl ? 'rtl' : 'ltr'}
+        >
+            <div className="absolute inset-0 bg-white/70 dark:bg-black/70 backdrop-blur-md -z-10" />
+
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
+                {/* Mobile Menu Trigger */}
+                <div className="flex md:hidden items-center gap-2">
+                    <Sheet open={open} onOpenChange={setOpen}>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
+                                <Menu className="size-6" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side={isRtl ? "right" : "left"} className="w-[300px] p-0 flex flex-col bg-background/95 backdrop-blur-xl">
+                            <SheetHeader className="p-6 border-b border-border/50 text-left">
+                                <SheetTitle className="font-black text-xl tracking-tight">
+                                    {translations.navbar_logo_text || "Shaker Shams"}
+                                </SheetTitle>
+                            </SheetHeader>
+                            <div className="flex flex-col gap-2 p-4 pt-6">
+                                {navItems.map((item) => (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setOpen(false)}
+                                        className="flex items-center px-4 py-4 text-base font-bold text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-2xl transition-all"
+                                    >
+                                        {item.name}
+                                    </Link>
+                                ))}
+                            </div>
+                            <div className="mt-auto p-6 border-t border-border/50 bg-muted/30">
+                                {!auth.user ? (
+                                    <div className="flex flex-col gap-3">
+                                        <Link href={login()} onClick={() => setOpen(false)}>
+                                            <Button variant="outline" className="w-full h-12 rounded-xl font-bold">
+                                                {translations.nav_login || "Log In"}
+                                            </Button>
+                                        </Link>
+                                        {canRegister && (
+                                            <Link href={register()} onClick={() => setOpen(false)}>
+                                                <Button className="w-full h-12 rounded-xl font-black shadow-lg shadow-primary/20">
+                                                    {translations.nav_signup || "Sign Up"}
+                                                </Button>
+                                            </Link>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <Link href={dashboard()} onClick={() => setOpen(false)}>
+                                        <Button className="w-full h-12 rounded-xl font-black">
+                                            {translations.nav_dashboard || "Go to Dashboard"}
+                                        </Button>
+                                    </Link>
+                                )}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                    <LanguageSwitcher />
+                </div>
+
+                {/* Logo and Workshop Name */}
+                <Link href="/" className="hidden md:flex items-center gap-3 group">
+                    <div className="flex flex-col">
+                        <span className="text-base md:text-lg font-black tracking-tight leading-tight group-hover:text-primary transition-colors">
+                            {translations.navbar_logo_text || "Shaker Shams Engineering Workshop"}
+                        </span>
+                        <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground">
+                            {isRtl ? "ورشة تعليمية متكاملة" : "Integrated Educational Workshop"}
+                        </span>
+                    </div>
                 </Link>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden lg:flex items-center space-x-6 text-sm">
+                <nav className="hidden md:flex items-center gap-8">
                     {navItems.map(item => (
-                        <a
-                            key={item.name}
+                        <Link
+                            key={item.href}
                             href={item.href}
-                            className="text-gray-600 hover:text-primary transition-colors dark:text-gray-300 dark:hover:text-white"
+                            className="text-sm font-bold text-muted-foreground hover:text-primary transition-all relative py-2 group"
                         >
                             {item.name}
-                        </a>
+                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                        </Link>
                     ))}
                 </nav>
 
-                {/* Auth Buttons & Utilities (CRITICAL INTEGRATION POINT) */}
-                <nav className="flex items-center gap-2">
-
-                    {/* 1. Language Switcher (Always visible) */}
-                    <LanguageSwitcher />
+                {/* Right Side Actions */}
+                <div className="flex items-center gap-2 md:gap-4">
+                    <div className="hidden md:flex items-center gap-4">
+                        <LanguageSwitcher />
+                        <div className="h-6 w-px bg-border mx-2" />
+                    </div>
 
                     {auth.user ? (
-                        <>
-                            {/* 2. Notification Bell (Only for logged-in users) */}
+                        <div className="flex items-center gap-3 md:gap-4">
                             <NotificationBell />
-
                             <Link href={dashboard()}>
-                                <Button variant="secondary" size="sm">
-                                    Dashboard
+                                <Button
+                                    variant="default"
+                                    size="sm"
+                                    className="rounded-xl font-black h-9 md:h-11 px-4 md:px-6 hover:scale-105 transition-transform"
+                                >
+                                    <span className="hidden sm:inline">{translations.nav_dashboard || "Dashboard"}</span>
+                                    <span className="sm:hidden">{isRtl ? "الرئيسية" : "Dash"}</span>
                                 </Button>
                             </Link>
-                        </>
+                        </div>
                     ) : (
-                        // Guest Buttons
-                        <>
+                        <div className="hidden md:flex items-center gap-2">
                             <Link href={login()}>
-                                <Button variant="ghost" size="sm">
-                                    Log In
+                                <Button variant="ghost" size="sm" className="font-bold rounded-xl px-4 h-11">
+                                    {translations.nav_login || "Log In"}
                                 </Button>
                             </Link>
                             {canRegister && (
                                 <Link href={register()}>
-                                    <Button size="sm">Sign Up</Button>
+                                    <Button size="sm" className="font-black rounded-xl px-6 h-11 shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+                                        {translations.nav_signup || "Sign Up"}
+                                    </Button>
                                 </Link>
                             )}
-                        </>
+                        </div>
                     )}
-                </nav>
+                </div>
             </div>
-        </header >
+        </header>
     );
 }

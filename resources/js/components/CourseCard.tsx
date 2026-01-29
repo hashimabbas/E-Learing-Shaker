@@ -18,7 +18,7 @@ export function CourseCard({ course }: { course: any }) {
                     <div className="relative h-28 rounded-md overflow-hidden bg-muted mb-3">
                         {!hovered ? (
                             <img
-                                src={course.thumbnail}
+                                src={course.thumbnail_url || course.thumbnail}
                                 className="w-full h-full object-cover"
                             />
                         ) : (

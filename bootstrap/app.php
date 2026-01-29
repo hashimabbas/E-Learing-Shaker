@@ -27,10 +27,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
+            LocalizationMiddleware::class, // <-- Moved UP: Must run before HandleInertiaRequests
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
-            LocalizationMiddleware::class, // <-- NEW: Apply to all web requests
             \Illuminate\Session\Middleware\AuthenticateSession::class,
 
         ]);

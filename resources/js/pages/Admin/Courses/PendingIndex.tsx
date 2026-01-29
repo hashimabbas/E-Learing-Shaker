@@ -70,7 +70,7 @@ export default function AdminPendingCoursesIndex({ pendingCourses }: AdminPendin
                                     <tr key={course.id} className="hover:bg-yellow-50/50 dark:hover:bg-yellow-900/10">
                                         <td className="px-6 py-4 text-sm font-medium">
                                             {course.title}
-                                            <p className="text-xs text-muted-foreground">{course.category.name}</p>
+                                            <p className="text-xs text-muted-foreground">{course.category?.name || 'Uncategorized'}</p>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{course.instructor.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-bold">OMR {course.price ? parseFloat(course.price).toFixed(2) : 'Free'}</td>

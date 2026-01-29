@@ -55,6 +55,56 @@ export default function OrdersShow({ order, success, error }: OrdersShowProps) {
                         <p><strong>Total Paid:</strong> OMR {order.total_amount.toFixed(2)}</p>
                     </div>
 
+                    {order.payment_method === 'Bank Transfer' && order.status === 'pending' && (
+                        <div className="mb-8 p-6 bg-muted/30 rounded-xl border border-dashed border-primary/50">
+                            <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                                <span className="w-2 h-8 bg-primary rounded-full"></span>
+                                Bank Transfer Instructions
+                            </h3>
+                            <div className="bg-white dark:bg-black p-4 rounded-lg border shadow-sm mb-6">
+                                <h4 className="font-semibold text-muted-foreground mb-3 text-sm uppercase tracking-wider">Account Details</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm">
+                                    <div className="space-y-1">
+                                        <div className="text-muted-foreground text-xs">Account Name</div>
+                                        <div className="font-mono font-bold text-lg select-all">SHAKER SHAMS</div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="text-muted-foreground text-xs">Account Number</div>
+                                        <div className="font-mono font-bold text-lg select-all">0313048132360034</div>
+                                    </div>
+                                    <div className="space-y-1 md:col-span-2">
+                                        <div className="text-muted-foreground text-xs">IBAN</div>
+                                        <div className="font-mono font-bold text-lg select-all break-all">OM970270313048132360034</div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="text-muted-foreground text-xs">Branch</div>
+                                        <div className="font-medium">City Centre Branch</div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="text-muted-foreground text-xs">Bank</div>
+                                        <div className="font-medium">Bank Muscat</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                                <p className="text-sm font-medium">
+                                    After transferring the amount, please send the payment receipt via WhatsApp to complete your order.
+                                </p>
+                                <a
+                                    href={`https://api.whatsapp.com/send?phone=96896657363&text=${encodeURIComponent(`Hello, I have made a bank transfer for Order #${order.order_number}. Here is the receipt.`)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <Button size="lg" className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold h-12 px-8 shadow-lg shadow-green-500/20">
+                                        Send Proof on WhatsApp
+                                    </Button>
+                                </a>
+                                <p className="text-xs text-muted-foreground">Admin will approve your order after verification.</p>
+                            </div>
+                        </div>
+                    )}
+
                     <Separator className="my-6" />
 
                     <h2 className="text-xl font-semibold mb-4">Items Purchased</h2>

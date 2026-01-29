@@ -19,12 +19,15 @@ class CourseUpdateRequest extends FormRequest
         $courseId = $this->route('course')->id;
 
         return [
-            'title' => ['required', 'string', 'max:255', Rule::unique('courses', 'title')->ignore($courseId)], // Title unique check, ignoring current course
+            'title' => ['required', 'string', 'max:255', Rule::unique('courses', 'title')->ignore($courseId)],
+            'title_ar' => ['nullable', 'string', 'max:255'],
             'description' => ['required', 'string'],
+            'description_ar' => ['nullable', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'price' => ['required', 'numeric', 'min:0', 'max:999.99'],
             'thumbnail_file' => ['nullable', 'image', 'max:5000'],
             'learning_outcomes' => ['nullable', 'array'],
+            'learning_outcomes_ar' => ['nullable', 'array'],
         ];
     }
 }

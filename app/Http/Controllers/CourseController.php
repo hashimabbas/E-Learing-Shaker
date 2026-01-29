@@ -132,18 +132,29 @@ class CourseController extends Controller
 
         $inWishlist = auth()->check() ? auth()->user()->wishlistItems()->where('course_id', $course->id)->exists() : false;
 
+        $lockedUntil = null;
+        if ($isEnrolled && auth()->check() && !auth()->user()->isInstructor() && !auth()->user()->isAdmin()) {
+             $enrollment = auth()->user()->enrolledCourses()->where('course_id', $course->id)->first()->pivot;
+             $enrollmentTime = \Carbon\Carbon::parse($enrollment->created_at);
+             $unlocksAt = $enrollmentTime->copy()->addHours(24);
+             if (now()->lessThan($unlocksAt)) {
+                 $lockedUntil = $unlocksAt->toIso8601String();
+             }
+        }
+
         return Inertia::render('Courses/Show', [
             'course' => $course,
             'instructor' => $instructor,
             'isEnrolled' => $isEnrolled,
             'inWishlist' => $inWishlist,
+            'lockedUntil' => $lockedUntil,
         ]);
     }
 
      /**
      * Display the course player page for an enrolled student.
      */
-    public function learn(Course $course, $lessonSlug = null): Response
+    public function learn(Course $course, $lessonSlug = null)
     {
         $user = auth()->user();
 
@@ -156,8 +167,21 @@ class CourseController extends Controller
                 ->with('error', 'You must be enrolled in this course to access the content.');
         }
 
+        // --- NEW: 24-Hour verification Check ---
+        if (!$user->isInstructor() && !$user->isAdmin()) {
+            $enrollment = $user->enrolledCourses()->where('course_id', $course->id)->first()->pivot;
+            $enrollmentTime = \Carbon\Carbon::parse($enrollment->created_at);
+            $unlockTime = $enrollmentTime->copy()->addHours(24);
+
+            if (now()->lessThan($unlockTime)) {
+                 return redirect()->route('courses.show', $course->slug)
+                    ->with('error', 'Content access is locked for verification until ' . $unlockTime->format('M d, Y h:i A'));
+            }
+        }
+        // ----------------------------------------
+
         // Load lessons
-        $course->load(['lessons' => fn($q) => $q->orderBy('order')->with('video', 'quiz:id,lesson_id')]);
+        $course->load(['lessons' => fn($q) => $q->orderBy('order')->with('video', 'quiz:id,lesson_id', 'textLesson')]);
         $lessonsCollection = $course->lessons;
 
         $bookmarkSeconds = 0;
