@@ -13,6 +13,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { LaravelPagination } from '@/components/ui/pagination';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { useForm } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
+import InputError from '@/components/input-error';
 
 
 interface AdminUsersIndexProps {
@@ -32,6 +37,24 @@ const getInitials = (name: string) => {
 export default function AdminUsersIndex({ users, filters }: AdminUsersIndexProps) {
     const [selectedRole, setSelectedRole] = useState(filters.role || 'all');
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '',
+        email: '',
+        password: '',
+        role: 'student',
+    });
+
+    const submitCreateUser = (e: React.FormEvent) => {
+        e.preventDefault();
+        post(route('admin.users.store'), {
+            onSuccess: () => {
+                setIsCreateModalOpen(false);
+                reset();
+            },
+        });
+    };
 
     // Simple debounce implementation if hook doesn't exist
     useEffect(() => {
@@ -84,6 +107,82 @@ export default function AdminUsersIndex({ users, filters }: AdminUsersIndexProps
                             Manage users, roles, and permissions.
                         </p>
                     </div>
+
+                    <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="font-bold">
+                                <Plus className="mr-2 h-4 w-4" /> Create User
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <form onSubmit={submitCreateUser}>
+                                <DialogHeader>
+                                    <DialogTitle>Create New User</DialogTitle>
+                                    <DialogDescription>
+                                        Add a new user to the platform. They will be auto-verified.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="create-name">Full Name</Label>
+                                        <Input
+                                            id="create-name"
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            placeholder="John Doe"
+                                            required
+                                        />
+                                        <InputError message={errors.name} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="create-email">Email Address</Label>
+                                        <Input
+                                            id="create-email"
+                                            type="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                            placeholder="john@example.com"
+                                            required
+                                        />
+                                        <InputError message={errors.email} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="create-password">Initial Password</Label>
+                                        <Input
+                                            id="create-password"
+                                            type="password"
+                                            value={data.password}
+                                            onChange={(e) => setData('password', e.target.value)}
+                                            required
+                                        />
+                                        <InputError message={errors.password} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="create-role">Role</Label>
+                                        <Select
+                                            onValueChange={(value) => setData('role', value)}
+                                            defaultValue={data.role}
+                                        >
+                                            <SelectTrigger id="create-role">
+                                                <SelectValue placeholder="Select role" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="student">Student</SelectItem>
+                                                <SelectItem value="instructor">Instructor</SelectItem>
+                                                <SelectItem value="admin">Admin</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <InputError message={errors.role} />
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <Button type="submit" disabled={processing} className="w-full">
+                                        {processing ? 'Creating...' : 'Create User'}
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
                 </div>
 
                 <Card>

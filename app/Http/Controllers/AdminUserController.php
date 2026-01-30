@@ -9,6 +9,7 @@ use Inertia\Response;
 use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash;
 
 class AdminUserController extends Controller
 {
@@ -34,6 +35,29 @@ class AdminUserController extends Controller
             'users' => $users,
             'filters' => $request->only('role'),
         ]);
+    }
+
+    /**
+     * Store a newly created user in storage.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8'],
+            'role' => ['required', Rule::in(['student', 'instructor', 'admin'])],
+        ]);
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+            'email_verified_at' => now(), // Auto-verify admin-created users
+        ]);
+
+        return back()->with('success', 'User created successfully.');
     }
 
     /**

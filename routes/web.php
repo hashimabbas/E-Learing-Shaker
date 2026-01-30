@@ -217,7 +217,7 @@ Route::middleware(['auth', 'log.content',  'role:admin'])->prefix('admin')->name
 
     // User, Course, Category Management (Action Item 2 & 3) will go here
     // Financial Reports (Action Item 4) will go here
-    Route::resource('users', AdminUserController::class)->only(['index', 'update', 'destroy']);
+    Route::resource('users', AdminUserController::class)->only(['index', 'store', 'update', 'destroy']);
 
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
 
