@@ -22,6 +22,7 @@ export interface Course {
     slug: string;
     description: string;
     thumbnail: string | null;
+    thumbnail_url?: string | null;
     price: string;
 }
 
@@ -50,7 +51,7 @@ const EnrolledCourseCard = ({ course }: { course: EnrolledCourse }) => {
             <div className="relative aspect-video overflow-hidden rounded-t-xl font-sans">
                 <Link href={`/courses/${course.slug}/learn`}>
                     <img
-                        src={course.thumbnail || '/images/default-thumbnail.jpg'}
+                        src={course.thumbnail_url || course.thumbnail || '/images/default-thumbnail.jpg'}
                         alt={course.title}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
@@ -211,7 +212,7 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                                         <Link href={`/courses/${course.slug}/learn`} className="group block">
                                             <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 shadow-md transition-shadow group-hover:shadow-xl">
                                                 <img
-                                                    src={course.thumbnail || '/images/default-thumbnail.jpg'}
+                                                    src={course.thumbnail_url || course.thumbnail || '/images/default-thumbnail.jpg'}
                                                     alt={course.title}
                                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                 />
@@ -286,7 +287,7 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                                         <Card className="h-full border-none shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 rounded-2xl">
                                             <div className="aspect-video overflow-hidden rounded-t-2xl">
                                                 <img
-                                                    src={course.thumbnail || '/images/default-thumbnail.jpg'}
+                                                    src={course.thumbnail_url || course.thumbnail || '/images/default-thumbnail.jpg'}
                                                     alt={course.title}
                                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                 />

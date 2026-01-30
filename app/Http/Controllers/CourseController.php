@@ -133,7 +133,7 @@ class CourseController extends Controller
         $inWishlist = auth()->check() ? auth()->user()->wishlistItems()->where('course_id', $course->id)->exists() : false;
 
         $lockedUntil = null;
-        if ($isEnrolled && auth()->check() && !auth()->user()->isInstructor() && !auth()->user()->isAdmin()) {
+        if ($course->price > 0 && $isEnrolled && auth()->check() && !auth()->user()->isInstructor() && !auth()->user()->isAdmin()) {
              $enrollment = auth()->user()->enrolledCourses()->where('course_id', $course->id)->first()->pivot;
              $enrollmentTime = \Carbon\Carbon::parse($enrollment->created_at);
              $unlocksAt = $enrollmentTime->copy()->addHours(24);
@@ -168,7 +168,7 @@ class CourseController extends Controller
         }
 
         // --- NEW: 24-Hour verification Check ---
-        if (!$user->isInstructor() && !$user->isAdmin()) {
+        if ($course->price > 0 && !$user->isInstructor() && !$user->isAdmin()) {
             $enrollment = $user->enrolledCourses()->where('course_id', $course->id)->first()->pivot;
             $enrollmentTime = \Carbon\Carbon::parse($enrollment->created_at);
             $unlockTime = $enrollmentTime->copy()->addHours(24);

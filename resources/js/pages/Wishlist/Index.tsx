@@ -78,7 +78,7 @@ export default function WishlistIndex({ wishlistItems }: WishlistIndexProps) {
                                     {/* Thumbnail */}
                                     <div className="aspect-video w-full overflow-hidden bg-muted relative">
                                         <img
-                                            src={item.course.thumbnail || '/images/default-thumbnail.jpg'}
+                                            src={item.course.thumbnail_url || item.course.thumbnail || '/images/default-thumbnail.jpg'}
                                             alt={item.course.localized_title || item.course.title}
                                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         />

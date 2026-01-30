@@ -35,7 +35,7 @@ class CartController extends Controller
     {
         $cart = $this->getUserCart($request->user()->id);
 
-        $cart->load(['items.course:id,title,slug,price,thumbnail']); // Load course details for items
+        $cart->load(['items.course']); // Load full course details to ensure appends are included
 
         return Inertia::render('Cart/Index', [
             'cart' => $cart,

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { GraduationCap, Menu } from 'lucide-react';
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
+import { route } from 'ziggy-js';
 import { useState } from 'react';
 
 // --- NEW IMPORTS ---
@@ -23,7 +24,7 @@ interface AppNavbarProps {
 }
 
 export default function AppNavbar({ canRegister }: AppNavbarProps) {
-    const { auth, translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
+    const { auth, translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
     const isRtl = locale === 'ar';
     const [open, setOpen] = useState(false);
 
@@ -70,13 +71,13 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                             <div className="mt-auto p-6 border-t border-border/50 bg-muted/30">
                                 {!auth.user ? (
                                     <div className="flex flex-col gap-3">
-                                        <Link href={login()} onClick={() => setOpen(false)}>
+                                        <Link href={login().url} onClick={() => setOpen(false)}>
                                             <Button variant="outline" className="w-full h-12 rounded-xl font-bold">
                                                 {translations.nav_login || "Log In"}
                                             </Button>
                                         </Link>
                                         {canRegister && (
-                                            <Link href={register()} onClick={() => setOpen(false)}>
+                                            <Link href={register().url} onClick={() => setOpen(false)}>
                                                 <Button className="w-full h-12 rounded-xl font-black shadow-lg shadow-primary/20">
                                                     {translations.nav_signup || "Sign Up"}
                                                 </Button>
@@ -84,7 +85,7 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                         )}
                                     </div>
                                 ) : (
-                                    <Link href={dashboard()} onClick={() => setOpen(false)}>
+                                    <Link href={dashboard().url} onClick={() => setOpen(false)}>
                                         <Button className="w-full h-12 rounded-xl font-black">
                                             {translations.nav_dashboard || "Go to Dashboard"}
                                         </Button>
@@ -132,7 +133,7 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                     {auth.user ? (
                         <div className="flex items-center gap-3 md:gap-4">
                             <NotificationBell />
-                            <Link href={dashboard()}>
+                            <Link href={dashboard().url}>
                                 <Button
                                     variant="default"
                                     size="sm"
@@ -145,13 +146,13 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                         </div>
                     ) : (
                         <div className="hidden md:flex items-center gap-2">
-                            <Link href={login()}>
+                            <Link href={login().url}>
                                 <Button variant="ghost" size="sm" className="font-bold rounded-xl px-4 h-11">
                                     {translations.nav_login || "Log In"}
                                 </Button>
                             </Link>
                             {canRegister && (
-                                <Link href={register()}>
+                                <Link href={register().url}>
                                     <Button size="sm" className="font-black rounded-xl px-6 h-11 shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
                                         {translations.nav_signup || "Sign Up"}
                                     </Button>

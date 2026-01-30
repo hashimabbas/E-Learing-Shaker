@@ -63,6 +63,7 @@ const StarRating = ({ rating, size = 4 }: { rating: number, size?: number }) => 
 
 function ReviewForm({ courseSlug, hasSubmittedReview }: { courseSlug: string, hasSubmittedReview: boolean }) {
     const [hoverRating, setHoverRating] = useState(0);
+    const { translations } = usePage<SharedData & { translations: any, locale: string }>().props;
     const { data, setData, post, processing, errors, reset } = useForm({
         rating: 0,
         comment: '',
@@ -71,14 +72,14 @@ function ReviewForm({ courseSlug, hasSubmittedReview }: { courseSlug: string, ha
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (data.rating === 0) {
-            toast.error("Please select a star rating.");
+            toast.error(translations.review_rating_error);
             return;
         }
 
         post(route('reviews.store', { course: courseSlug }), {
             onSuccess: () => {
                 reset();
-                toast.success(hasSubmittedReview ? "Review updated!" : "Review submitted!");
+                toast.success(hasSubmittedReview ? translations.review_update_success : translations.review_success);
             },
             preserveScroll: true,
         });
@@ -86,10 +87,10 @@ function ReviewForm({ courseSlug, hasSubmittedReview }: { courseSlug: string, ha
 
     return (
         <Card className="p-6 border-slate-200/50 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-3xl shadow-sm">
-            <h4 className="text-xl font-bold mb-4">{hasSubmittedReview ? 'Update Your Review' : 'Write a Review'}</h4>
+            <h4 className="text-xl font-bold mb-4">{hasSubmittedReview ? translations.update_review : translations.write_review}</h4>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex flex-col gap-2">
-                    <Label className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Rating</Label>
+                    <Label className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{translations.rating_label || 'Rating'}</Label>
                     <div className="flex items-center gap-2">
                         <div className="flex gap-1">
                             {[...Array(5)].map((_, i) => (
@@ -111,9 +112,9 @@ function ReviewForm({ courseSlug, hasSubmittedReview }: { courseSlug: string, ha
                 </div>
 
                 <div className="space-y-2">
-                    <Label className="text-sm font-semibold uppercase tracking-wider text-muted-foreground text-foreground">Message</Label>
+                    <Label className="text-sm font-semibold uppercase tracking-wider text-muted-foreground text-foreground">{translations.message_label || 'Message'}</Label>
                     <Textarea
-                        placeholder="Tell others what you think about this course..."
+                        placeholder={translations.review_placeholder}
                         value={data.comment}
                         onChange={(e) => setData('comment', e.target.value)}
                         rows={4}
@@ -123,12 +124,30 @@ function ReviewForm({ courseSlug, hasSubmittedReview }: { courseSlug: string, ha
                 </div>
 
                 <Button type="submit" disabled={processing || data.rating === 0} className="w-full py-6 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20">
-                    {processing ? 'Submitting...' : hasSubmittedReview ? 'Update Review' : 'Post Review'}
+                    {processing ? translations.submitting : hasSubmittedReview ? translations.update_review_btn : translations.post_review}
                 </Button>
             </form>
         </Card>
     );
 }
+
+const getEmbedUrl = (url?: string) => {
+    if (!url) return "";
+
+    // YouTube
+    const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    if (ytMatch && ytMatch[1]) {
+        return `https://www.youtube.com/embed/${ytMatch[1]}`;
+    }
+
+    // Vimeo
+    const vimeoMatch = url.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/);
+    if (vimeoMatch && vimeoMatch[3]) {
+        return `https://player.vimeo.com/video/${vimeoMatch[3]}`;
+    }
+
+    return url;
+};
 
 export default function CoursesShow({ course, instructor, isEnrolled, inWishlist, lockedUntil }: CoursesShowProps) {
     const [activeTab, setActiveTab] = useState<'description' | 'curriculum' | 'reviews' | 'instructor' | 'discussions'>('description');
@@ -159,14 +178,14 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
         if (isNaN(price) || price === 0) {
             router.post(route('courses.enroll.free', { course: course.slug }), {}, {
-                onSuccess: () => toast.success('Enrollment successful 🎉')
+                onSuccess: () => toast.success(translations.enrollment_success)
             });
             return;
         }
 
         router.post(route('cart.store', { course: course.slug }), {}, {
             preserveScroll: true,
-            onSuccess: () => toast.success('Added to cart 🛒')
+            onSuccess: () => toast.success(translations.added_to_cart)
         });
     };
 
@@ -190,10 +209,10 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                         <div className="max-w-2xl">
                             <div className="flex items-center gap-3 mb-6">
                                 <span className="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary ring-1 ring-inset ring-primary/30 uppercase tracking-widest">
-                                    Course License
+                                    {translations.course_license}
                                 </span>
                                 <span className="flex items-center gap-1 text-sm text-slate-300">
-                                    <Globe className="size-4" /> English
+                                    <Globe className="size-4" /> {translations.course_language}
                                 </span>
                             </div>
 
@@ -208,14 +227,14 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                 <div className="flex items-center gap-2">
                                     <StarRating rating={course.average_rating} size={5} />
                                     <span className="font-bold text-lg">{course.average_rating.toFixed(1)}</span>
-                                    <span className="text-slate-400">({course.reviews_count} Reviews)</span>
+                                    <span className="text-slate-400">({course.reviews_count} {translations.course_reviews})</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Users className="size-5 text-primary" />
-                                    <span className="font-bold">1.2k Students</span>
+                                    <span className="font-bold">1.2k {translations.course_students}</span>
                                 </div>
                                 <div className="text-slate-400">
-                                    Instructor: <span className="text-white font-bold underline decoration-primary underline-offset-4">{instructor.name}</span>
+                                    {translations.course_instructor}: <span className="text-white font-bold underline decoration-primary underline-offset-4">{instructor.name}</span>
                                 </div>
                             </div>
                         </div>
@@ -283,7 +302,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                                     <Separator className="my-10" />
 
-                                    <h3 className="text-2xl font-black mb-6">Course overview</h3>
+                                    <h3 className="text-2xl font-black mb-6">{translations.course_overview}</h3>
                                     <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-400 leading-loose">
                                         {locale === 'ar' ? course.description_ar : course.description}
                                     </div>
@@ -293,8 +312,8 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                             {activeTab === 'curriculum' && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="flex items-center justify-between mb-6">
-                                        <h3 className="text-2xl font-black">Course Modules</h3>
-                                        <span className="text-sm font-bold text-muted-foreground">{course.lessons.length} sections</span>
+                                        <h3 className="text-2xl font-black">{translations.course_modules}</h3>
+                                        <span className="text-sm font-bold text-muted-foreground">{course.lessons.length} {translations.sections}</span>
                                     </div>
                                     <div className="space-y-2">
                                         {course.lessons.map((lesson: Lesson, index: number) => (
@@ -305,14 +324,14 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                     </div>
                                                     <div>
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-xs font-bold text-muted-foreground/50">Section {index + 1}</span>
-                                                            {lesson.is_free_preview && <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-wider border border-green-500/20">Preview</span>}
+                                                            <span className="text-xs font-bold text-muted-foreground/50">{translations.section} {index + 1}</span>
+                                                            {lesson.is_free_preview && <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-wider border border-green-500/20">{translations.preview}</span>}
                                                         </div>
                                                         <h4 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors">{lesson.title}</h4>
                                                     </div>
                                                 </div>
                                                 {lesson.is_free_preview ? (
-                                                    <Button size="sm" variant="ghost" className="text-primary font-bold">Watch Free</Button>
+                                                    <Button size="sm" variant="ghost" className="text-primary font-bold">{translations.watch_free}</Button>
                                                 ) : (
                                                     <Unlock className="size-4 text-slate-300 dark:text-slate-700" />
                                                 )}
@@ -328,7 +347,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                         <div className="space-y-1">
                                             <h3 className="text-4xl font-black">{course.average_rating.toFixed(1)}</h3>
                                             <StarRating rating={course.average_rating} size={6} />
-                                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest pt-2">Course Rating</p>
+                                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest pt-2">{translations.course_rating}</p>
                                         </div>
                                         <div className="flex-1 max-w-xs space-y-2">
                                             {[5, 4, 3, 2, 1].map((s) => (
@@ -347,9 +366,9 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                         <ReviewForm courseSlug={course.slug} hasSubmittedReview={userHasReviewed} />
                                     ) : (
                                         <div className="p-8 rounded-3xl bg-slate-50 dark:bg-slate-800/30 text-center border-2 border-dashed border-slate-200 dark:border-slate-800">
-                                            <p className="font-bold text-slate-500">Join 1.2k+ students and share your feedback.</p>
+                                            <p className="font-bold text-slate-500">{translations.review_join_community}</p>
                                             <Button variant="link" className="text-primary font-black mt-2" asChild>
-                                                <Link href={route('login')}>Login to write a review</Link>
+                                                <Link href={route('login')}>{translations.login_to_review}</Link>
                                             </Button>
                                         </div>
                                     )}
@@ -362,7 +381,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                 </div>
                                                 <div className="flex items-center justify-between mb-2">
                                                     <h5 className="font-black text-slate-900 dark:text-white">{review.user.name}</h5>
-                                                    <span className="text-xs font-medium text-muted-foreground italic">2 days ago</span>
+                                                    <span className="text-xs font-medium text-muted-foreground italic">2 {translations.days_ago}</span>
                                                 </div>
                                                 <StarRating rating={review.rating} size={4} />
                                                 <p className="mt-4 text-slate-600 dark:text-slate-400 leading-relaxed italic">"{review.comment}"</p>
@@ -381,21 +400,21 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                         <div className="text-center md:text-left space-y-4">
                                             <div>
                                                 <h3 className="text-2xl font-black text-slate-900 dark:text-white">{instructor.name}</h3>
-                                                <p className="text-primary font-bold text-sm uppercase tracking-widest pt-1">Senior Software Architect</p>
+                                                <p className="text-primary font-bold text-sm uppercase tracking-widest pt-1">{translations.instructor_title}</p>
                                             </div>
                                             <div className="flex items-center justify-center md:justify-start gap-6 py-2">
                                                 <div className="text-center md:text-left">
                                                     <p className="text-xl font-black leading-none">24</p>
-                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase pt-1">Courses</p>
+                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase pt-1">{translations.instructor_courses}</p>
                                                 </div>
                                                 <div className="text-center md:text-left border-x px-6 border-slate-200 dark:border-slate-800">
                                                     <p className="text-xl font-black leading-none">15.4k</p>
-                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase pt-1">Students</p>
+                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase pt-1">{translations.instructor_students}</p>
                                                 </div>
                                             </div>
                                             <p className="text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-4">
-                                                Expert instructor specializing in high-performance web applications and cloud architecture.
-                                                Proven track record of helping thousands of developers transition from senior to lead roles.
+                                                {translations.instructor_bio_placeholder}
+                                                {translations.instructor_bio_placeholder_2}
                                             </p>
                                         </div>
                                     </div>
@@ -407,13 +426,13 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                     <div className="mx-auto w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-8">
                                         <MessageCircle className="size-10 text-primary" />
                                     </div>
-                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Learning Community</h3>
+                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2">{translations.learning_community}</h3>
                                     <p className="text-slate-600 dark:text-slate-400 max-w-sm mx-auto mb-10 font-medium">
-                                        Collaborate with peers, ask questions, and share projects in the student forum.
+                                        {translations.community_desc}
                                     </p>
                                     <Button size="lg" className="rounded-2xl px-12 py-7 font-black text-lg shadow-xl shadow-primary/20" asChild>
                                         <Link href={route('discussions.index', course.slug)}>
-                                            Enter Discussion Forum
+                                            {translations.enter_forum}
                                             <ArrowRight className="ml-2 size-6" />
                                         </Link>
                                     </Button>
@@ -429,26 +448,27 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                 <div className="relative aspect-video bg-slate-950">
                                     {course.preview_video_url ? (
                                         <iframe
-                                            src={course.preview_video_url}
+                                            src={getEmbedUrl(course.preview_video_url)}
                                             className="w-full h-full"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowFullScreen
                                         />
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center text-slate-600 group-hover:text-primary transition-colors cursor-pointer">
                                             <PlayCircle className="size-20 mb-3 animate-pulse" />
-                                            <span className="font-black uppercase tracking-widest text-xs">Preview this course</span>
+                                            <span className="font-black uppercase tracking-widest text-xs">{translations.preview_course}</span>
                                         </div>
                                     )}
-                                    <div className="absolute inset-0 ring-1 ring-inset ring-black/10 transition-all group-hover:ring-black/0" />
+                                    <div className="absolute inset-0 ring-1 ring-inset ring-black/10 transition-all group-hover:ring-black/0 pointer-events-none" />
                                 </div>
 
                                 <div className="p-8 space-y-8">
                                     <div className="flex items-baseline gap-3">
                                         <span className="text-4xl font-black text-slate-900 dark:text-white">
-                                            {Number(course.price) > 0 ? `OMR ${Number(course.price).toFixed(2)}` : 'Free'}
+                                            {Number(course.price) > 0 ? `${translations.course_price_currency || 'OMR'} ${Number(course.price).toFixed(2)}` : translations.course_price_free || 'Free'}
                                         </span>
-                                        <span className="text-sm font-bold text-slate-400 line-through">OMR 45.00</span>
-                                        <span className="text-xs font-black text-green-500 uppercase tracking-widest ml-auto">75% OFF</span>
+                                        {/* <span className="text-sm font-bold text-slate-400 line-through">OMR 45.00</span>
+                                        <span className="text-xs font-black text-green-500 uppercase tracking-widest ml-auto">75% OFF</span> */}
                                     </div>
 
                                     <div className="space-y-3">
@@ -457,15 +477,15 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                 <div className="space-y-2">
                                                     <Button size="lg" disabled className="w-full h-16 rounded-2xl text-lg font-black bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed shadow-none">
                                                         <Clock className="mr-3 size-6 animate-pulse" />
-                                                        Verifying Payment...
+                                                        {translations.verifying_payment}
                                                     </Button>
                                                     <p className="text-center text-xs font-bold text-amber-500 bg-amber-500/10 py-2 rounded-lg">
-                                                        Access unlocks on {new Date(lockedUntil).toLocaleString()}
+                                                        {translations.access_unlocks_on} {new Date(lockedUntil).toLocaleString()}
                                                     </p>
                                                 </div>
                                             ) : (
                                                 <Button size="lg" className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30" onClick={() => router.get(route('student.resume-course', { course: course.slug }))}>
-                                                    Continue Masterclass
+                                                    {translations.continue_masterclass}
                                                     <ArrowRight className="ml-3 size-6" />
                                                 </Button>
                                             )
@@ -475,31 +495,31 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                     {Number(course.price) > 0 ? (
                                                         <>
                                                             <ShoppingCart className="mr-3 size-6" />
-                                                            Subscribe Now
+                                                            {translations.subscribe_now}
                                                         </>
                                                     ) : (
                                                         <>
-                                                            Enroll Now Free
+                                                            {translations.enroll_now_free}
                                                             <ArrowRight className="ml-3 size-6" />
                                                         </>
                                                     )}
                                                 </Button>
                                                 <Button size="lg" variant="outline" className="w-full h-14 rounded-2xl font-bold border-slate-200 dark:border-slate-800" onClick={handleWishlistToggle}>
                                                     <Heart className={cn("mr-3 size-6 transition-all", inWishlist ? "fill-red-500 text-red-500 scale-110" : "")} />
-                                                    {inWishlist ? 'Wishlisted' : 'Add to Wishlist'}
+                                                    {inWishlist ? translations.wishlisted : translations.add_to_wishlist}
                                                 </Button>
                                             </>
                                         )}
                                     </div>
 
                                     <div className="space-y-4">
-                                        <h5 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 border-b border-slate-100 dark:border-slate-800 pb-2">Course Metrics</h5>
+                                        <h5 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 border-b border-slate-100 dark:border-slate-800 pb-2">{translations.course_metrics}</h5>
                                         <div className="grid grid-cols-1 gap-4">
                                             {[
-                                                { icon: Video, label: "24 hours on-demand video" },
-                                                { icon: Download, label: "12 downloadable resources" },
-                                                { icon: Trophy, label: "Certificate of completion" },
-                                                { icon: Rocket, label: "Full lifetime access" },
+                                                { icon: Video, label: locale === 'ar' ? "24 ساعة من الفيديو عند الطلب" : "24 hours on-demand video" },
+                                                // { icon: Download, label: locale === 'ar' ? "12 مورداً قابلاً للتنزيل" : "12 downloadable resources" },
+                                                { icon: Trophy, label: locale === 'ar' ? "شهادة إتمام" : "Certificate of completion" },
+                                                { icon: Rocket, label: locale === 'ar' ? "وصول كامل مدى الحياة" : "Full lifetime access" },
                                             ].map((item, i) => (
                                                 <div key={i} className="flex items-center gap-3 text-sm font-bold text-slate-600 dark:text-slate-400">
                                                     <div className="size-6 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-primary/70 shrink-0">
@@ -513,11 +533,11 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                 </div>
                             </Card>
 
-                            <div className="p-8 rounded-[2.5rem] bg-slate-900 border border-white/5 space-y-4">
-                                <h5 className="text-white font-black">Institutional Training?</h5>
-                                <p className="text-slate-400 text-sm font-medium">Get this course for your team and upskill 10+ employees with our business plan.</p>
-                                <Button variant="outline" className="w-full border-white/10 text-white hover:bg-white/5 font-bold rounded-xl">Morpho for Business</Button>
-                            </div>
+                            {/* <div className="p-8 rounded-[2.5rem] bg-slate-900 border border-white/5 space-y-4">
+                                <h5 className="text-white font-black">{translations.institutional_training}</h5>
+                                <p className="text-slate-400 text-sm font-medium">{translations.business_plan_desc}</p>
+                                <Button variant="outline" className="w-full border-white/10 text-white hover:bg-white/5 font-bold rounded-xl">{translations.morpho_for_business}</Button>
+                            </div> */}
                         </div>
                     </div>
                 </div>

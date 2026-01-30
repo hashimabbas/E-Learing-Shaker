@@ -121,7 +121,7 @@ class Course extends Model
             if (str_starts_with($this->thumbnail, 'images/')) {
                 return '/' . $this->thumbnail;
             }
-            return \Illuminate\Support\Facades\Storage::url($this->thumbnail);
+            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->thumbnail);
         }
         return null;
     }

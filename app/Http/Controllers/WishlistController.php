@@ -26,7 +26,7 @@ class WishlistController extends Controller
         $user = $request->user();
 
         $wishlistItems = Wishlist::where('user_id', $user->id)
-            ->with(['course:id,title,slug,price,thumbnail,average_rating,reviews_count']) // Eager load course details
+            ->with(['course']) // Eager load course details fully for appends
             ->get();
 
         return Inertia::render('Wishlist/Index', [

@@ -48,7 +48,13 @@ class PaymentController extends Controller
             DB::beginTransaction();
 
             $totalAmount = $cart->items->sum(fn($item) => $item->price_at_purchase * $item->quantity);
-            $paymentMethod = $request->input('payment_method', 'Thawani');
+            $defaultMethod = config('services.thawani.enabled') ? 'Thawani' : 'PayPal';
+            $paymentMethod = $request->input('payment_method', $defaultMethod);
+
+            // Guard against disabled Thawani
+            if ($paymentMethod === 'Thawani' && !config('services.thawani.enabled')) {
+                return redirect()->route('cart.index')->with('error', 'Thawani payment is currently unavailable.');
+            }
 
             $order = Order::create([
                 'user_id' => $user->id,

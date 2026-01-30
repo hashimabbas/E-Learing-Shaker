@@ -38,7 +38,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
 export function AppSidebar() {
-    const { auth, translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
+    const { auth, translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
     const user = auth.user;
     const { state, isMobile, setOpenMobile } = useSidebar();
     const isRtl = locale === 'ar';

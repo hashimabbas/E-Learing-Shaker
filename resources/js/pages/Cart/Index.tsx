@@ -33,6 +33,7 @@ interface CartItem {
         slug: string;
         price: number;
         thumbnail: string;
+        thumbnail_url?: string;
         instructor?: { name: string };
         average_rating?: number;
     };
@@ -45,11 +46,11 @@ interface CartIndexProps {
 }
 
 export default function CartIndex({ cart }: CartIndexProps) {
-    const { translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
+    const { translations, locale, gateways } = usePage<SharedData & { translations: any, locale: string, gateways: { thawani: boolean, paypal: boolean, bank_transfer: boolean } }>().props;
     const isRtl = locale === 'ar';
 
     useFlash();
-    const [paymentMethod, setPaymentMethod] = React.useState('Thawani');
+    const [paymentMethod, setPaymentMethod] = React.useState(gateways?.thawani ? 'Thawani' : 'PayPal');
     const [processing, setProcessing] = React.useState(false);
 
     const handleRemove = (slug: string) => {
@@ -104,7 +105,7 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                             <div className="flex flex-col sm:flex-row">
                                                 <Link href={route('courses.show', item.course.slug)} className="w-full sm:w-48 shrink-0 overflow-hidden bg-muted group">
                                                     <img
-                                                        src={item.course.thumbnail || '/images/default-thumbnail.jpg'}
+                                                        src={item.course.thumbnail_url || item.course.thumbnail || '/images/default-thumbnail.jpg'}
                                                         alt={item.course.title}
                                                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 aspect-video sm:aspect-square"
                                                     />
@@ -189,18 +190,20 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                             <div className="space-y-4 mb-6 mt-8">
                                                 <h3 className="text-lg font-bold">{translations.cart_select_payment || "Select Payment Method"}</h3>
                                                 <div className="space-y-3">
-                                                    <div
-                                                        className={`flex items-center space-x-3 rtl:space-x-reverse border rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'Thawani' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'hover:bg-muted/50'}`}
-                                                        onClick={() => setPaymentMethod('Thawani')}
-                                                    >
-                                                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'Thawani' ? 'border-primary' : 'border-muted-foreground'}`}>
-                                                            {paymentMethod === 'Thawani' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                                                    {gateways?.thawani && (
+                                                        <div
+                                                            className={`flex items-center space-x-3 rtl:space-x-reverse border rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'Thawani' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'hover:bg-muted/50'}`}
+                                                            onClick={() => setPaymentMethod('Thawani')}
+                                                        >
+                                                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${paymentMethod === 'Thawani' ? 'border-primary' : 'border-muted-foreground'}`}>
+                                                                {paymentMethod === 'Thawani' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <div className="font-semibold">{translations.cart_payment_card || "Credit / Debit Card"}</div>
+                                                                <div className="text-xs text-muted-foreground">{translations.cart_payment_card_desc || "Secure payment via Thawani"}</div>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex-1">
-                                                            <div className="font-semibold">{translations.cart_payment_card || "Credit / Debit Card"}</div>
-                                                            <div className="text-xs text-muted-foreground">{translations.cart_payment_card_desc || "Secure payment via Thawani"}</div>
-                                                        </div>
-                                                    </div>
+                                                    )}
 
                                                     <div
                                                         className={`flex items-center space-x-3 rtl:space-x-reverse border rounded-lg p-4 cursor-pointer transition-all ${paymentMethod === 'Bank Transfer' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'hover:bg-muted/50'}`}

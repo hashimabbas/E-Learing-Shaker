@@ -71,6 +71,11 @@ class HandleInertiaRequests extends Middleware
 
             'locale' => fn () => app()->getLocale(),
             'translations' => $translations, // Share all translations
+            'gateways' => [
+                'thawani' => config('services.thawani.enabled'),
+                'paypal' => true, // Assuming PayPal is always enabled for now
+                'bank_transfer' => true,
+            ],
             'notifications' => $user
                 ? $user->unreadNotifications()->get(['id', 'data', 'created_at'])
                 : [],

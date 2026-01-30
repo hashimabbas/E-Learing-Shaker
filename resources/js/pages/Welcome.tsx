@@ -87,7 +87,7 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: any, title: str
 // --- Main Page Sections ---
 
 function HeroSection({ categories, featuredCourses }: WelcomeProps) {
-    const { translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
+    const { translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
     const isRtl = locale === 'ar';
 
     return (
@@ -203,7 +203,7 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
 }
 
 const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, setSelectedCategorySlug, featuredCategory, filteredCourses }: any) => {
-    const { translations } = usePage<SharedData & { translations: any }>().props;
+    const { translations } = (usePage().props as unknown) as SharedData & { translations: any };
 
     return (
         <section className="bg-muted/30 py-24 relative overflow-hidden" id="categories">
@@ -348,7 +348,7 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
 };
 
 const StatsSection = () => {
-    const { translations } = usePage<SharedData & { translations: any }>().props;
+    const { translations } = (usePage().props as unknown) as SharedData & { translations: any };
     return (
         <section className="bg-muted/30 py-20">
             <div className="container mx-auto px-4">
@@ -364,7 +364,7 @@ const StatsSection = () => {
 };
 
 const FeaturesSection = () => {
-    const { translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
+    const { translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
     const isRtl = locale === 'ar';
 
     const features = [
@@ -467,7 +467,7 @@ const FeaturesSection = () => {
 };
 
 const FAQSection = () => {
-    const { translations } = usePage<SharedData & { translations: any }>().props;
+    const { translations } = (usePage().props as unknown) as SharedData & { translations: any };
 
     return (
         <section className="bg-muted/30 py-20">
@@ -499,7 +499,7 @@ const FAQSection = () => {
 };
 
 const CTASection = () => {
-    const { translations } = usePage<SharedData & { translations: any }>().props;
+    const { translations } = (usePage().props as unknown) as SharedData & { translations: any };
 
     return (
         <section className="relative overflow-hidden bg-muted/30 py-24">
