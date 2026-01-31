@@ -21,7 +21,7 @@ return [
     "financial_reports"=>  "Financial Reports",
 
     // Welcome Page
-    "hero_badge" => "Eng. Shaker Shams Workshop",
+    "hero_badge" => "A comprehensive educational workshop specialized in implementation",
     // "hero_title_prefix" => "Master the Art with",
     "hero_name" => "Eng. Shaker Shams",
     "hero_bio_1" => "Architect and Entrepreneur, founder of companies specialized in finishing and facades Wajihat.om and Verdan.doors, currently holding the position of Head of Execution Department at 100Creators.",
@@ -29,7 +29,7 @@ return [
     "hero_bio_3" => "I believe that precision is what makes the real difference in project outcomes. From this principle, I work on turning small details into execution solutions that lead to exceptional results.",
     "cta_start_learning" => "Start Learning Now",
     "cta_view_portfolio" => "View Portfolio",
-    "verified_expert" => "Entrepreneur",
+    "verified_expert" => "Holds an international FIDIC arbitration license",
     "students_count" => "Students",
     "projects_count" => "Projects",
     "years_experience" => "Years",
@@ -60,13 +60,13 @@ return [
     "feature_3" => "Certificates recognized by top companies",
     "feature_4" => "Learn at your own pace from any device",
     "feature_safe_title" => "Safe Learning",
-    "feature_safe_desc" => "Skilled trainers and secure payment systems for your peace of mind.",
+    "feature_safe_desc" => "Data provided based on field experience and secure payment systems for your peace of mind.",
     "feature_value_title" => "Value & Quality",
-    "feature_value_desc" => "Premium content at affordable prices compared to traditional learning.",
+    "feature_value_desc" => "Valuable content with practical and field benefits at a discounted price to make the benefit accessible to anyone interested in this field.",
     "features_badge" => "Why Choose Us",
     "features_desc" => "Our platform is built by experts for future leaders. We provide more than just videos; we provide a career path.",
     "feature_anywhere_title" => "Learn Anywhere",
-    "feature_anywhere_desc" => "Access your courses on any device, anytime, with lifetime access.",
+    "feature_anywhere_desc" => "Access your courses on any device, anytime.",
     "features_cta" => "Start Journey",
     "practical_learning" => "Practical Learning",
 
@@ -81,7 +81,7 @@ return [
 
     // CTA Section
     "cta_title" => "Ready to Start Learning?",
-    "cta_desc" => "Join thousands of students and transform your career today.",
+    "cta_desc" => "Join the elite of engineers and executors in the field of modern decorations and finishes, and make your career path easier today.",
     "cta_browse_catalog" => "Browse Catalog",
 
     // My Learning Page
@@ -170,8 +170,10 @@ return [
     "about_hero_title_prefix" => "I Turn Small Details Into ",
     "about_hero_title_highlight" => "Exceptional Results",
     "about_hero_quote" => "\"I believe that precision makes the difference.\"",
-    "about_intro_p1" => "I am an engineer specialized in the field of Modern Decoration, Home Facades, and execution.",
-    "about_intro_p2" => "My goal is to offer content that reflects real-world execution details from my work and field experience, supported by scientific knowledge. I help you learn, avoid common mistakes, and reach the best possible result for your projects.",
+    "about_intro_p1" => "Architect and entrepreneur, founder of companies specializing in finishing works and facades Wajihat.om & Verdan.doors.  
+Currently, I hold the position of Execution Department Manager at 100CREATORS office.  
+I specialize in executing modern interior and exterior finishing works, with a high focus on quality and precision. I work directly on project implementation and deal daily with site details, materials, team coordination, and resolving execution issues.",
+    "about_intro_p2" => "I believe that precision is what truly makes a difference in project outcomes, and from this perspective, I work on turning small details into actionable solutions that lead to exceptional results.",
     "about_view_courses" => "View My Courses",
     "about_eng_name" => "Eng. Shaker Shams",
     "about_specialist_title" => "Entrepreneur and Executive Engineer",
@@ -180,22 +182,22 @@ return [
     "about_roles_title" => "Professional Roles",
     "about_role_wajihat_title" => "Wajihat",
     "about_role_wajihat_position" => "Co-founder & CEO",
-    "about_role_wajihat_desc" => "Leading the way in modern facades and architectural aesthetics alongside a talented team.",
+    "about_role_wajihat_desc" => "A company specialized in designing and implementing building facades with the best architectural solutions and the best execution methods.",
     "about_role_verdan_title" => "Verdan Doors",
     "about_role_verdan_position" => "Co-founder & CEO",
-    "about_role_verdan_desc" => "Specializing in high-quality door solutions that combine security with elegant design.",
+    "about_role_verdan_desc" => "A company specializing in providing luxury doors for homes and doors with innovative and distinctive solutions of high quality.",
     "about_role_100creators_title" => "100Creators",
     "about_role_100creators_position" => "Head of Fit-out Department",
-    "about_role_100creators_desc" => "Overseeing complex fit-out projects and ensuring every interior detail is executed to perfection.",
+    "about_role_100creators_desc" => "Designing and executing modern decoration works through managing a comprehensive team that includes engineers, workshop supervisors, technicians, and craftsmen.",
     
     // Principles Section
     "about_principles_title" => "Principles I Work By",
     "about_principle_1_title" => "Scientific Knowledge",
     "about_principle_1_desc" => "Every decision is backed by engineering principles, not just aesthetics.",
     "about_principle_2_title" => "Field Experience",
-    "about_principle_2_desc" => "Real-world insights gained from years of executing complex projects.",
+    "about_principle_2_desc" => "Practical insights gained from years of executing complex projects with implementation challenges.",
     "about_principle_3_title" => "Continuous Learning",
-    "about_principle_3_desc" => "Avoiding mistakes by learning from every project to reach the best results.",
+    "about_principle_3_desc" => "Avoid mistakes by closely reviewing execution details and continuously learning from practical solutions to site challenges.",
 
     // Courses Index Page
     "courses_index_page_title" => "Browse Courses",

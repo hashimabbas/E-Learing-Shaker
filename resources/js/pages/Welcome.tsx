@@ -91,17 +91,7 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
     const isRtl = locale === 'ar';
 
     return (
-        <section className="relative overflow-hidden bg-neutral-950 pt-20 pb-32 lg:pt-28 lg:pb-48" dir={isRtl ? 'rtl' : 'ltr'}>
-            {/* Background Texture & Gradients */}
-            <div className="absolute inset-0 z-0 opacity-30">
-                <img
-                    src="/images/learning-hero-bg.png"
-                    alt=""
-                    className="h-full w-full object-cover grayscale mix-blend-overlay"
-                />
-            </div>
-            <div className={`absolute top-[-10%] ${isRtl ? 'left-[-10%]' : 'right-[-10%]'} h-[600px] w-[600px] rounded-full bg-amber-500/10 blur-[120px] animate-pulse`} />
-            <div className={`absolute bottom-[-10%] ${isRtl ? 'right-[-10%]' : 'left-[-10%]'} h-[500px] w-[500px] rounded-full bg-blue-600/10 blur-[100px]`} />
+        <section className="relative overflow-hidden pt-20 pb-32 lg:pt-28 lg:pb-48" style={{ backgroundColor: '#3e3838' }} dir={isRtl ? 'rtl' : 'ltr'}>
 
             <div className="container relative z-10 mx-auto px-4">
                 <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
@@ -109,16 +99,13 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                     {/* Let's keep the image layout consistent but mirror the text alignment */}
                     <div className={`relative mx-auto w-full max-w-sm lg:mx-0 lg:max-w-md ${isRtl ? 'lg:order-last' : ''}`}>
                         {/* Main Image Container with Curve */}
-                        <div className="relative z-10 overflow-hidden rounded-t-[3rem] rounded-b-[15%] bg-gradient-to-b from-neutral-800 to-neutral-900 shadow-2xl ring-1 ring-white/10 transition-transform duration-700 hover:scale-[1.02]">
+                        <div className="relative z-10 overflow-hidden shadow-2xl ring-1 ring-white/10 transition-transform duration-700 hover:scale-[1.02]">
                             <div className="aspect-[3/4] relative">
                                 <img
                                     src="/images/hero-section.png"
                                     alt="Engineer Shaker Shams"
                                     className="h-full w-full object-cover object-top"
                                 />
-                                {/* Overlay Gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-transparent to-transparent opacity-80" />
-
                                 {/* Floating Badge */}
                                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-md shadow-xl w-max">
                                     <CheckCircle2 className="h-5 w-5 text-amber-500 fill-amber-500/20" />
@@ -126,12 +113,6 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Back decorative elements */}
-                        <div className={`absolute top-10 ${isRtl ? '-left-8' : '-right-8'} -z-10 h-3/4 w-3/4 animate-in fade-in zoom-in duration-1000 delay-300`}>
-                            <div className="h-full w-full rounded-[3rem] border-2 border-dashed border-amber-500/20 opacity-60" />
-                        </div>
-                        <div className={`absolute -bottom-8 ${isRtl ? '-right-8' : '-left-8'} -z-10 h-1/2 w-1/2 rounded-full bg-gradient-to-tr from-amber-500/20 to-transparent blur-3xl`} />
                     </div>
 
                     {/* Text Column */}
@@ -144,7 +125,7 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                                 {translations.hero_title_prefix && (
                                     <span className="block text-neutral-400 text-3xl lg:text-5xl font-extrabold mb-2 tracking-normal"></span>
                                 )}
-                                <span className=" bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600" style={{ color: '#95a5a6' }}>
+                                <span style={{ color: '#95a5a6' }}>
                                     {translations.hero_name || "Eng. Shaker Shams"}
                                 </span>
                             </h1>
@@ -152,8 +133,8 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
 
                         <div className="mx-auto max-w-2xl text-lg leading-relaxed text-neutral-400 lg:mx-0 font-medium space-y-4">
                             <p dangerouslySetInnerHTML={{ __html: translations.hero_bio_1 }} />
-                            {translations.hero_bio_2 && <p>{translations.hero_bio_2}</p>}
-                            {translations.hero_bio_3 && <p>{translations.hero_bio_3}</p>}
+                            {/* {translations.hero_bio_2 && <p>{translations.hero_bio_2}</p>}
+                            {translations.hero_bio_3 && <p>{translations.hero_bio_3}</p>} */}
                         </div>
 
                         <div className={`flex flex-col gap-4 sm:flex-row sm:justify-center ${isRtl ? 'lg:justify-start' : 'lg:justify-start'} pt-4`}>
@@ -172,10 +153,7 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
 
                         {/* Stats mini-bar */}
                         <div className={`flex flex-wrap items-center justify-center ${isRtl ? 'lg:justify-start' : 'lg:justify-start'} gap-8 border-t border-neutral-800 pt-8 opacity-80`}>
-                            <div className="flex items-center gap-3">
-                                <Users className="h-5 w-5 text-amber-500" />
-                                <div className="text-sm font-medium text-neutral-300"><span className="font-bold text-white">500+</span> {translations.students_count || "Students"}</div>
-                            </div>
+
                             <div className="h-4 w-px bg-neutral-800" />
                             <div className="flex items-center gap-3">
                                 <Briefcase className="h-5 w-5 text-amber-500" />
@@ -184,33 +162,28 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                             <div className="h-4 w-px bg-neutral-800" />
                             <div className="flex items-center gap-3">
                                 <Building2 className="h-5 w-5 text-amber-500" />
-                                <div className="text-sm font-medium text-neutral-300"><span className="font-bold text-white">13+</span> {translations.years_experience || "Years"}</div>
+                                <div className="text-sm font-medium text-neutral-300"><span className="font-bold text-white">14+</span> {translations.years_experience || "Years"}</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Bottom Wave Shape Divider */}
-            <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none pointer-events-none">
-                <svg className="relative block h-[120px] w-full min-w-[1000px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                    <path d="M985.66,92.83C906.67,72,823.78,31,432.84,26.42V0h767.16v120C1153.29,86.28,1065.34,113.84,985.66,92.83Z" className="fill-background opacity-[0.03]"></path>
-                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V46.29C57.54,26.58,113.41,13.63,166.39,13.63,219.05,13.63,270,29.93,321.39,56.44Z" className="fill-background"></path>
-                </svg>
-            </div>
+
         </section>
     );
 }
 
 const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, setSelectedCategorySlug, featuredCategory, filteredCourses }: any) => {
-    const { translations } = (usePage().props as unknown) as SharedData & { translations: any };
+    const { translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
+    const isRtl = locale === 'ar';
 
     return (
-        <section className="bg-muted/30 py-24 relative overflow-hidden" id="categories">
+        <section className="bg-muted/30 py-24 relative overflow-hidden" id="categories" dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-            <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-            <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl" />
+            <div className={cn("absolute -top-24 h-96 w-96 rounded-full bg-primary/5 blur-3xl", isRtl ? "-left-24" : "-right-24")} />
+            <div className={cn("absolute -bottom-24 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl", isRtl ? "-right-24" : "-left-24")} />
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="mb-16 text-center max-w-3xl mx-auto">
@@ -348,14 +321,14 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
 };
 
 const StatsSection = () => {
-    const { translations } = (usePage().props as unknown) as SharedData & { translations: any };
+    const { translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
+    const isRtl = locale === 'ar';
     return (
-        <section className="bg-muted/30 py-20">
+        <section className="bg-muted/30 py-20" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:gap-8">
-                    <StatItem icon={Building2} label={translations.stats_years_experience || "Years Experience"} value="13+" />
+                <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:gap-8">
+                    <StatItem icon={Building2} label={translations.stats_years_experience || "Years Experience"} value="14+" />
                     <StatItem icon={CheckCircle2} label={translations.stats_projects_executed || "Projects Executed"} value="100+" />
-                    <StatItem icon={Users} label={translations.stats_happy_students || "Happy Students"} value="500+" />
                     <StatItem icon={BookOpen} label={translations.stats_specialized_courses || "Specialized Courses"} value="2" />
                 </div>
             </div>
@@ -440,28 +413,24 @@ const FeaturesSection = () => {
 };
 
 const FAQSection = () => {
-    const { translations } = (usePage().props as unknown) as SharedData & { translations: any };
+    const { translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
+    const isRtl = locale === 'ar';
 
     return (
-        <section className="bg-muted/30 py-20">
+        <section className="bg-muted/30 py-20" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="container mx-auto px-4 max-w-3xl">
-                <h2 className="mb-8 text-center text-3xl font-bold">{translations.faq_title || "Frequently Asked Questions"}</h2>
+                <h2 className="mb-8 text-center text-3xl font-bold ">{translations.faq_title || "Frequently Asked Questions"}</h2>
                 <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="item-1">
-                        <AccordionTrigger className="text-left font-bold">{translations.faq_q1 || "How do I start learning?"}</AccordionTrigger>
-                        <AccordionContent>
+                        <AccordionTrigger className={cn("font-bold", isRtl ? "text-right" : "text-left")}>{translations.faq_q1 || "How do I start learning?"}</AccordionTrigger>
+                        <AccordionContent className={isRtl ? "text-right" : "text-left"}>
                             {translations.faq_a1 || "Simply sign up for an account, browse our catalog, and enroll in any course that interests you. You can start watching videos immediately!"}
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-2">
-                        <AccordionTrigger className="text-left font-bold">{translations.faq_q2 || "Will I get a certificate?"}</AccordionTrigger>
-                        <AccordionContent>
-                            {translations.faq_a2 || "Yes! After completing all the requirements of a course, you will receive a digital certificate of completion that you can share on LinkedIn."}
-                        </AccordionContent>
-                    </AccordionItem>
+
                     <AccordionItem value="item-3">
-                        <AccordionTrigger className="text-left font-bold">{translations.faq_q3 || "Can I access my courses on mobile?"}</AccordionTrigger>
-                        <AccordionContent>
+                        <AccordionTrigger className={cn("font-bold", isRtl ? "text-right" : "text-left")}>{translations.faq_q3 || "Can I access my courses on mobile?"}</AccordionTrigger>
+                        <AccordionContent className={isRtl ? "text-right" : "text-left"}>
                             {translations.faq_a3 || "Absolutely. Our platform is fully responsive, and you can learn on your phone, tablet, or desktop anytime, anywhere."}
                         </AccordionContent>
                     </AccordionItem>
@@ -472,14 +441,15 @@ const FAQSection = () => {
 };
 
 const CTASection = () => {
-    const { translations } = (usePage().props as unknown) as SharedData & { translations: any };
+    const { translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
+    const isRtl = locale === 'ar';
 
     return (
-        <section className="relative overflow-hidden bg-muted/30 py-24">
+        <section className="relative overflow-hidden bg-muted/30 py-24" dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Background Decorations */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px]" />
-                <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px]" />
+                <div className={cn("absolute top-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px]", isRtl ? "left-0" : "right-0")} />
+                <div className={cn("absolute bottom-0 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px]", isRtl ? "right-0" : "left-0")} />
             </div>
 
             <div className="container relative z-10 mx-auto px-4 text-center">

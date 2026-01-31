@@ -36,17 +36,17 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
 
     return (
         <header
-            className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/10"
+            className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-black/10"
             dir={isRtl ? 'rtl' : 'ltr'}
         >
-            <div className="absolute inset-0 bg-white/70 dark:bg-black/70 backdrop-blur-md -z-10" />
+            <div className="absolute inset-0  dark:bg-black/70 backdrop-blur-md -z-10" style={{ backgroundColor: '#efe5dc' }} />
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
                 {/* Mobile Menu Trigger */}
                 <div className="flex md:hidden items-center gap-2">
                     <Sheet open={open} onOpenChange={setOpen}>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-[#3e3838] hover:bg-black/5">
                                 <Menu className="size-6" />
                             </Button>
                         </SheetTrigger>
@@ -100,10 +100,10 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                 {/* Logo and Workshop Name */}
                 <Link href="/" className="hidden md:flex items-center gap-3 group">
                     <div className="flex flex-col">
-                        <span className="text-base md:text-lg font-black tracking-tight leading-tight group-hover:text-primary transition-colors">
+                        <span className="text-base md:text-lg font-black tracking-tight leading-tight group-hover:text-primary transition-colors text-[#3e3838]">
                             {translations.navbar_logo_text || "Shaker Shams Engineering Workshop"}
                         </span>
-                        <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground">
+                        <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-[#3e3838]/60">
                             {isRtl ? "ورشة تعليمية متكاملة" : "Integrated Educational Workshop"}
                         </span>
                     </div>
@@ -115,39 +115,40 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className="text-sm font-bold text-muted-foreground hover:text-primary transition-all relative py-2 group"
+                            className="text-sm font-bold text-[#3e3838]/80 hover:text-primary transition-all relative py-2 group"
                         >
                             {item.name}
-                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                            <span className="absolute bottom-0 text-[#3e3838]/80 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
                         </Link>
                     ))}
                 </nav>
 
                 {/* Right Side Actions */}
                 <div className="flex items-center gap-2 md:gap-4">
-                    <div className="hidden md:flex items-center gap-4">
+                    <div className="hidden md:flex items-center text-[#3e3838]/80 gap-4" >
                         <LanguageSwitcher />
-                        <div className="h-6 w-px bg-border mx-2" />
+                        <div className="h-6 w-px bg-black/10 mx-2" />
                     </div>
 
                     {auth.user ? (
-                        <div className="flex items-center gap-3 md:gap-4">
+                        <div className="flex items-center gap-3 md:gap-4 text-[#3e3838]/80">
                             <NotificationBell />
                             <Link href={dashboard().url}>
                                 <Button
                                     variant="default"
                                     size="sm"
                                     className="rounded-xl font-black h-9 md:h-11 px-4 md:px-6 hover:scale-105 transition-transform"
+
                                 >
-                                    <span className="hidden sm:inline">{translations.nav_dashboard || "Dashboard"}</span>
-                                    <span className="sm:hidden">{isRtl ? "الرئيسية" : "Dash"}</span>
+                                    <span className="hidden sm:inline" style={{ color: '#2c3e50' }}>{translations.nav_dashboard || "Dashboard"}</span>
+                                    <span className="sm:hidden" style={{ color: '#2c3e50' }}>{isRtl ? "الرئيسية" : "Dash"}</span>
                                 </Button>
                             </Link>
                         </div>
                     ) : (
                         <div className="hidden md:flex items-center gap-2">
                             <Link href={login().url}>
-                                <Button variant="ghost" size="sm" className="font-bold rounded-xl px-4 h-11">
+                                <Button variant="ghost" size="sm" className="font-bold rounded-xl px-4 h-11 text-[#3e3838] hover:bg-black/5">
                                     {translations.nav_login || "Log In"}
                                 </Button>
                             </Link>

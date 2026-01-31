@@ -13,7 +13,7 @@ export default function About() {
       <Head title={translations.about_meta_title || "About Me"} />
 
       {/* Hero / Intro Section */}
-      <section className="relative overflow-hidden bg-neutral-950 pt-20 pb-32 lg:pt-32 lg:pb-48" dir={isRtl ? 'rtl' : 'ltr'}>
+      <section className="relative overflow-hidden pt-20 pb-32 lg:pt-32 lg:pb-48" style={{ backgroundColor: '#3d3737' }} dir={isRtl ? 'rtl' : 'ltr'}>
         {/* Background Effects */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] right-[-5%] h-[500px] w-[500px] rounded-full bg-amber-500/10 blur-[120px] opacity-50" />
@@ -61,9 +61,9 @@ export default function About() {
             <div className={`order-1 ${isRtl ? 'lg:order-1' : 'lg:order-2'} flex justify-center ${isRtl ? 'lg:justify-start' : 'lg:justify-end'}`}>
               <div className="relative w-full max-w-md">
                 <div className="absolute inset-0 bg-gradient-to-tr from-amber-500 to-purple-500 rounded-[2rem] blur-2xl opacity-20 transform rotate-6"></div>
-                <div className="relative bg-neutral-900 border border-white/10 rounded-[2rem] p-2 shadow-2xl overflow-hidden">
+                <div className="relative  rounded-[2rem]  shadow-2xl overflow-hidden">
                   <img
-                    src="/images/hero-section.png"
+                    src="/images/about.jpeg"
                     alt={translations.about_eng_name || "Eng. Shaker Shams"}
                     className="rounded-[1.5rem] w-full h-auto object-cover transition-all duration-700"
                   />
@@ -83,60 +83,60 @@ export default function About() {
       </section>
 
       {/* Roles / Companies Section */}
-      <section className="py-20 bg-neutral-900/50" dir={isRtl ? 'rtl' : 'ltr'}>
+      <section className="py-20" style={{ backgroundColor: '#8b8b8b' }} dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-[#1a1a1a] mb-4">
               {translations.about_roles_title || "Professional Roles"}
             </h2>
-            <div className="h-1 w-20 bg-amber-500 mx-auto rounded-full"></div>
+            <div className="h-1 w-20 bg-amber-600 mx-auto rounded-full"></div>
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
             {/* Role 1 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-neutral-900 border border-white/5 p-8 transition-all hover:border-amber-500/30 hover:shadow-2xl hover:shadow-amber-900/10">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 group-hover:bg-amber-500 group-hover:text-black transition-colors">
+            <div className="group relative overflow-hidden rounded-3xl bg-white/40 backdrop-blur-sm border border-black/5 p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-600/10 text-amber-700 group-hover:bg-amber-600 group-hover:text-white transition-colors">
                 <Building2 className="h-7 w-7" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">
                 {translations.about_role_wajihat_title || "Wajihat"}
               </h3>
-              <p className="text-amber-500 font-medium mb-4">
+              <p className="text-amber-800 font-bold mb-4">
                 {translations.about_role_wajihat_position || "Co-founder & CEO"}
               </p>
-              <p className="text-neutral-400 text-sm leading-relaxed">
+              <p className="text-neutral-800 text-sm leading-relaxed font-medium">
                 {translations.about_role_wajihat_desc || "Leading the way in modern facades and architectural aesthetics alongside a talented team."}
               </p>
             </div>
 
             {/* Role 2 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-neutral-900 border border-white/5 p-8 transition-all hover:border-amber-500/30 hover:shadow-2xl hover:shadow-amber-900/10">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-black transition-colors">
+            <div className="group relative overflow-hidden rounded-3xl bg-white/40 backdrop-blur-sm border border-black/5 p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-700 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                 <Briefcase className="h-7 w-7" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">
                 {translations.about_role_verdan_title || "Verdan Doors"}
               </h3>
-              <p className="text-blue-400 font-medium mb-4">
+              <p className="text-blue-800 font-bold mb-4">
                 {translations.about_role_verdan_position || "Co-founder & CEO"}
               </p>
-              <p className="text-neutral-400 text-sm leading-relaxed">
+              <p className="text-neutral-800 text-sm leading-relaxed font-medium">
                 {translations.about_role_verdan_desc || "Specializing in high-quality door solutions that combine security with elegant design."}
               </p>
             </div>
 
             {/* Role 3 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-neutral-900 border border-white/5 p-8 transition-all hover:border-amber-500/30 hover:shadow-2xl hover:shadow-amber-900/10">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-black transition-colors">
+            <div className="group relative overflow-hidden rounded-3xl bg-white/40 backdrop-blur-sm border border-black/5 p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-600/10 text-purple-700 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                 <Award className="h-7 w-7" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">
                 {translations.about_role_100creators_title || "100Creators"}
               </h3>
-              <p className="text-purple-400 font-medium mb-4">
+              <p className="text-purple-800 font-bold mb-4">
                 {translations.about_role_100creators_position || "Head of Fit-out Department"}
               </p>
-              <p className="text-neutral-400 text-sm leading-relaxed">
+              <p className="text-neutral-800 text-sm leading-relaxed font-medium">
                 {translations.about_role_100creators_desc || "Overseeing complex fit-out projects and ensuring every interior detail is executed to perfection."}
               </p>
             </div>
@@ -145,7 +145,7 @@ export default function About() {
       </section>
 
       {/* Values Section */}
-      <section className="py-24 bg-neutral-950" dir={isRtl ? 'rtl' : 'ltr'}>
+      <section className="py-24" style={{ backgroundColor: '#3d3737' }} dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-16">
             {translations.about_principles_title || "Principles I Work By"}
