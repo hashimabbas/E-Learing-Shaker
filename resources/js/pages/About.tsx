@@ -65,7 +65,7 @@ export default function About() {
                   <img
                     src="/images/hero-section.png"
                     alt={translations.about_eng_name || "Eng. Shaker Shams"}
-                    className="rounded-[1.5rem] w-full h-auto object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                    className="rounded-[1.5rem] w-full h-auto object-cover transition-all duration-700"
                   />
                   <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/90 to-transparent">
                     <div className="text-white font-bold text-xl">

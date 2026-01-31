@@ -142,9 +142,9 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                             </Badge>
                             <h1 className="text-5xl font-black tracking-tight text-white lg:text-7xl leading-[1.1]">
                                 {translations.hero_title_prefix && (
-                                    <span className="block text-neutral-400 text-3xl lg:text-5xl font-extrabold mb-2 tracking-normal">{translations.hero_title_prefix}</span>
+                                    <span className="block text-neutral-400 text-3xl lg:text-5xl font-extrabold mb-2 tracking-normal"></span>
                                 )}
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600">
+                                <span className=" bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600" style={{ color: '#95a5a6' }}>
                                     {translations.hero_name || "Eng. Shaker Shams"}
                                 </span>
                             </h1>
@@ -184,7 +184,7 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                             <div className="h-4 w-px bg-neutral-800" />
                             <div className="flex items-center gap-3">
                                 <Building2 className="h-5 w-5 text-amber-500" />
-                                <div className="text-sm font-medium text-neutral-300"><span className="font-bold text-white">15+</span> {translations.years_experience || "Years"}</div>
+                                <div className="text-sm font-medium text-neutral-300"><span className="font-bold text-white">13+</span> {translations.years_experience || "Years"}</div>
                             </div>
                         </div>
                     </div>
@@ -353,7 +353,7 @@ const StatsSection = () => {
         <section className="bg-muted/30 py-20">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:gap-8">
-                    <StatItem icon={Building2} label={translations.stats_years_experience || "Years Experience"} value="15+" />
+                    <StatItem icon={Building2} label={translations.stats_years_experience || "Years Experience"} value="13+" />
                     <StatItem icon={CheckCircle2} label={translations.stats_projects_executed || "Projects Executed"} value="100+" />
                     <StatItem icon={Users} label={translations.stats_happy_students || "Happy Students"} value="500+" />
                     <StatItem icon={BookOpen} label={translations.stats_specialized_courses || "Specialized Courses"} value="2" />
@@ -396,34 +396,7 @@ const FeaturesSection = () => {
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="flex flex-col lg:flex-row gap-20 items-center">
-                    <div className="flex-1 space-y-10">
-                        <div className="space-y-6">
-                            <Badge variant="outline" className="border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-primary">
-                                {translations.features_badge || "Why Choose Us"}
-                            </Badge>
-                            <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.1]">
-                                {translations.features_title || "Elevate Your Architectural Mastery"}
-                            </h2>
-                            <p className="text-xl text-muted-foreground font-medium leading-relaxed max-w-xl">
-                                {translations.features_desc || "Our platform is built by experts for future leaders. We provide more than just videos; we provide a career path."}
-                            </p>
-                        </div>
 
-                        <div className="grid gap-6">
-                            {[
-                                translations.feature_1 || "Project-based curriculum",
-                                translations.feature_2 || "Direct instructor support",
-                                translations.feature_3 || "Industry-recognized certificates"
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-center gap-4 group">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-6">
-                                        <CheckCircle2 className="h-6 w-6" />
-                                    </div>
-                                    <span className="text-lg font-bold text-foreground/80">{item}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
 
                     <div className="flex-1 grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 w-full">
                         {features.map((feature, i) => (

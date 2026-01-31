@@ -22,14 +22,14 @@ return [
 
     // Welcome Page
     "hero_badge" => "Eng. Shaker Shams Workshop",
-    "hero_title_prefix" => "Master the Art with",
+    // "hero_title_prefix" => "Master the Art with",
     "hero_name" => "Eng. Shaker Shams",
     "hero_bio_1" => "Architect and Entrepreneur, founder of companies specialized in finishing and facades Wajihat.om and Verdan.doors, currently holding the position of Head of Execution Department at 100Creators.",
     "hero_bio_2" => "Specialized in executing modern interior and exterior finishing works, with a high focus on quality and precision. I work directly in project execution and deal daily with site details, materials, team coordination, and solving execution problems.",
     "hero_bio_3" => "I believe that precision is what makes the real difference in project outcomes. From this principle, I work on turning small details into execution solutions that lead to exceptional results.",
     "cta_start_learning" => "Start Learning Now",
     "cta_view_portfolio" => "View Portfolio",
-    "verified_expert" => "Verified Expert",
+    "verified_expert" => "Entrepreneur",
     "students_count" => "Students",
     "projects_count" => "Projects",
     "years_experience" => "Years",
@@ -60,7 +60,7 @@ return [
     "feature_3" => "Certificates recognized by top companies",
     "feature_4" => "Learn at your own pace from any device",
     "feature_safe_title" => "Safe Learning",
-    "feature_safe_desc" => "Verified instructors and secure payment systems for your peace of mind.",
+    "feature_safe_desc" => "Skilled trainers and secure payment systems for your peace of mind.",
     "feature_value_title" => "Value & Quality",
     "feature_value_desc" => "Premium content at affordable prices compared to traditional learning.",
     "features_badge" => "Why Choose Us",
@@ -174,7 +174,7 @@ return [
     "about_intro_p2" => "My goal is to offer content that reflects real-world execution details from my work and field experience, supported by scientific knowledge. I help you learn, avoid common mistakes, and reach the best possible result for your projects.",
     "about_view_courses" => "View My Courses",
     "about_eng_name" => "Eng. Shaker Shams",
-    "about_specialist_title" => "Specialist in Details",
+    "about_specialist_title" => "Entrepreneur and Executive Engineer",
     
     // Professional Roles Section
     "about_roles_title" => "Professional Roles",
