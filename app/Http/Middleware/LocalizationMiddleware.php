@@ -15,11 +15,16 @@ class LocalizationMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // 1. Check for a language parameter in the session/cookie
-        $locale = Session::get('locale', config('app.locale', 'en'));
+        // 1. Check for a language parameter in the session/cookie, default to 'ar'
+        $locale = Session::get('locale', 'ar');
 
         // 2. Set the application locale
         App::setLocale($locale);
+
+        // 3. Optional: Ensure the locale is in the session if not already there
+        if (!Session::has('locale')) {
+            Session::put('locale', $locale);
+        }
 
         return $next($request);
     }

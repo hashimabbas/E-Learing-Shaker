@@ -83,6 +83,7 @@ return [
     "cta_title" => "Ready to Start Learning?",
     "cta_desc" => "Join the elite of engineers and executors in the field of modern decorations and finishes, and make your career path easier today.",
     "cta_browse_catalog" => "Browse Catalog",
+    "cta_create_account" => "Create Account",
 
     // My Learning Page
     "welcome_back" => "Welcome back,",

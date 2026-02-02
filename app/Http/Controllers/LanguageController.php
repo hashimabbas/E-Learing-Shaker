@@ -18,7 +18,7 @@ class LanguageController extends Controller
         $allowedLocales = ['en', 'ar'];
 
         if (!in_array($locale, $allowedLocales)) {
-            $locale = 'en'; // Default to a safe value
+            $locale = 'ar'; // Default to a safe value
         }
 
         // Save the chosen locale to the session

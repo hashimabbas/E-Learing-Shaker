@@ -68,12 +68,12 @@ export default function Portfolio({ images }: PortfolioProps) {
         </div>
 
         {/* Bottom Wave Shape Divider */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none pointer-events-none">
+        {/* <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none pointer-events-none">
           <svg className="relative block h-[80px] w-full min-w-[1000px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
             <path d="M985.66,92.83C906.67,72,823.78,31,432.84,26.42V0h767.16v120C1153.29,86.28,1065.34,113.84,985.66,92.83Z" className="fill-background opacity-[0.03]"></path>
             <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V46.29C57.54,26.58,113.41,13.63,166.39,13.63,219.05,13.63,270,29.93,321.39,56.44Z" className="fill-background"></path>
           </svg>
-        </div>
+        </div> */}
       </section>
 
       {/* Gallery Section */}
