@@ -70,7 +70,7 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                             </div>
                             <div className="mt-auto p-6 border-t border-border/50 bg-muted/30">
                                 {!auth.user ? (
-                                    <div className="flex flex-col gap-3">
+                                    <div className="flex flex-col gap-3 bg-primary">
                                         <Link href={login().url} onClick={() => setOpen(false)}>
                                             <Button variant="outline" className="w-full h-12 rounded-xl font-bold">
                                                 {translations.nav_login || "Log In"}
@@ -103,9 +103,9 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                         <span className="text-base md:text-lg font-black tracking-tight leading-tight group-hover:text-primary transition-colors text-[#3e3838]">
                             {translations.navbar_logo_text || "Shaker Shams Engineering Workshop"}
                         </span>
-                        <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-[#3e3838]/60">
+                        {/* <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-[#3e3838]/60">
                             {isRtl ? "ورشة تعليمية متكاملة" : "Integrated Educational Workshop"}
-                        </span>
+                        </span> */}
                     </div>
                 </Link>
 

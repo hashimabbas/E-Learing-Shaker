@@ -21,7 +21,7 @@ return [
     "financial_reports"=>  "Financial Reports",
 
     // Welcome Page
-    "hero_badge" => "A comprehensive educational workshop specialized in implementation",
+    "hero_badge" => "Comprehensive implementation workshop",
     // "hero_title_prefix" => "Master the Art with",
     "hero_name" => "Eng. Shaker Shams",
     "hero_bio_1" => "Architect and Entrepreneur, founder of companies specialized in finishing and facades Wajihat.om and Verdan.doors, currently holding the position of Head of Execution Department at 100Creators.",
@@ -29,7 +29,7 @@ return [
     "hero_bio_3" => "I believe that precision is what makes the real difference in project outcomes. From this principle, I work on turning small details into execution solutions that lead to exceptional results.",
     "cta_start_learning" => "Start Learning Now",
     "cta_view_portfolio" => "View Portfolio",
-    "verified_expert" => "Holds an international FIDIC arbitration license",
+    "verified_expert" => "International FIDIC arbitration licensed",
     "students_count" => "Students",
     "projects_count" => "Projects",
     "years_experience" => "Years",
@@ -187,7 +187,7 @@ I specialize in executing modern interior and exterior finishing works, with a h
     "about_role_verdan_position" => "Co-founder & CEO",
     "about_role_verdan_desc" => "A company specializing in providing luxury doors for homes and doors with innovative and distinctive solutions of high quality.",
     "about_role_100creators_title" => "100Creators",
-    "about_role_100creators_position" => "Head of Fit-out Department",
+    "about_role_100creators_position" => "Chief Executive",
     "about_role_100creators_desc" => "Designing and executing modern decoration works through managing a comprehensive team that includes engineers, workshop supervisors, technicians, and craftsmen.",
     
     // Principles Section

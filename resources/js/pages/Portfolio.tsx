@@ -25,7 +25,7 @@ export default function Portfolio({ images }: PortfolioProps) {
       <Head title={translations.portfolio_title || "Portfolio"} />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-neutral-950 pt-20 pb-20 lg:pt-32 lg:pb-32" dir={isRtl ? 'rtl' : 'ltr'}>
+      <section className="relative overflow-hidden bg-primary pt-20 pb-20 lg:pt-32 lg:pb-32" dir={isRtl ? 'rtl' : 'ltr'}>
         {/* Background Effects */}
         <div className="absolute inset-0 z-0 opacity-30">
           <div className="absolute top-[-10%] right-[-10%] h-[600px] w-[600px] rounded-full bg-amber-500/10 blur-[120px] animate-pulse" />
@@ -50,7 +50,7 @@ export default function Portfolio({ images }: PortfolioProps) {
 
             <div className="flex items-center justify-center gap-8 pt-6 opacity-80">
               <div className="text-center">
-                <div className="text-3xl font-black text-white">{images.length}</div>
+                <div className="text-3xl font-black text-white">200+</div>
                 <div className="text-sm font-medium text-neutral-400">{translations.portfolio_projects || "Projects"}</div>
               </div>
               <div className="h-12 w-px bg-neutral-800" />

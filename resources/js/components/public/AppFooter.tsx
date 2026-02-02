@@ -3,7 +3,7 @@ import { route } from 'ziggy-js';
 
 export default function AppFooter() {
     return (
-        <footer className="border-t py-10 bg-gray-100 dark:bg-gray-950">
+        <footer className="border-t py-10 bg-secondary dark:bg-gray-950">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500 dark:text-gray-400">
                 <div className="flex flex-col items-center mb-6">
                     {/* <span className="font-semibold text-gray-900 dark:text-white">E-Learning</span> */}

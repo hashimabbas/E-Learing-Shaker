@@ -191,7 +191,7 @@ return [
     "about_role_verdan_position" => "مؤسس مشارك ومدير تنفيذي",
     "about_role_verdan_desc" => "شركة متخصصة بتوفير أبواب فاخره للمنازل وأبواب ذات حلول مبتكره ومميزه ذات جوده عاليه",
     "about_role_100creators_title" => "100Creators",
-    "about_role_100creators_position" => "رئيس قسم التشطيبات",
+    "about_role_100creators_position" => "رئيس التنفيذ",
     "about_role_100creators_desc" => "تصميم وتنفيذ أعمال الديكورات الحديثه من خلال إدارة فريق متكامل يضم مهندسين ومسؤلين ورش عمل وفنيين وحرفيين.",
     
     // Principles Section
