@@ -362,7 +362,7 @@ const FeaturesSection = () => {
     ];
 
     return (
-        <section className="relative bg-white py-32 overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+        <section className="relative bg-primary py-32 overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Background Decorations */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 blur-[100px] rounded-full" />
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white blur-[100px] rounded-full" />
@@ -376,7 +376,7 @@ const FeaturesSection = () => {
                             <div
                                 key={i}
                                 className={cn(
-                                    "group p-10 rounded-[3rem] border border-border/50 bg-background/50 backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/20",
+                                    "group p-10 rounded-[3rem] border border-border/50 bg-white backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/20",
                                     i === 2 ? "sm:col-span-2 xl:col-span-1" : ""
                                 )}
                             >
