@@ -165,6 +165,7 @@ return [
     "portfolio_view_image" => "عرض الصورة",
     "portfolio_close" => "إغلاق",
     "portfolio_click_to_close" => "انقر في أي مكان للإغلاق",
+    "load_more" => "عرض المزيد من المشاريع",
     
     // About Page
     "about_page_title" => "نبذة عن المهندس شاكر شمس",
@@ -173,7 +174,7 @@ return [
     "about_hero_title_prefix" => "أحول التفاصيل الصغيرة إلى ",
     "about_hero_title_highlight" => "نتائج استثنائية",
     "about_hero_quote" => "\"أؤمن بأن الدقة هي ما يصنع الفرق.\"",
-    "about_intro_p1" => "مهندس معماري ورائد أعمال مؤسس شركات متخصصة في مجال التشطيبات والواجهاتWajihat.om  & Verdan.doors
+    "about_intro_p1" => "مهندس معماري ورائد أعمال مؤسس شركات متخصصة في مجال التشطيبات والواجهات
 أشغل حاليآ منصب مدير قسم التنفيذ في مكتب 100CREATORS 
 متخصص في تنفيذ أعمال التشطيبات الداخلية والخارجية الحديثة، مع تركيز عالٍ على الجودة والدقة.أعمل بشكل مباشر على تنفيذ المشاريع وأتعامل يوميآ مع تفاصيل الموقع والمواد والتنسيق بين الفرق وحل المشكلات التنفيذية
 .",
@@ -298,10 +299,11 @@ return [
     "orders_browse_catalog" => "تصفح الدليل",
 
     // Course Show Page
-    "course_license" => "ترخيص الدورة",
+    "course_license" => "رخصة الدورة",
     "course_language" => "العربية",
     "course_reviews" => "تقييمات",
     "course_students" => "طالب",
+    "course_students_count" => "أكثر من 1.2 ألف",
     "course_instructor" => "المحاضر",
     "tab_description" => "الوصف",
     "tab_curriculum" => "المنهج",
@@ -319,11 +321,12 @@ return [
     "review_join_community" => "انضم إلى أكثر من 1.2 ألف طالب وشاركنا رأيك.",
     "login_to_review" => "قم بتسجيل الدخول لكتابة تقييم",
     "days_ago" => "أيام مضت",
-    "instructor_title" => "مهندس برمجيات أول",
-    "instructor_courses" => "دورات",
+    "instructor_title" => "رائد أعمال ومهندس تنفيذي",
+    "instructor_courses" => "دورة",
     "instructor_students" => "طالب",
-    "instructor_bio_placeholder" => "مدرب خبير متخصص في تطبيقات الويب عالية الأداء وهندسة السحاب.",
-    "instructor_bio_placeholder_2" => "سجل حافل بمساعدة آلاف المطورين على الانتقال من أدوار سيناير إلى أدوار قيادية.",
+    "instructor_students_count" => "أكثر من 15 ألف",
+    "instructor_bio" => "مهندس معماري ورائد أعمال، مؤسس شركات متخصصة في التشطيبات والواجهات Wajihat.om و Verdan.doors.",
+    "instructor_bio_2" => "يشغل حالياً منصب مدير قسم التنفيذ في مكتب 100Creators. يركز على تحويل التفاصيل الصغيرة إلى حلول تنفيذية تؤدي إلى نتائج استثنائية.",
     "learning_community" => "مجتمع التعلم",
     "community_desc" => "تعاون مع زملائك، واطرح الأسئلة، وشارك المشاريع في منتدى الطلاب.",
     "enter_forum" => "دخول منتدى المناقشة",
@@ -336,6 +339,12 @@ return [
     "wishlisted" => "في قائمة الرغبات",
     "add_to_wishlist" => "إضافة لقائمة الرغبات",
     "course_metrics" => "مقاييس الدورة",
+    "metrics_video" => "ساعة من الفيديو عند الطلب",
+    "metrics_certificate" => "شهادة إتمام",
+    "metrics_access" => "وصول كامل مدى الحياة",
+    "metrics_video_label" => "ساعة من الفيديو عند الطلب",
+    "metrics_certificate_label" => "شهادة إتمام",
+    "metrics_access_label" => "وصول كامل مدى الحياة",
     "institutional_training" => "تدريب مؤسسي؟",
     "business_plan_desc" => "احصل على هذه الدورة لفريقك وقم بتطوير مهارات أكثر من 10 موظفين مع خطة العمل الخاصة بنا.",
     "morpho_for_business" => "مورفو للأعمال",

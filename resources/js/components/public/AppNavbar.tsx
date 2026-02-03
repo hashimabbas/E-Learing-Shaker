@@ -68,17 +68,17 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                     </Link>
                                 ))}
                             </div>
-                            <div className="mt-auto p-6 border-t border-border/50 bg-muted/30">
+                            <div className="mt-auto p-6 border-t border-border/50 bg-muted/30 dark:text-white">
                                 {!auth.user ? (
                                     <div className="flex flex-col gap-3 bg-primary">
                                         <Link href={login().url} onClick={() => setOpen(false)}>
-                                            <Button variant="outline" className="w-full h-12 rounded-xl font-bold">
+                                            <Button variant="outline" className="w-full h-12 rounded-xl font-bold dark:text-white dark:bg-white">
                                                 {translations.nav_login || "Log In"}
                                             </Button>
                                         </Link>
                                         {canRegister && (
                                             <Link href={register().url} onClick={() => setOpen(false)}>
-                                                <Button className="w-full h-12 rounded-xl font-black shadow-lg shadow-primary/20">
+                                                <Button className="w-full h-12 rounded-xl font-black shadow-lg shadow-primary/20 dark:text-white dark:bg-white">
                                                     {translations.nav_signup || "Sign Up"}
                                                 </Button>
                                             </Link>
@@ -86,7 +86,7 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                     </div>
                                 ) : (
                                     <Link href={dashboard().url} onClick={() => setOpen(false)}>
-                                        <Button className="w-full h-12 rounded-xl font-black">
+                                        <Button className="w-full h-12 rounded-xl font-black dark:text-white dark:bg-white">
                                             {translations.nav_dashboard || "Go to Dashboard"}
                                         </Button>
                                     </Link>
@@ -140,8 +140,8 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                     className="rounded-xl font-black h-9 md:h-11 px-4 md:px-6 hover:scale-105 transition-transform"
 
                                 >
-                                    <span className="hidden sm:inline" style={{ color: '#2c3e50' }}>{translations.nav_dashboard || "Dashboard"}</span>
-                                    <span className="sm:hidden" style={{ color: '#2c3e50' }}>{isRtl ? "الرئيسية" : "Dash"}</span>
+                                    <span className="hidden sm:inline" >{translations.nav_dashboard || "Dashboard"}</span>
+                                    <span className="sm:hidden" >{isRtl ? "الرئيسية" : "Dash"}</span>
                                 </Button>
                             </Link>
                         </div>

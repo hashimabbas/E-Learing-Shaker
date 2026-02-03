@@ -217,10 +217,10 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                             </div>
 
                             <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-                                {course.title}
+                                {locale === 'ar' ? course.title_ar : course.title}
                             </h1>
                             <p className="text-lg leading-8 text-slate-300 mb-8 line-clamp-3 font-medium">
-                                {course.description}
+                                {locale === 'ar' ? course.description_ar : course.description}
                             </p>
 
                             <div className="flex flex-wrap items-center gap-8 text-sm">
@@ -231,7 +231,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Users className="size-5 text-primary" />
-                                    <span className="font-bold">1.2k {translations.course_students}</span>
+                                    <span className="font-bold">{translations.course_students_count} {translations.course_students}</span>
                                 </div>
                                 <div className="text-slate-400">
                                     {translations.course_instructor}: <span className="text-white font-bold underline decoration-primary underline-offset-4">{instructor.name}</span>
@@ -381,7 +381,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                 </div>
                                                 <div className="flex items-center justify-between mb-2">
                                                     <h5 className="font-black text-slate-900 dark:text-white">{review.user.name}</h5>
-                                                    <span className="text-xs font-medium text-muted-foreground italic">2 {translations.days_ago}</span>
+                                                    <span className="text-xs font-medium text-muted-foreground italic">{translations.updated_recently}</span>
                                                 </div>
                                                 <StarRating rating={review.rating} size={4} />
                                                 <p className="mt-4 text-slate-600 dark:text-slate-400 leading-relaxed italic">"{review.comment}"</p>
@@ -404,17 +404,18 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                             </div>
                                             <div className="flex items-center justify-center md:justify-start gap-6 py-2">
                                                 <div className="text-center md:text-left">
-                                                    <p className="text-xl font-black leading-none">24</p>
+                                                    <p className="text-xl font-black leading-none">{instructor.courses_count || '2'}</p>
                                                     <p className="text-[10px] font-bold text-muted-foreground uppercase pt-1">{translations.instructor_courses}</p>
                                                 </div>
                                                 <div className="text-center md:text-left border-x px-6 border-slate-200 dark:border-slate-800">
-                                                    <p className="text-xl font-black leading-none">15.4k</p>
+                                                    <p className="text-xl font-black leading-none">{translations.instructor_students_count}</p>
                                                     <p className="text-[10px] font-bold text-muted-foreground uppercase pt-1">{translations.instructor_students}</p>
                                                 </div>
                                             </div>
-                                            <p className="text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-4">
-                                                {translations.instructor_bio_placeholder}
-                                                {translations.instructor_bio_placeholder_2}
+                                            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                                                {translations.instructor_bio}
+                                                <br /><br />
+                                                {translations.instructor_bio_2}
                                             </p>
                                         </div>
                                     </div>
@@ -480,7 +481,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                         {translations.verifying_payment}
                                                     </Button>
                                                     <p className="text-center text-xs font-bold text-amber-500 bg-amber-500/10 py-2 rounded-lg">
-                                                        {translations.access_unlocks_on} {new Date(lockedUntil).toLocaleString()}
+                                                        {translations.access_unlocks_on} {new Date(lockedUntil).toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US')}
                                                     </p>
                                                 </div>
                                             ) : (
@@ -516,10 +517,9 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                         <h5 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 border-b border-slate-100 dark:border-slate-800 pb-2">{translations.course_metrics}</h5>
                                         <div className="grid grid-cols-1 gap-4">
                                             {[
-                                                { icon: Video, label: locale === 'ar' ? "24 ساعة من الفيديو عند الطلب" : "24 hours on-demand video" },
-                                                // { icon: Download, label: locale === 'ar' ? "12 مورداً قابلاً للتنزيل" : "12 downloadable resources" },
-                                                { icon: Trophy, label: locale === 'ar' ? "شهادة إتمام" : "Certificate of completion" },
-                                                { icon: Rocket, label: locale === 'ar' ? "وصول كامل مدى الحياة" : "Full lifetime access" },
+                                                { icon: Video, label: translations.metrics_video_label },
+                                                { icon: Trophy, label: translations.metrics_certificate_label },
+                                                { icon: Rocket, label: translations.metrics_access_label },
                                             ].map((item, i) => (
                                                 <div key={i} className="flex items-center gap-3 text-sm font-bold text-slate-600 dark:text-slate-400">
                                                     <div className="size-6 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-primary/70 shrink-0">

@@ -102,7 +102,7 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                         <div className="relative z-10 overflow-hidden shadow-2xl ring-1 ring-white/10 transition-transform duration-700 hover:scale-[1.02]">
                             <div className="aspect-[3/4] relative bg-black">
                                 <img
-                                    src="/images/hero-section.png"
+                                    src="/images/old-hero-section.jpeg"
                                     alt="Engineer Shaker Shams"
                                     className="h-full w-full object-cover object-top"
                                 />
@@ -461,7 +461,7 @@ const CTASection = () => {
                 </p>
                 <div className="flex flex-wrap justify-center gap-6">
                     <Link href={register()}>
-                        <Button size="lg" className="h-16 rounded-2xl bg-gradient-to-r from-primary to-amber-600 px-10 text-lg font-bold text-black shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">
+                        <Button size="lg" className="h-16 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 px-10 text-lg font-bold text-black shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">
                             {translations.cta_create_account || "Create Free Account"}
                         </Button>
                     </Link>
