@@ -296,7 +296,7 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                                                 <h5 className="font-bold line-clamp-2 group-hover:text-primary transition-colors">{course.localized_title || course.title}</h5>
                                                 <div className="mt-4 flex items-center justify-between">
                                                     <span className="text-primary font-bold">
-                                                        OMR {course.price ? parseFloat(course.price).toFixed(2) : '0.00'}
+                                                        USD {course.price ? parseFloat(course.price).toFixed(2) : '0.00'}
                                                     </span>
                                                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                                                         <ChevronRight className={`h-4 w-4 ${isRtl ? 'rotate-180' : ''}`} />

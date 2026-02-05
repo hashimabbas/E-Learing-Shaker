@@ -169,7 +169,7 @@ export default function InstructorCoursesIndex({ courses }: InstructorCoursesInd
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <div className="text-lg font-black tracking-tight text-primary">
-                                                        OMR {course.price ? parseFloat(course.price).toFixed(2) : '0.00'}
+                                                        USD {course.price ? parseFloat(course.price).toFixed(2) : '0.00'}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-5 text-right space-x-2">

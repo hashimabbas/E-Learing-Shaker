@@ -82,7 +82,7 @@ export default function PendingIndex({ pendingOrders }: PendingIndexProps) {
                       </div>
                     </TableCell>
                     <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell className="font-bold">OMR {Number(order.total_amount).toFixed(2)}</TableCell>
+                    <TableCell className="font-bold">USD {Number(order.total_amount).toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="bg-yellow-100 text-yellow-700 border-yellow-200">
                         <Clock className="w-3 h-3 mr-1" /> Pending

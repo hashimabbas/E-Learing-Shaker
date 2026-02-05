@@ -85,6 +85,9 @@ class InstructorCourseController extends Controller
             'preview_video_url' => $validated['preview_video_url'] ?? null,
             'learning_outcomes' => $validated['learning_outcomes'] ?? null,
             'learning_outcomes_ar' => $validated['learning_outcomes_ar'] ?? null,
+            'discount_percentage' => $validated['discount_percentage'] ?? 0,
+            'discount_start_date' => $validated['discount_start_date'] ?? null,
+            'discount_end_date' => $validated['discount_end_date'] ?? null,
         ]);
 
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Course created! Now add lessons.');
@@ -140,6 +143,9 @@ class InstructorCourseController extends Controller
             'price' => $request->price,
             'learning_outcomes' => $request->learning_outcomes,
             'learning_outcomes_ar' => $request->learning_outcomes_ar,
+            'discount_percentage' => $request->discount_percentage,
+            'discount_start_date' => $request->discount_start_date,
+            'discount_end_date' => $request->discount_end_date,
         ]);
 
         return back()->with('success', 'Course updated successfully.');

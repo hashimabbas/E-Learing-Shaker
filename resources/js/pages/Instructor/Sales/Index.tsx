@@ -46,7 +46,7 @@ interface InstructorSalesIndexProps {
 
 const formatCurrency = (amount: number | string | null | undefined) => {
     const numericAmount = parseFloat(amount as any) || 0;
-    return `OMR ${numericAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `USD ${numericAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
 const StatCard = ({ title, value, icon: Icon, trend, trendValue, color }: any) => (
@@ -184,7 +184,7 @@ export default function InstructorSalesIndex({ salesData }: InstructorSalesIndex
                                                 axisLine={false}
                                                 tickLine={false}
                                                 tick={{ fill: '#9ca3af', fontSize: 12, fontWeight: 700 }}
-                                                tickFormatter={(value) => `OMR ${value}`}
+                                                tickFormatter={(value) => `USD ${value}`}
                                             />
                                             <Tooltip
                                                 contentStyle={{

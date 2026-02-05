@@ -286,7 +286,7 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">{translations.course_price_label || "Price"}</span>
                                         <span className="text-lg font-black text-primary">
-                                            {Number(course.price) === 0 ? (translations.course_price_free || 'Free') : `${translations.course_price_currency || 'OMR'} ${parseFloat(course.price).toFixed(2)}`}
+                                            {Number(course.price) === 0 ? (translations.course_price_free || 'Free') : `${translations.course_price_currency || 'USD'} ${parseFloat(course.price).toFixed(2)}`}
                                         </span>
                                     </div>
                                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:rotate-[-45deg]">

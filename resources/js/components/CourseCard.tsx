@@ -46,9 +46,18 @@ export function CourseCard({ course }: { course: any }) {
                             {course.average_rating.toFixed(1)}
                         </span>
 
-                        <span className="font-bold text-primary">
-                            {course.price > 0 ? `OMR ${course.price}` : 'Free'}
-                        </span>
+                        <div className="flex flex-col items-end">
+                            {course.has_active_discount ? (
+                                <>
+                                    <span className="text-[10px] text-muted-foreground line-through font-medium">USD {course.price}</span>
+                                    <span className="font-bold text-green-600">USD {course.discounted_price}</span>
+                                </>
+                            ) : (
+                                <span className="font-bold text-primary">
+                                    {course.price > 0 ? `USD ${course.price}` : 'Free'}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </CardContent>
             </Card>

@@ -32,6 +32,9 @@ interface CartItem {
         localized_title?: string;
         slug: string;
         price: number;
+        discounted_price: number;
+        has_active_discount: boolean;
+        discount_percentage: number;
         thumbnail: string;
         thumbnail_url?: string;
         instructor?: { name: string };
@@ -71,7 +74,7 @@ export default function CartIndex({ cart }: CartIndexProps) {
     };
 
     const cartTotal = cart.items.reduce((sum, item) => sum + item.price_at_purchase * item.quantity, 0);
-    const originalTotal = cartTotal * 1.2; // Symbolic discount placeholder
+    const originalTotal = cart.items.reduce((sum, item) => sum + (item.course.price || item.price_at_purchase) * item.quantity, 0);
     const totalSavings = originalTotal - cartTotal;
 
     return (
@@ -125,12 +128,18 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                                         </div>
                                                         <div className={cn("shrink-0", isRtl ? "text-left" : "text-right")}>
                                                             <div className="text-2xl font-black text-primary">
-                                                                {item.price_at_purchase.toFixed(2)} {translations.course_price_currency || 'OMR'}
+                                                                {(item.price_at_purchase).toFixed(2)} {translations.course_price_currency || 'USD'}
                                                             </div>
-                                                            <div className="text-sm text-muted-foreground line-through">
-                                                                {(item.price_at_purchase * 1.2).toFixed(2)} {translations.course_price_currency || 'OMR'}
-                                                            </div>
-                                                            <Badge variant="outline" className="mt-2 text-green-600 border-green-200 bg-green-50">20% {translations.cart_off || "Off"}</Badge>
+                                                            {item.course.has_active_discount && (
+                                                                <>
+                                                                    <div className="text-sm text-muted-foreground line-through">
+                                                                        {(item.course.price).toFixed(2)} {translations.course_price_currency || 'USD'}
+                                                                    </div>
+                                                                    <Badge variant="outline" className="mt-2 text-green-600 border-green-200 bg-green-50">
+                                                                        {item.course.discount_percentage}% {translations.cart_off || "Off"}
+                                                                    </Badge>
+                                                                </>
+                                                            )}
                                                         </div>
                                                     </div>
 
@@ -169,11 +178,11 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                             <div className="space-y-4">
                                                 <div className="flex justify-between text-muted-foreground">
                                                     <span>{translations.cart_original_price || "Original Price"}</span>
-                                                    <span className="line-through">{originalTotal.toFixed(2)} {translations.course_price_currency || 'OMR'}</span>
+                                                    <span className="line-through">{originalTotal.toFixed(2)} {translations.course_price_currency || 'USD'}</span>
                                                 </div>
                                                 <div className="flex justify-between text-green-600 font-medium">
                                                     <span>{translations.cart_platform_discount || "Platform Discount"}</span>
-                                                    <span>-{totalSavings.toFixed(2)} {translations.course_price_currency || 'OMR'}</span>
+                                                    <span>-{totalSavings.toFixed(2)} {translations.course_price_currency || 'USD'}</span>
                                                 </div>
                                                 <Separator />
                                                 <div className="flex justify-between items-end">
@@ -182,7 +191,7 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                                         <p className="text-xs text-muted-foreground">{translations.cart_including_taxes || "Including all taxes"}</p>
                                                     </div>
                                                     <div className="text-4xl font-black text-primary tracking-tight">
-                                                        {cartTotal.toFixed(2)} {translations.course_price_currency || 'OMR'}
+                                                        {cartTotal.toFixed(2)} {translations.course_price_currency || 'USD'}
                                                     </div>
                                                 </div>
                                             </div>

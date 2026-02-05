@@ -21,11 +21,14 @@ class CourseStoreRequest extends FormRequest
             'description' => ['required', 'string'],
             'description_ar' => ['nullable', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
-            'price' => ['required', 'numeric', 'min:0', 'max:999.99'],
+            'price' => 'required|numeric|min:0',
             'thumbnail_file' => ['nullable', 'image', 'max:5000'],
-            'preview_video_url' => ['nullable', 'url', 'max:255'],
-            'learning_outcomes' => ['nullable', 'array'],
-            'learning_outcomes_ar' => ['nullable', 'array'],
+            'preview_video_url' => 'nullable|string',
+            'learning_outcomes' => 'nullable|array',
+            'learning_outcomes_ar' => 'nullable|array',
+            'discount_percentage' => 'nullable|integer|min:0|max:100',
+            'discount_start_date' => 'nullable|date',
+            'discount_end_date' => 'nullable|date|after_or_equal:discount_start_date',
         ];
     }
 }

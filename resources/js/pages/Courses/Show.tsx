@@ -465,11 +465,21 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                                 <div className="p-8 space-y-8">
                                     <div className="flex items-baseline gap-3">
-                                        <span className="text-4xl font-black text-slate-900 dark:text-white">
-                                            {Number(course.price) > 0 ? `${translations.course_price_currency || 'OMR'} ${Number(course.price).toFixed(2)}` : translations.course_price_free || 'Free'}
-                                        </span>
-                                        {/* <span className="text-sm font-bold text-slate-400 line-through">OMR 45.00</span>
-                                        <span className="text-xs font-black text-green-500 uppercase tracking-widest ml-auto">75% OFF</span> */}
+                                        {course.has_active_discount ? (
+                                            <>
+                                                <span className="text-4xl font-black text-slate-900 dark:text-white">
+                                                    {translations.course_price_currency || 'USD'} {Number(course.discounted_price).toFixed(2)}
+                                                </span>
+                                                <span className="text-sm font-bold text-slate-400 line-through">
+                                                    {translations.course_price_currency || 'USD'} {Number(course.price).toFixed(2)}
+                                                </span>
+                                                <span className="text-xs font-black text-green-500 uppercase tracking-widest ml-auto">{course.discount_percentage}% OFF</span>
+                                            </>
+                                        ) : (
+                                            <span className="text-4xl font-black text-slate-900 dark:text-white">
+                                                {Number(course.price) > 0 ? `${translations.course_price_currency || 'USD'} ${Number(course.price).toFixed(2)}` : translations.course_price_free || 'Free'}
+                                            </span>
+                                        )}
                                     </div>
 
                                     <div className="space-y-3">
@@ -513,7 +523,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                         )}
                                     </div>
 
-                                    <div className="space-y-4">
+                                    {/* <div className="space-y-4">
                                         <h5 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50 border-b border-slate-100 dark:border-slate-800 pb-2">{translations.course_metrics}</h5>
                                         <div className="grid grid-cols-1 gap-4">
                                             {[
@@ -529,7 +539,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                 </div>
                                             ))}
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </Card>
 

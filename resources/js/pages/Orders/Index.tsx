@@ -132,7 +132,7 @@ export default function OrdersIndex({ orders }: OrdersIndexProps) {
 
                                                 <div className="flex w-full md:w-auto items-center justify-between md:col-span-1">
                                                     <span className="md:hidden text-muted-foreground font-medium">{translations.orders_total_amount || "Total"}:</span>
-                                                    <span className="text-lg font-black tracking-tight">{order.total_amount.toFixed(2)} {translations.course_price_currency || 'OMR'}</span>
+                                                    <span className="text-lg font-black tracking-tight">{order.total_amount.toFixed(2)} {translations.course_price_currency || 'USD'}</span>
                                                 </div>
 
                                                 <div className="hidden md:flex md:col-span-1">

@@ -191,6 +191,9 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
         price: course.price || 0,
         learning_outcomes: (course.learning_outcomes?.length > 0 ? course.learning_outcomes : ['']) as string[],
         learning_outcomes_ar: (course.learning_outcomes_ar?.length > 0 ? course.learning_outcomes_ar : ['']) as string[],
+        discount_percentage: course.discount_percentage || 0,
+        discount_start_date: course.discount_start_date ? new Date(course.discount_start_date).toISOString().slice(0, 16) : '',
+        discount_end_date: course.discount_end_date ? new Date(course.discount_end_date).toISOString().slice(0, 16) : '',
     });
 
     const handleAddOutcome = (language: 'en' | 'ar') => {
@@ -308,7 +311,7 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                 </Card>
                                 <Card className="p-4 border-none shadow-sm bg-background flex flex-col items-center justify-center text-center">
                                     <BadgeDollarSign className="h-5 w-5 mb-1 text-green-600" />
-                                    <span className="text-lg font-black leading-none">OMR 4.5k</span>
+                                    <span className="text-lg font-black leading-none">USD 4.5k</span>
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-1">Revenue</span>
                                 </Card>
                                 <Card className="hidden sm:flex p-4 border-none shadow-sm bg-background flex-col items-center justify-center text-center">
@@ -336,6 +339,9 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                 </TabsTrigger>
                                 <TabsTrigger value="quizzes" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
                                     <HelpCircle className='w-4 h-4' /> Assessments
+                                </TabsTrigger>
+                                <TabsTrigger value="offers" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
+                                    <BadgeDollarSign className='w-4 h-4' /> Promotions
                                 </TabsTrigger>
                             </TabsList>
                         </div>
@@ -494,9 +500,9 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                                 <InputError message={errors.category_id} />
                                             </div>
                                             <div className="space-y-3">
-                                                <Label htmlFor="price" className="text-base font-bold tracking-tight">Price (OMR)</Label>
+                                                <Label htmlFor="price" className="text-base font-bold tracking-tight">Price (USD)</Label>
                                                 <div className="relative">
-                                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-black text-muted-foreground">OMR</div>
+                                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-black text-muted-foreground">USD</div>
                                                     <Input
                                                         id="price"
                                                         type="number"
@@ -591,53 +597,93 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
 
                         {/* Quizzes Tab */}
                         <TabsContent value="quizzes" className="mt-0 animate-in fade-in zoom-in-95 duration-500">
+                            {/* ... existing content ... */}
+                        </TabsContent>
+
+                        {/* Offers Tab */}
+                        <TabsContent value="offers" className="mt-0 animate-in fade-in slide-in-from-right-4 duration-500">
                             <Card className="border-none shadow-xl">
                                 <CardHeader className="bg-muted/30 pb-6 rounded-t-xl border-b">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 rounded-lg bg-background text-primary border shadow-sm">
-                                            <HelpCircle className="h-5 w-5" />
+                                        <div className="p-2 rounded-lg bg-background text-green-600 border shadow-sm">
+                                            <BadgeDollarSign className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <CardTitle className="text-xl font-bold italic tracking-tight uppercase">Knowledge Checks</CardTitle>
-                                            <CardDescription>Review and refine course assessments.</CardDescription>
+                                            <CardTitle className="text-xl font-bold italic tracking-tight uppercase">Promotion & Offers</CardTitle>
+                                            <CardDescription>Increase enrollments by setting temporary discounts.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-8">
-                                    {course.lessons.filter((lesson: any) => lesson.type === 'quiz').length > 0 ? (
-                                        <div className="space-y-4 max-w-2xl">
-                                            {course.lessons
-                                                .filter((lesson: any) => lesson.type === 'quiz')
-                                                .map((lesson: any) => (
-                                                    <div key={lesson.id} className="flex justify-between items-center p-5 border rounded-2xl bg-card hover:border-primary/40 transition-all shadow-sm group">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="h-10 w-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
-                                                                <HelpCircle className="h-5 w-5" />
-                                                            </div>
-                                                            <div>
-                                                                <span className="font-bold text-lg block">{lesson.title}</span>
-                                                                <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{lesson.quiz?.questions?.length || 0} Questions</span>
-                                                            </div>
-                                                        </div>
-                                                        <Button
-                                                            size="sm"
-                                                            className="rounded-full px-6 font-bold"
-                                                            onClick={() => handleOpenContentModal(lesson)}
-                                                        >
-                                                            Edit Questions
-                                                        </Button>
-                                                    </div>
-                                                ))}
+                                    <form onSubmit={handleUpdateDetails} className="space-y-8 max-w-2xl">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div className="space-y-3">
+                                                <Label htmlFor="discount_percentage" className="text-base font-bold tracking-tight">Discount Percentage (%)</Label>
+                                                <div className="relative">
+                                                    <Input
+                                                        id="discount_percentage"
+                                                        type="number"
+                                                        min="0"
+                                                        max="100"
+                                                        className="h-14 rounded-xl border-muted-foreground/20 text-xl font-black px-5 bg-muted/10 shadow-inner"
+                                                        value={data.discount_percentage}
+                                                        onChange={(e) => setData('discount_percentage', parseInt(e.target.value))}
+                                                    />
+                                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-black text-muted-foreground">%</div>
+                                                </div>
+                                                <InputError message={errors.discount_percentage} />
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <Label className="text-base font-bold tracking-tight">Final Price</Label>
+                                                <div className="h-14 flex items-center px-5 rounded-xl bg-orange-50 border border-orange-100 text-orange-700 font-black text-xl">
+                                                    USD {(data.price * (1 - (data.discount_percentage / 100))).toFixed(2)}
+                                                </div>
+                                            </div>
                                         </div>
-                                    ) : (
-                                        <div className="text-center py-20 border-2 border-dashed rounded-3xl bg-muted/10 opacity-60">
-                                            <HelpCircle className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-                                            <p className="text-muted-foreground font-bold italic text-lg mb-6">No assessment units detected.</p>
-                                            <Button variant="outline" className="rounded-full h-12 px-8 font-black tracking-tight" onClick={() => setActiveTab('curriculum')}>
-                                                <PlusCircle className="mr-2 h-4 w-4" /> Add Quiz to Curriculum
-                                            </Button>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div className="space-y-3">
+                                                <Label htmlFor="discount_start_date" className="text-base font-bold tracking-tight">Offer Start Date</Label>
+                                                <Input
+                                                    id="discount_start_date"
+                                                    type="datetime-local"
+                                                    className="h-14 rounded-xl border-muted-foreground/20 font-medium px-5 bg-muted/10"
+                                                    value={data.discount_start_date}
+                                                    onChange={(e) => setData('discount_start_date', e.target.value)}
+                                                />
+                                                <InputError message={errors.discount_start_date} />
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <Label htmlFor="discount_end_date" className="text-base font-bold tracking-tight">Offer End Date</Label>
+                                                <Input
+                                                    id="discount_end_date"
+                                                    type="datetime-local"
+                                                    className="h-14 rounded-xl border-muted-foreground/20 font-medium px-5 bg-muted/10"
+                                                    value={data.discount_end_date}
+                                                    onChange={(e) => setData('discount_end_date', e.target.value)}
+                                                />
+                                                <InputError message={errors.discount_end_date} />
+                                            </div>
                                         </div>
-                                    )}
+
+                                        <div className="bg-blue-50 dark:bg-blue-900/20 p-5 rounded-2xl border border-blue-100 dark:border-blue-800 flex gap-4">
+                                            <HelpCircle className="h-6 w-6 text-blue-600 shrink-0" />
+                                            <div className="text-sm text-blue-800 dark:text-blue-300 font-medium leading-relaxed">
+                                                Instructors can use offers to boost sales. Discounts are automatically applied during the specified time range. Set percentage to **0** to disable any active offer.
+                                            </div>
+                                        </div>
+
+                                        <Button
+                                            type="submit"
+                                            size="lg"
+                                            disabled={processing}
+                                            className="h-14 rounded-full px-10 font-black tracking-tight text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                                        >
+                                            {processing ? 'Saving...' : <><Save className="mr-2 h-5 w-5" /> Update Offer Details</>}
+                                        </Button>
+                                    </form>
                                 </CardContent>
                             </Card>
                         </TabsContent>

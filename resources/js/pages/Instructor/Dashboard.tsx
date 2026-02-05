@@ -103,7 +103,7 @@ export default function InstructorDashboard({ stats, latestCourses }: Instructor
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10">
                         <StatCard
                             title="Total Revenue"
-                            value={`OMR ${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                            value={`USD ${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                             icon={DollarSign}
                             trend="12.5"
                             color="blue"
@@ -155,7 +155,7 @@ export default function InstructorDashboard({ stats, latestCourses }: Instructor
                                                 axisLine={false}
                                                 tickLine={false}
                                                 tick={{ fill: '#9ca3af', fontSize: 12 }}
-                                                tickFormatter={(value) => `OMR ${value}`}
+                                                tickFormatter={(value) => `USD ${value}`}
                                             />
                                             <Tooltip
                                                 contentStyle={{
@@ -163,7 +163,7 @@ export default function InstructorDashboard({ stats, latestCourses }: Instructor
                                                     border: 'none',
                                                     boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
                                                 }}
-                                                formatter={(value) => [`OMR ${value}`, 'Revenue']}
+                                                formatter={(value) => [`USD ${value}`, 'Revenue']}
                                             />
                                             <Area
                                                 type="monotone"
@@ -261,7 +261,7 @@ export default function InstructorDashboard({ stats, latestCourses }: Instructor
                                                 <h3 className="font-bold text-lg leading-tight">{course.title}</h3>
                                                 <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 text-xs font-medium text-muted-foreground">
                                                     <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> {course.students_count?.toLocaleString()} Students</span>
-                                                    <span className="flex items-center gap-1.5"><DollarSign className="h-3.5 w-3.5" /> OMR {course.revenue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                                    <span className="flex items-center gap-1.5"><DollarSign className="h-3.5 w-3.5" /> USD {course.revenue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                                     <span className="flex items-center gap-1.5"><Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" /> {course.average_rating || '0.0'}</span>
                                                 </div>
                                             </div>

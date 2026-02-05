@@ -52,8 +52,7 @@ class PayPalService
                     [
                         'reference_id' => $order->order_number,
                         'amount' => [
-                            'currency_code' => 'USD', // PayPal does not support OMR, converting to USD
-                            'value' => number_format($order->total_amount * 2.6, 2, '.', ''),
+                            'value' => number_format($order->total_amount, 2, '.', ''),
                         ],
                     ],
                 ],

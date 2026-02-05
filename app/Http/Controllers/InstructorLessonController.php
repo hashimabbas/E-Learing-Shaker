@@ -114,8 +114,7 @@ class InstructorLessonController extends Controller
             'resource_file' => [
                 'required',
                 'file',
-                'max:500000', // 500MB
-                Rule::when($lesson->type === 'video', ['mimetypes:video/mp4,video/quicktime', 'max:100000']), // Smaller max for test environment
+                Rule::when($lesson->type === 'video', ['mimetypes:video/mp4,video/quicktime']),
                 Rule::when($lesson->type === 'downloadable', ['mimetypes:application/pdf']),
             ],
         ]);

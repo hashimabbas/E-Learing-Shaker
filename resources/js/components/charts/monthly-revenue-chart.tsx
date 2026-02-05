@@ -16,8 +16,8 @@ interface ChartData {
 }
 
 export function MonthlyRevenueChart({ data }: { data: ChartData[] }) {
-    // Custom label to show OMR
-    const formatYAxis = (tick: number) => `OMR ${tick.toLocaleString()}`;
+    // Custom label to show USD
+    const formatYAxis = (tick: number) => `USD ${tick.toLocaleString()}`;
 
     // Color to highlight the current month's bar
     const getBarColor = (item: ChartData) => item.is_current ? '#10B981' : '#3B82F6';

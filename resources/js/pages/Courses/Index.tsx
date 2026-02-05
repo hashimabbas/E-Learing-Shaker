@@ -158,7 +158,7 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
                         <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">{translations.courses_index_price_label || "Investment"}</div>
                         <div className="text-4xl font-black text-white flex items-baseline gap-1">
                             {parseFloat(course.price.toString()) > 0
-                                ? <>{parseFloat(course.price.toString()).toFixed(1)} <span className="text-lg font-bold opacity-60 uppercase">{translations.course_price_currency || 'OMR'}</span></>
+                                ? <>{parseFloat(course.price.toString()).toFixed(1)} <span className="text-lg font-bold opacity-60 uppercase">{translations.course_price_currency || 'USD'}</span></>
                                 : <span className="text-emerald-500">{translations.course_price_free || 'FREE'}</span>}
                         </div>
                     </div>
@@ -206,7 +206,7 @@ const CompactCourseCard = ({ course, translations, isRtl }: { course: Course, tr
                             ? `${parseFloat(course.price.toString())}`
                             : (translations.course_price_free || "Free")}
                     </span>
-                    {parseFloat(course.price.toString()) > 0 && <span className="text-[10px] text-white/50 ml-1 font-bold">{translations.course_price_currency || 'OMR'}</span>}
+                    {parseFloat(course.price.toString()) > 0 && <span className="text-[10px] text-white/50 ml-1 font-bold">{translations.course_price_currency || 'USD'}</span>}
                 </div>
             </div>
 

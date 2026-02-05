@@ -31,7 +31,7 @@ class BankTransferPendingNotification extends Notification implements ShouldQueu
                     ->greeting('Hello Admin,')
                     ->line('A new order has been placed using Bank Transfer.')
                     ->line('Order Number: ' . $this->order->order_number)
-                    ->line('Total Amount: OMR ' . number_format($this->order->total_amount, 2))
+                    ->line('Total Amount: USD ' . number_format($this->order->total_amount, 2))
                     ->line('User: ' . $this->order->user->name . ' (' . $this->order->user->email . ')')
                     ->line('Please verify the transaction via WhatsApp and approve the order.')
                     ->action('View Order', route('orders.show', $this->order->order_number)); // Linking to public order view for now, assuming admin can view it

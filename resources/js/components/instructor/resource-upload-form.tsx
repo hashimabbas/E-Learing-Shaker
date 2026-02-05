@@ -6,6 +6,7 @@ import InputError from '@/components/input-error';
 import { useForm } from '@inertiajs/react';
 import { Upload, Video, Download } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
 
 interface ResourceUploadFormProps {
     lessonId: number;
@@ -14,7 +15,7 @@ interface ResourceUploadFormProps {
 }
 
 export default function ResourceUploadForm({ lessonId, lessonType, onUploadSuccess }: ResourceUploadFormProps) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, progress } = useForm({
         resource_file: null as File | null,
     });
 
@@ -63,6 +64,16 @@ export default function ResourceUploadForm({ lessonId, lessonType, onUploadSucce
             <Button type="submit" disabled={processing} className='w-full'>
                 <Upload className='w-4 h-4 mr-2' /> {processing ? 'Uploading...' : 'Start Upload'}
             </Button>
+
+            {progress && (
+                <div className="space-y-2 animate-in fade-in zoom-in-95 duration-300">
+                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        <span>Uploading...</span>
+                        <span>{progress.percentage}%</span>
+                    </div>
+                    <Progress value={progress.percentage} className="h-2" />
+                </div>
+            )}
         </form>
     );
 }

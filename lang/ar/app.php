@@ -52,7 +52,7 @@ return [
     "explorer_browse_all" => "تصفح جميع الدورات",
     "course_price_label" => "السعر",
     "course_price_free" => "مجاني",
-    "course_price_currency" => "ر.ع",
+    "course_price_currency" => "USD",
 
     // Features Section
     "features_title" => "لماذا تتعلم معنا؟",
@@ -361,4 +361,25 @@ return [
     "review_rating_error" => "يرجى اختيار تقييم بالنجوم.",
     "enrollment_success" => "تم التسجيل بنجاح 🎉",
     "added_to_cart" => "تمت الإضافة إلى السلة 🛒",
+
+    // Auth Pages
+    "auth_login_title" => "تسجيل الدخول إلى حسابك",
+    "auth_login_description" => "أدخل بريدك الإلكتروني وكلمة المرور أدناه لتسجيل الدخول",
+    "auth_login_head" => "تسجيل الدخول",
+    "auth_email" => "البريد الإلكتروني",
+    "auth_email_placeholder" => "email@example.com",
+    "auth_password" => "كلمة المرور",
+    "auth_forgot_password" => "نسيت كلمة المرور؟",
+    "auth_remember_me" => "تذكرني",
+    "auth_login_btn" => "تسجيل الدخول",
+    "auth_no_account" => "ليس لديك حساب؟",
+    "auth_signup" => "إنشاء حساب",
+    "auth_register_title" => "إنشاء حساب جديد",
+    "auth_register_description" => "أدخل بياناتك أدناء لإنشاء حسابك",
+    "auth_register_head" => "تسجيل",
+    "auth_name" => "الاسم",
+    "auth_name_placeholder" => "الاسم الكامل",
+    "auth_confirm_password" => "تأكيد كلمة المرور",
+    "auth_register_btn" => "إنشاء الحساب",
+    "auth_already_have_account" => "لديك حساب بالفعل؟",
 ];

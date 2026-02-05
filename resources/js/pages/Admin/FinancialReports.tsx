@@ -33,7 +33,7 @@ interface AdminFinancialReportsProps {
 
 const formatCurrency = (amount: number | string | null | undefined): string => {
     const numericAmount = parseFloat(amount as string) || 0;
-    return `OMR ${numericAmount.toFixed(2).toLocaleString()}`;
+    return `USD ${numericAmount.toFixed(2).toLocaleString()}`;
 };
 
 const getMonthName = (monthNumber: number) => {

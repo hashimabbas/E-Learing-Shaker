@@ -73,7 +73,7 @@ export default function AdminPendingCoursesIndex({ pendingCourses }: AdminPendin
                                             <p className="text-xs text-muted-foreground">{course.category?.name || 'Uncategorized'}</p>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{course.instructor.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold">OMR {course.price ? parseFloat(course.price).toFixed(2) : 'Free'}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold">USD {course.price ? parseFloat(course.price).toFixed(2) : 'Free'}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">{new Date(course.created_at).toLocaleDateString()}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                             <Button onClick={() => handleApprove(course.id, course.title)} size="sm" variant="success">

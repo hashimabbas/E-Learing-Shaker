@@ -1,6 +1,6 @@
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -9,14 +9,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
+import { type SharedData } from '@/types';
 
 export default function Register() {
+    const { translations } = usePage<SharedData & { translations: any }>().props;
+
     return (
         <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
+            title={translations.auth_register_title || "Create an account"}
+            description={translations.auth_register_description || "Enter your details below to create your account"}
         >
-            <Head title="Register" />
+            <Head title={translations.auth_register_head || "Register"} />
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
@@ -27,7 +30,7 @@ export default function Register() {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name" className="text-sm font-semibold tracking-wide ml-1 rtl:mr-1">{translations.auth_name || "Name"}</Label>
                                 <Input
                                     id="name"
                                     type="text"
@@ -36,16 +39,17 @@ export default function Register() {
                                     tabIndex={1}
                                     autoComplete="name"
                                     name="name"
-                                    placeholder="Full name"
+                                    placeholder={translations.auth_name_placeholder || "Full name"}
+                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError
                                     message={errors.name}
-                                    className="mt-2"
+                                    className="mt-1"
                                 />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email" className="text-sm font-semibold tracking-wide ml-1 rtl:mr-1">{translations.auth_email || "Email address"}</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -53,13 +57,14 @@ export default function Register() {
                                     tabIndex={2}
                                     autoComplete="email"
                                     name="email"
-                                    placeholder="email@example.com"
+                                    placeholder={translations.auth_email_placeholder || "email@example.com"}
+                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password" className="text-sm font-semibold tracking-wide ml-1 rtl:mr-1">{translations.auth_password || "Password"}</Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -67,14 +72,15 @@ export default function Register() {
                                     tabIndex={3}
                                     autoComplete="new-password"
                                     name="password"
-                                    placeholder="Password"
+                                    placeholder={translations.auth_password || "Password"}
+                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError message={errors.password} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
+                                <Label htmlFor="password_confirmation" className="text-sm font-semibold tracking-wide ml-1 rtl:mr-1">
+                                    {translations.auth_confirm_password || "Confirm password"}
                                 </Label>
                                 <Input
                                     id="password_confirmation"
@@ -83,7 +89,8 @@ export default function Register() {
                                     tabIndex={4}
                                     autoComplete="new-password"
                                     name="password_confirmation"
-                                    placeholder="Confirm password"
+                                    placeholder={translations.auth_confirm_password || "Confirm password"}
+                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError
                                     message={errors.password_confirmation}
@@ -92,19 +99,19 @@ export default function Register() {
 
                             <Button
                                 type="submit"
-                                className="mt-2 w-full"
+                                className="mt-2 h-12 w-full rounded-xl text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-100"
                                 tabIndex={5}
                                 data-test="register-user-button"
                             >
-                                {processing && <Spinner />}
-                                Create account
+                                {processing && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
+                                {translations.auth_register_btn || "Create account"}
                             </Button>
                         </div>
 
-                        <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
-                                Log in
+                        <div className="text-center text-sm text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-100 dark:border-slate-800">
+                            {translations.auth_already_have_account || "Already have an account?"}{' '}
+                            <TextLink href={login()} className="font-bold text-primary hover:underline" tabIndex={6}>
+                                {translations.auth_login_btn || "Log in"}
                             </TextLink>
                         </div>
                     </>

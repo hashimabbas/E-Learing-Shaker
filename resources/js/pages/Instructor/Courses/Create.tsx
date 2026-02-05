@@ -307,9 +307,9 @@ export default function InstructorCoursesCreate({ categories }: InstructorCourse
                                             </div>
                                         </CardHeader>
                                         <CardContent className="p-8 space-y-3">
-                                            <Label htmlFor="price" className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Price (OMR)</Label>
+                                            <Label htmlFor="price" className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Price (USD)</Label>
                                             <div className="relative">
-                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-black text-muted-foreground">OMR</div>
+                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-black text-muted-foreground">USD</div>
                                                 <Input
                                                     id="price"
                                                     type="number"

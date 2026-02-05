@@ -28,7 +28,7 @@ class NewPurchaseNotification extends Notification
     {
         return [
             'data' => [
-                'message' => "NEW SALE! Order #{$this->order->order_number} for OMR {$this->order->total_amount}.",
+                'message' => "NEW SALE! Order #{$this->order->order_number} for USD {$this->order->total_amount}.",
                 'url' => route('orders.show', $this->order->order_number),
                 'type' => 'sale',
             ],
@@ -38,7 +38,7 @@ class NewPurchaseNotification extends Notification
     public function toDatabase(object $notifiable): array
     {
         return [
-            'message' => "NEW SALE! Order #{$this->order->order_number} for OMR {$this->order->total_amount}.",
+            'message' => "NEW SALE! Order #{$this->order->order_number} for USD {$this->order->total_amount}.",
             'url' => route('orders.show', $this->order->order_number),
             'type' => 'sale',
             'amount' => $this->order->total_amount,

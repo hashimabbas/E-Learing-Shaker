@@ -51,7 +51,7 @@ return [
     "explorer_browse_all" => "Browse All Courses",
     "course_price_label" => "Price",
     "course_price_free" => "Free",
-    "course_price_currency" => "OMR",
+    "course_price_currency" => "USD",
 
     // Features Section
     "features_title" => "Why Learn With Our Platform?",
@@ -354,4 +354,25 @@ I specialize in executing modern interior and exterior finishing works, with a h
     "review_rating_error" => "Please select a star rating.",
     "enrollment_success" => "Enrollment successful 🎉",
     "added_to_cart" => "Added to cart 🛒",
+
+    // Auth Pages
+    "auth_login_title" => "Log in to your account",
+    "auth_login_description" => "Enter your email and password below to log in",
+    "auth_login_head" => "Log in",
+    "auth_email" => "Email address",
+    "auth_email_placeholder" => "email@example.com",
+    "auth_password" => "Password",
+    "auth_forgot_password" => "Forgot password?",
+    "auth_remember_me" => "Remember me",
+    "auth_login_btn" => "Log in",
+    "auth_no_account" => "Don't have an account?",
+    "auth_signup" => "Sign up",
+    "auth_register_title" => "Create an account",
+    "auth_register_description" => "Enter your details below to create your account",
+    "auth_register_head" => "Register",
+    "auth_name" => "Name",
+    "auth_name_placeholder" => "Full name",
+    "auth_confirm_password" => "Confirm password",
+    "auth_register_btn" => "Create account",
+    "auth_already_have_account" => "Already have an account?",
 ];

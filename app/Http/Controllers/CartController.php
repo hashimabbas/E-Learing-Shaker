@@ -61,7 +61,7 @@ class CartController extends Controller
 
         $cart->items()->create([
             'course_id' => $course->id,
-            'price_at_purchase' => $course->price, // Use current price
+            'price_at_purchase' => $course->discounted_price, // Use discounted price
             'quantity' => 1,
         ]);
 

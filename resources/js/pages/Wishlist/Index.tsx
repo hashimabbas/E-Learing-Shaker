@@ -119,7 +119,7 @@ export default function WishlistIndex({ wishlistItems }: WishlistIndexProps) {
 
                                         <div className="mt-auto flex items-center justify-between pt-4 border-t">
                                             <div className="text-xl font-black text-primary">
-                                                {Number(item.course.price) > 0 ? `${Number(item.course.price).toFixed(2)} ${translations.course_price_currency || 'OMR'}` : (translations.course_price_free || 'FREE')}
+                                                {Number(item.course.price) > 0 ? `${Number(item.course.price).toFixed(2)} ${translations.course_price_currency || 'USD'}` : (translations.course_price_free || 'FREE')}
                                             </div>
                                             <Button
                                                 onClick={() => handleAddToCart(item.course.slug)}

@@ -21,7 +21,7 @@ interface AdminDashboardProps {
 
 const formatCurrency = (amount: number | string | null | undefined) => {
     const numericAmount = parseFloat(amount as any) || 0;
-    return `OMR ${numericAmount.toFixed(2)}`;
+    return `USD ${numericAmount.toFixed(2)}`;
 };
 
 const getInitials = (name: string) => {

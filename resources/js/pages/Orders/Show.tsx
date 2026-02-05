@@ -52,7 +52,7 @@ export default function OrdersShow({ order, success, error }: OrdersShowProps) {
                         <p><strong>Order Number:</strong> {order.order_number}</p>
                         <p><strong>Date Placed:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
                         <p><strong>Payment Method:</strong> {order.payment_method}</p>
-                        <p><strong>Total Paid:</strong> OMR {order.total_amount.toFixed(2)}</p>
+                        <p><strong>Total Paid:</strong> USD {order.total_amount.toFixed(2)}</p>
                     </div>
 
                     {order.payment_method === 'Bank Transfer' && order.status === 'pending' && (
@@ -117,7 +117,7 @@ export default function OrdersShow({ order, success, error }: OrdersShowProps) {
                                     </Link>
                                     <p className="text-xs text-muted-foreground">Quantity: {item.quantity}</p>
                                 </div>
-                                <span className="font-semibold">OMR {item.price.toFixed(2)}</span>
+                                <span className="font-semibold">USD {item.price.toFixed(2)}</span>
                             </div>
                         ))}
                     </div>
@@ -126,7 +126,7 @@ export default function OrdersShow({ order, success, error }: OrdersShowProps) {
 
                     <div className="flex justify-end">
                         <div className="text-right">
-                            <h3 className="text-xl font-bold">Grand Total: OMR {order.total_amount.toFixed(2)}</h3>
+                            <h3 className="text-xl font-bold">Grand Total: USD {order.total_amount.toFixed(2)}</h3>
                             {order.isPaid && (
                                 <Link href="/my-learning">
                                     <Button className="mt-4">Go to My Learning</Button>

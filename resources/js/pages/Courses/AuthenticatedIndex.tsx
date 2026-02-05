@@ -142,7 +142,7 @@ export default function AuthenticatedCoursesIndex({
 
                                                     <span className="font-bold text-primary">
                                                         {course.price > 0
-                                                            ? `OMR ${course.price}`
+                                                            ? `USD ${course.price}`
                                                             : 'Free'}
                                                     </span>
                                                 </div>
