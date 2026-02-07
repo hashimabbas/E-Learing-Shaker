@@ -16,7 +16,8 @@ import {
     Calendar,
     Users,
     BadgeDollarSign,
-    BookOpen
+    BookOpen,
+    Play
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { route } from 'ziggy-js';
@@ -174,6 +175,11 @@ export default function InstructorCoursesIndex({ courses }: InstructorCoursesInd
                                                 </td>
                                                 <td className="px-6 py-5 text-right space-x-2">
                                                     <div className="flex items-center justify-end gap-2">
+                                                        <Link href={route('courses.learn', course.slug)} target="_blank">
+                                                            <Button variant="ghost" size="icon" className="h-10 w-10 hover:bg-emerald-50 hover:text-emerald-600 transition-colors" title="Preview as Student">
+                                                                <Play className="h-5 w-5" />
+                                                            </Button>
+                                                        </Link>
                                                         <Link href={route('courses.show', course.slug)} target="_blank">
                                                             <Button variant="ghost" size="icon" className="h-10 w-10 hover:bg-blue-50 hover:text-blue-600 transition-colors" title="View Public Page">
                                                                 <Eye className="h-5 w-5" />

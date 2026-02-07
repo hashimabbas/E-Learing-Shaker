@@ -19,7 +19,8 @@ import {
     BadgeDollarSign,
     CheckCircle2,
     Save,
-    MoreHorizontal
+    MoreHorizontal,
+    Play
 } from 'lucide-react';
 import { useState } from 'react';
 import CurriculumItemEditor from '@/components/instructor/curriculum-item-editor';
@@ -301,6 +302,13 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                 <p className="text-muted-foreground text-lg font-medium max-w-xl line-clamp-1">
                                     Course ID: <span className="text-foreground tracking-widest">#{course.id}</span> • {course.category?.name}
                                 </p>
+                                <div className="flex flex-wrap gap-3 pt-4">
+                                    <Link href={route('courses.learn', course.slug)} target="_blank">
+                                        <Button className="h-11 rounded-full px-6 font-extrabold shadow-lg shadow-primary/20 bg-emerald-600 hover:bg-emerald-700">
+                                            <Play className="mr-2 h-4 w-4" /> Preview as Student
+                                        </Button>
+                                    </Link>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
