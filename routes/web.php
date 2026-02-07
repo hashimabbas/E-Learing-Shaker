@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\Api\ProgressController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CertificatesController;
+use App\Http\Controllers\ChunkUploadController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseEnrollmentController;
 use App\Http\Controllers\DiscussionController;
@@ -197,6 +198,11 @@ Route::middleware(['auth', 'log.content', 'role:instructor|admin'])->prefix('ins
     Route::resource('lessons', InstructorLessonController::class)->except(['index', 'show']);
     // Custom route for video/resource upload handling
     Route::post('lessons/{lesson}/upload-resource', [InstructorLessonController::class, 'uploadResource'])->name('lessons.upload_resource');
+
+    // Chunked Upload Routes
+    Route::post('upload-chunk', [ChunkUploadController::class, 'uploadChunk'])->name('upload_chunk');
+    Route::post('lessons/{lesson}/finish-upload', [ChunkUploadController::class, 'finishUpload'])->name('finish_upload');
+
 
     // Quiz Management (Nested under Instructor scope)
     Route::post('quizzes', [InstructorQuizController::class, 'store'])->name('quizzes.store');
