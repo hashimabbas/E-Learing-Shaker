@@ -14,8 +14,6 @@ class SecureVideoController extends Controller
     public function stream(Request $request, Lesson $lesson)
     {
         $user = $request->user();
-        $userId = $user->id;
-
 
         // ✅ Authorization check
         if (
@@ -30,75 +28,82 @@ class SecureVideoController extends Controller
             abort(404);
         }
 
-        // 2️⃣ LOG ACCESS (THIS IS THE KEY PART)
-        // ContentAccessLog::create([
-        //     'user_id' => $user->id,
-        //     'course_id' => $lesson->course_id,
-        //     'lesson_id' => $lesson->id,
-        //     'action' => 'video_play',
-        //     'ip_address' => $request->ip(),
-        //     'session_id' => session()->getId(),
-        //     'device_fingerprint' => hash('sha256',
-        //         $request->userAgent() . '|' . $request->header('Accept-Language')
-        //     ),
-        //     'user_agent' => $request->userAgent(),
-        //     'accessed_at' => now(),
-        // ]);
-
-        // AccountSharingDetector::check($user);
-
-
         $path = $lesson->video->path;
 
-        if (!Storage::exists($path)) {
+        if (!Storage::disk('local')->exists($path)) {
             abort(404);
         }
 
-        $size   = Storage::size($path);
-        $mime   = Storage::mimeType($path);
-        $start  = 0;
-        $end    = $size - 1;
+        $fullPath = Storage::disk('local')->path($path);
+        $size = filesize($fullPath);
+        $mime = Storage::disk('local')->mimeType($path);
+
+        // 🚀 Offload to Web Server if configured (X-Sendfile for Apache/Litespeed, X-Accel-Redirect for Nginx)
+        $method = config('services.video.streaming_method', env('VIDEO_STREAMING_METHOD', 'php'));
+
+        if ($method === 'x-sendfile') {
+            return response()->make('', 200, [
+                'Content-Type' => $mime,
+                'X-Sendfile' => $fullPath,
+                'Content-Disposition' => 'inline',
+            ]);
+        }
+
+        if ($method === 'x-accel-redirect') {
+            // Nginx requires a relative path to an internal location
+            $internalPath = '/internal-storage/' . $path;
+            return response()->make('', 200, [
+                'Content-Type' => $mime,
+                'X-Accel-Redirect' => $internalPath,
+                'Content-Disposition' => 'inline',
+            ]);
+        }
+
+        // 🛠 PHP Streaming Fallback (Optimized)
+        set_time_limit(0);
+        ini_set('memory_limit', '512M');
+
+        // Disable output buffering to avoid memory issues with large files
+        while (ob_get_level()) ob_end_clean();
+
+        $start = 0;
+        $end = $size - 1;
 
         $headers = [
-            'Content-Type'  => $mime,
+            'Content-Type' => $mime,
             'Accept-Ranges' => 'bytes',
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-            'Pragma'        => 'no-cache',
-            'Expires'       => '0',
+            'Cache-Control' => 'public, max-age=3600',
         ];
 
-
-        // 🔒 Handle range requests (VERY IMPORTANT)
         if ($request->headers->has('Range')) {
             $range = $request->header('Range');
-            preg_match('/bytes=(\d+)-(\d+)?/', $range, $matches);
-
-            $start = intval($matches[1]);
-            if (isset($matches[2])) {
-                $end = intval($matches[2]);
+            if (preg_match('/bytes=(\d+)-(\d+)?/', $range, $matches)) {
+                $start = intval($matches[1]);
+                if (isset($matches[2])) {
+                    $end = intval($matches[2]);
+                }
             }
 
             $headers['Content-Range'] = "bytes $start-$end/$size";
             $headers['Content-Length'] = $end - $start + 1;
 
-            return response()->stream(function () use ($path, $start, $end) {
-                $stream = Storage::readStream($path);
+            return response()->stream(function () use ($fullPath, $start, $end) {
+                $stream = fopen($fullPath, 'rb');
                 fseek($stream, $start);
 
-                $buffer = 1024 * 8;
+                $buffer = 1024 * 64; // 64KB chunks for better throughput
                 while (!feof($stream) && ftell($stream) <= $end) {
                     echo fread($stream, $buffer);
                     flush();
                 }
-
                 fclose($stream);
             }, 206, $headers);
         }
 
         $headers['Content-Length'] = $size;
 
-        return response()->stream(function () use ($path) {
-            $stream = Storage::readStream($path);
+        return response()->stream(function () use ($fullPath) {
+            $stream = fopen($fullPath, 'rb');
             fpassthru($stream);
             fclose($stream);
         }, 200, $headers);

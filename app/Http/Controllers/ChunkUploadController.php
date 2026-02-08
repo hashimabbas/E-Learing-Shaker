@@ -47,6 +47,8 @@ class ChunkUploadController extends Controller
      */
     public function finishUpload(Request $request, Lesson $lesson)
     {
+        set_time_limit(0); // Prevent timeouts for large file reassembly
+
         $request->validate([
             'file_id' => 'required|string',
             'total_chunks' => 'required|integer',

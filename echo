@@ -1,0 +1,2 @@
+# Video Streaming (php, x-sendfile, x-accel-redirect)
+VIDEO_STREAMING_METHOD=php

@@ -48,4 +48,7 @@ return [
         'mode' => env('PAYPAL_MODE', 'sandbox'),
     ],
 
+    'video' => [
+        'streaming_method' => env('VIDEO_STREAMING_METHOD', 'php'),
+    ],
 ];
