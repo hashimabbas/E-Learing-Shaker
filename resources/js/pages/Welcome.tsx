@@ -52,6 +52,9 @@ interface Course {
     };
     thumbnail?: string;
     thumbnail_url?: string;
+    has_active_discount?: boolean;
+    discounted_price?: string | number;
+    discount_percentage?: number;
 }
 
 interface WelcomeProps {
@@ -255,6 +258,13 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
                                 {/* Dark Gradient Overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-80" />
 
+                                {/* Discount Badge */}
+                                {course.has_active_discount && (
+                                    <div className={cn("absolute top-4 z-20 bg-primary px-3 py-1 rounded-full text-[10px] font-black text-white shadow-lg animate-pulse", isRtl ? "left-4" : "right-4")}>
+                                        {course.discount_percentage}% OFF
+                                    </div>
+                                )}
+
                                 {/* Play Button */}
                                 <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-100 transform scale-75">
                                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/90 text-white shadow-xl shadow-primary/30 backdrop-blur-sm">
@@ -285,9 +295,22 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
                                 <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">{translations.course_price_label || "Price"}</span>
-                                        <span className="text-lg font-black text-primary">
-                                            {Number(course.price) === 0 ? (translations.course_price_free || 'Free') : `${translations.course_price_currency || 'USD'} ${parseFloat(course.price).toFixed(2)}`}
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            {course.has_active_discount ? (
+                                                <>
+                                                    <span className="text-lg font-black text-primary">
+                                                        {Number(course.discounted_price) === 0 ? (translations.course_price_free || 'Free') : `${translations.course_price_currency || 'USD'} ${parseFloat(String(course.discounted_price)).toFixed(2)}`}
+                                                    </span>
+                                                    <span className="text-xs font-bold text-muted-foreground line-through opacity-50">
+                                                        {parseFloat(course.price).toFixed(2)}
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <span className="text-lg font-black text-primary">
+                                                    {Number(course.price) === 0 ? (translations.course_price_free || 'Free') : `${translations.course_price_currency || 'USD'} ${parseFloat(course.price).toFixed(2)}`}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:rotate-[-45deg]">
                                         <ArrowRight className="h-5 w-5" />

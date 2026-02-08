@@ -42,6 +42,9 @@ interface Course {
         name: string;
     };
     category?: Category;
+    has_active_discount?: boolean;
+    discounted_price?: number | string;
+    discount_percentage?: number;
 }
 
 interface Props {
@@ -156,10 +159,23 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
                 <div className="flex items-center gap-6 pt-6">
                     <div className="flex-shrink-0">
                         <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">{translations.courses_index_price_label || "Investment"}</div>
-                        <div className="text-4xl font-black text-white flex items-baseline gap-1">
-                            {parseFloat(course.price.toString()) > 0
-                                ? <>{parseFloat(course.price.toString()).toFixed(1)} <span className="text-lg font-bold opacity-60 uppercase">{translations.course_price_currency || 'USD'}</span></>
-                                : <span className="text-emerald-500">{translations.course_price_free || 'FREE'}</span>}
+                        <div className="text-4xl font-black text-white flex items-baseline gap-2">
+                            {course.has_active_discount ? (
+                                <>
+                                    <span className="text-primary">
+                                        {Number(course.discounted_price) > 0
+                                            ? <>{parseFloat(String(course.discounted_price)).toFixed(1)} <span className="text-lg font-bold opacity-60 uppercase">{translations.course_price_currency || 'USD'}</span></>
+                                            : <span className="text-emerald-500">{translations.course_price_free || 'FREE'}</span>}
+                                    </span>
+                                    <span className="text-xl font-bold text-neutral-500 line-through opacity-50">
+                                        {parseFloat(course.price.toString()).toFixed(1)}
+                                    </span>
+                                </>
+                            ) : (
+                                parseFloat(course.price.toString()) > 0
+                                    ? <>{parseFloat(course.price.toString()).toFixed(1)} <span className="text-lg font-bold opacity-60 uppercase">{translations.course_price_currency || 'USD'}</span></>
+                                    : <span className="text-emerald-500">{translations.course_price_free || 'FREE'}</span>
+                            )}
                         </div>
                     </div>
                     <Link href={route('courses.show', { course: course.slug })} className="flex-1">
@@ -200,12 +216,32 @@ const CompactCourseCard = ({ course, translations, isRtl }: { course: Course, tr
 
             {/* Price Badge over thumb */}
             <div className={cn("absolute bottom-4", isRtl ? "left-4" : "right-4")}>
-                <div className="bg-black/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl">
-                    <span className="text-primary font-black text-lg">
-                        {parseFloat(course.price.toString()) > 0
-                            ? `${parseFloat(course.price.toString())}`
-                            : (translations.course_price_free || "Free")}
-                    </span>
+                <div className="bg-black/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl flex flex-col items-end">
+                    {course.has_active_discount ? (
+                        <>
+                            <div className="flex items-center gap-2">
+                                <span className="text-primary font-black text-lg">
+                                    {Number(course.discounted_price) > 0
+                                        ? `${parseFloat(String(course.discounted_price))}`
+                                        : (translations.course_price_free || "Free")}
+                                </span>
+                                <span className="text-[10px] text-white/40 line-through">
+                                    {parseFloat(course.price.toString())}
+                                </span>
+                            </div>
+                            <span className="text-[8px] font-black text-emerald-500 uppercase tracking-tighter">
+                                {course.discount_percentage}% OFF
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <span className="text-primary font-black text-lg">
+                                {parseFloat(course.price.toString()) > 0
+                                    ? `${parseFloat(course.price.toString())}`
+                                    : (translations.course_price_free || "Free")}
+                            </span>
+                        </>
+                    )}
                     {parseFloat(course.price.toString()) > 0 && <span className="text-[10px] text-white/50 ml-1 font-bold">{translations.course_price_currency || 'USD'}</span>}
                 </div>
             </div>
