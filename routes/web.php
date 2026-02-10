@@ -57,11 +57,12 @@ Route::get('/terms-of-use', [SupportController::class, 'terms'])->name('support.
 Route::get('/contact', [SupportController::class, 'contact'])->name('support.contact');
 Route::post('/contact', [SupportController::class, 'submitContact'])->name('support.contact.submit');
 
-// routes/web.php
+// Video Streaming Route (Handle auth inside controller to support CDN origin bypass)
+Route::get('/secure/video/{lesson}', [SecureVideoController::class, 'stream'])->name('secure.video');
+
 Route::post('/courses/{course:slug}/enroll-free', [CourseEnrollmentController::class, 'enrollFree'])
     ->middleware('auth')
     ->name('courses.enroll.free');
-
 
 Route::middleware(['auth', 'block.suspicious', 'log.content'])->group(function () {
     // ... existing settings routes ...
@@ -90,11 +91,10 @@ Route::middleware(['auth', 'block.suspicious', 'log.content'])->group(function (
     Route::get('/checkout/paypal/return', [PaymentController::class, 'paypalReturn'])->name('payment.paypal.return');
     Route::get('/checkout/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
 
+
     // User Order History/View
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order:order_number}', [OrderController::class, 'show'])->name('orders.show');
-
-    Route::get('/secure/video/{lesson}', [SecureVideoController::class, 'stream'])->name('secure.video');
 
     Route::post('/progress/update', [ProgressController::class, 'update'])->name('api.progress.update');
 

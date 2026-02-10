@@ -226,8 +226,14 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                             <div className="flex flex-wrap items-center gap-8 text-sm">
                                 <div className="flex items-center gap-2">
                                     <StarRating rating={course.average_rating} size={5} />
-                                    <span className="font-bold text-lg">{course.average_rating.toFixed(1)}</span>
-                                    <span className="text-slate-400">({course.reviews_count} {translations.course_reviews})</span>
+                                    <span className="font-bold text-lg">
+                                        {Number(course.average_rating) > 0
+                                            ? course.average_rating.toFixed(1)
+                                            : (translations.course_no_rating_yet || "New Course")}
+                                    </span>
+                                    {Number(course.average_rating) > 0 && (
+                                        <span className="text-slate-400">({course.reviews_count} {translations.course_reviews})</span>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Users className="size-5 text-primary" />
@@ -345,7 +351,11 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                 <div className="space-y-12 animate-in fade-in duration-500">
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 dark:border-slate-800 pb-8">
                                         <div className="space-y-1">
-                                            <h3 className="text-4xl font-black">{course.average_rating.toFixed(1)}</h3>
+                                            <h3 className="text-4xl font-black">
+                                                {Number(course.average_rating) > 0
+                                                    ? course.average_rating.toFixed(1)
+                                                    : (translations.course_no_rating_yet || "No ratings yet")}
+                                            </h3>
                                             <StarRating rating={course.average_rating} size={6} />
                                             <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest pt-2">{translations.course_rating}</p>
                                         </div>

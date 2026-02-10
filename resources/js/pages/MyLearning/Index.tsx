@@ -7,6 +7,7 @@ import { BookOpen, Clock, BarChart3, ChevronRight, Search, Play, Trophy, Sparkle
 import { Button } from '@/components/ui/button';
 import { route } from 'ziggy-js';
 import { SharedData } from '@/types';
+import { cn } from '@/lib/utils';
 
 export interface PaginatedData<T> {
     data: T[];
@@ -23,7 +24,10 @@ export interface Course {
     description: string;
     thumbnail: string | null;
     thumbnail_url?: string | null;
-    price: string;
+    price: string | number;
+    has_active_discount?: boolean;
+    discounted_price?: number | string;
+    discount_percentage?: number;
 }
 
 interface EnrolledCourse extends Course {
@@ -280,29 +284,71 @@ export default function MyLearningIndex({ auth, enrolledCourses, recentlyViewed,
                         </div>
 
                         <div className="relative">
-                            <h2 className="text-3xl font-bold mb-8">{translations.recommended_for_you || "Recommended for you"}</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+                                <h2 className="text-3xl font-bold tracking-tight">{translations.recommended_for_you || "Recommended for you"}</h2>
+                                {recommendations.some(c => c.has_active_discount) && (
+                                    <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-2xl animate-in fade-in zoom-in duration-500">
+                                        <Sparkles className="h-4 w-4 text-amber-500 animate-pulse" />
+                                        <span className="text-amber-500 font-black text-xs uppercase tracking-[0.2em]">{translations.special_offer_banner || "Exclusive Offers Active!"}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className={cn(
+                                "grid gap-8",
+                                recommendations.length === 1 ? "max-w-xl mx-auto grid-cols-1" :
+                                    recommendations.length === 2 ? "max-w-4xl mx-auto grid-cols-1 md:grid-cols-2" :
+                                        "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+                            )}>
                                 {recommendations.map((course) => (
                                     <Link key={course.id} href={route('courses.show', course.slug)} className="group">
-                                        <Card className="h-full border-none shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 rounded-2xl">
-                                            <div className="aspect-video overflow-hidden rounded-t-2xl">
-                                                <img
-                                                    src={course.thumbnail_url || course.thumbnail || '/images/default-thumbnail.jpg'}
-                                                    alt={course.title}
-                                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                />
-                                            </div>
-                                            <CardContent className="p-4">
-                                                <h5 className="font-bold line-clamp-2 group-hover:text-primary transition-colors">{course.localized_title || course.title}</h5>
-                                                <div className="mt-4 flex items-center justify-between">
-                                                    <span className="text-primary font-bold">
-                                                        USD {course.price ? parseFloat(course.price).toFixed(2) : '0.00'}
-                                                    </span>
-                                                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-                                                        <ChevronRight className={`h-4 w-4 ${isRtl ? 'rotate-180' : ''}`} />
-                                                    </div>
+                                        <Card className="h-full border border-white/5 bg-neutral-900/40 backdrop-blur-xl shadow-2xl transition-all duration-500 group-hover:shadow-primary/20 group-hover:-translate-y-2 group-hover:border-primary/30 rounded-[2rem] overflow-hidden relative">
+                                            {/* Premium Glow Effect */}
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-500" />
+
+                                            <div className="relative">
+                                                <div className="relative aspect-video overflow-hidden rounded-t-[2rem]">
+                                                    <img
+                                                        src={course.thumbnail_url || course.thumbnail || '/images/default-thumbnail.jpg'}
+                                                        alt={course.title}
+                                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                    />
+                                                    {course.has_active_discount && (
+                                                        <div className="absolute top-4 right-4 bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-xl animate-in slide-in-from-top-2">
+                                                            {course.discount_percentage}% {translations.cart_off || 'OFF'}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            </CardContent>
+                                                <CardContent className="p-6">
+                                                    <h5 className="font-bold text-xl line-clamp-2 group-hover:text-primary transition-colors min-h-[3.5rem] leading-tight">{course.localized_title || course.title}</h5>
+                                                    <div className="mt-6 flex flex-col gap-3">
+                                                        <div className="flex items-center gap-3">
+                                                            {course.has_active_discount ? (
+                                                                <div className="flex flex-col">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="text-2xl font-black text-white">
+                                                                            {translations.course_price_currency || 'USD'} {Number(course.discounted_price).toFixed(2)}
+                                                                        </span>
+                                                                        <span className="text-xs text-white line-through opacity-70">
+                                                                            {Number(course.price).toFixed(2)}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <span className="text-2xl font-black text-white">
+                                                                    {translations.course_price_currency || 'USD'} {course.price ? parseFloat(String(course.price)).toFixed(2) : '0.00'}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex items-center justify-between border-t border-white/10 pt-4 mt-2">
+                                                            <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{course.has_active_discount ? (translations.limited_time || "Limited Time Offer") : (translations.course_price_label || "Best Value")}</span>
+                                                            <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(var(--primary),0.4)]">
+                                                                <ChevronRight className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${isRtl ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </div>
                                         </Card>
                                     </Link>
                                 ))}

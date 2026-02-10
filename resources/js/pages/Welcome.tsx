@@ -17,7 +17,8 @@ import {
     Zap,
     Building2,
     Briefcase,
-    Ruler
+    Ruler,
+    Sparkles
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -28,7 +29,7 @@ import {
     AccordionItem,
     AccordionTrigger
 } from "@/components/ui/accordion";
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { route } from 'ziggy-js';
 import { cn } from '@/lib/utils';
 import PublicLayout from '@/layouts/PublicLayout';
@@ -284,7 +285,11 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
                                     </div>
                                     <div className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 border border-amber-500/20">
                                         <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-                                        <span className="text-xs font-bold text-amber-600">{course.average_rating.toFixed(1)}</span>
+                                        <span className="text-xs font-bold text-amber-600">
+                                            {Number(course.average_rating) > 0
+                                                ? Number(course.average_rating).toFixed(1)
+                                                : (translations.course_card_new || "New")}
+                                        </span>
                                     </div>
                                 </div>
 
@@ -343,16 +348,17 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
     )
 };
 
-const StatsSection = () => {
+const StatsSection = ({ newlyAddedCount }: { newlyAddedCount: number }) => {
     const { translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
     const isRtl = locale === 'ar';
     return (
         <section className="bg-secondary py-20" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:gap-8">
+                <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:gap-8">
                     <StatItem icon={Building2} label={translations.stats_years_experience || "Years Experience"} value="14+" />
                     <StatItem icon={CheckCircle2} label={translations.stats_projects_executed || "Projects Executed"} value="200+" />
                     <StatItem icon={BookOpen} label={translations.stats_specialized_courses || "Specialized Courses"} value="2" />
+                    <StatItem icon={Sparkles} label={translations.course_new_badge || "Newly Added"} value={String(newlyAddedCount)} />
                 </div>
             </div>
         </section>
@@ -514,10 +520,15 @@ export default function Welcome(props: WelcomeProps) {
             ? Object.values(props.featuredCourses).flat().slice(0, 8)
             : props.featuredCourses[featuredCategory.id] ?? [];
 
+    const newlyAddedCount = useMemo(() => {
+        const allCourses = Object.values(props.featuredCourses).flat();
+        return allCourses.filter(course => (Number(course.average_rating) || 0) === 0).length;
+    }, [props.featuredCourses]);
+
     return (
         <PublicLayout title="Learn Anything Online">
             <HeroSection {...props} />
-            <StatsSection />
+            <StatsSection newlyAddedCount={newlyAddedCount} />
             <CourseExplorer
                 {...props}
                 selectedCategorySlug={selectedCategorySlug}

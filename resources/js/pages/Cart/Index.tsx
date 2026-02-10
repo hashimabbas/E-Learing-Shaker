@@ -73,8 +73,8 @@ export default function CartIndex({ cart }: CartIndexProps) {
         });
     };
 
-    const cartTotal = cart.items.reduce((sum, item) => sum + item.price_at_purchase * item.quantity, 0);
-    const originalTotal = cart.items.reduce((sum, item) => sum + (item.course.price || item.price_at_purchase) * item.quantity, 0);
+    const cartTotal = cart.items.reduce((sum, item) => sum + Number(item.price_at_purchase) * Number(item.quantity), 0);
+    const originalTotal = cart.items.reduce((sum, item) => sum + (Number(item.course.price) || Number(item.price_at_purchase)) * Number(item.quantity), 0);
     const totalSavings = originalTotal - cartTotal;
 
     return (
@@ -122,18 +122,18 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                                             <p className="text-sm text-muted-foreground">{translations.cart_by || "By"} {item.course.instructor?.name || 'Expert Instructor'}</p>
                                                             <div className="flex items-center gap-1 mt-1 text-sm font-medium">
                                                                 <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                                                                <span>{item.course.average_rating ? item.course.average_rating.toFixed(1) : '4.8'}</span>
+                                                                <span>{item.course.average_rating ? Number(item.course.average_rating).toFixed(1) : '4.8'}</span>
                                                                 <span className="text-muted-foreground font-normal">(1,234 {translations.cart_ratings || "ratings"})</span>
                                                             </div>
                                                         </div>
                                                         <div className={cn("shrink-0", isRtl ? "text-left" : "text-right")}>
                                                             <div className="text-2xl font-black text-primary">
-                                                                {(item.price_at_purchase).toFixed(2)} {translations.course_price_currency || 'USD'}
+                                                                {Number(item.price_at_purchase).toFixed(2)} {translations.course_price_currency || 'USD'}
                                                             </div>
                                                             {item.course.has_active_discount && (
                                                                 <>
                                                                     <div className="text-sm text-muted-foreground line-through">
-                                                                        {(item.course.price).toFixed(2)} {translations.course_price_currency || 'USD'}
+                                                                        {Number(item.course.price).toFixed(2)} {translations.course_price_currency || 'USD'}
                                                                     </div>
                                                                     <Badge variant="outline" className="mt-2 text-green-600 border-green-200 bg-green-50">
                                                                         {item.course.discount_percentage}% {translations.cart_off || "Off"}
@@ -178,11 +178,11 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                             <div className="space-y-4">
                                                 <div className="flex justify-between text-muted-foreground">
                                                     <span>{translations.cart_original_price || "Original Price"}</span>
-                                                    <span className="line-through">{originalTotal.toFixed(2)} {translations.course_price_currency || 'USD'}</span>
+                                                    <span className="line-through">{Number(originalTotal).toFixed(2)} {translations.course_price_currency || 'USD'}</span>
                                                 </div>
                                                 <div className="flex justify-between text-green-600 font-medium">
                                                     <span>{translations.cart_platform_discount || "Platform Discount"}</span>
-                                                    <span>-{totalSavings.toFixed(2)} {translations.course_price_currency || 'USD'}</span>
+                                                    <span>-{Number(totalSavings).toFixed(2)} {translations.course_price_currency || 'USD'}</span>
                                                 </div>
                                                 <Separator />
                                                 <div className="flex justify-between items-end">
@@ -191,7 +191,7 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                                         <p className="text-xs text-muted-foreground">{translations.cart_including_taxes || "Including all taxes"}</p>
                                                     </div>
                                                     <div className="text-4xl font-black text-primary tracking-tight">
-                                                        {cartTotal.toFixed(2)} {translations.course_price_currency || 'USD'}
+                                                        {Number(cartTotal).toFixed(2)} {translations.course_price_currency || 'USD'}
                                                     </div>
                                                 </div>
                                             </div>

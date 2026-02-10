@@ -129,28 +129,32 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-3 gap-4 lg:gap-8">
+                <div className="grid grid-cols-2 gap-4 lg:gap-8">
                     <div className="bg-white/5 border border-white/10 p-5 rounded-3xl group/stat hover:bg-white/10 transition-colors">
                         <div className="bg-yellow-500/10 w-10 h-10 flex items-center justify-center rounded-xl mb-3 group-hover/stat:scale-110 transition-transform">
                             <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
                         </div>
-                        <div className="text-2xl font-black text-white">4.9</div>
+                        <div className={cn("font-black text-white", Number(course.average_rating) > 0 ? "text-2xl" : "text-sm pt-2")}>
+                            {Number(course.average_rating) > 0
+                                ? Number(course.average_rating).toFixed(1)
+                                : (translations.course_new_badge || "Newly Added")}
+                        </div>
                         <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest">{translations.courses_index_rating_label || "Rating"}</div>
                     </div>
 
-                    <div className="bg-white/5 border border-white/10 p-5 rounded-3xl group/stat hover:bg-white/10 transition-colors">
+                    {/* <div className="bg-white/5 border border-white/10 p-5 rounded-3xl group/stat hover:bg-white/10 transition-colors">
                         <div className="bg-blue-500/10 w-10 h-10 flex items-center justify-center rounded-xl mb-3 group-hover/stat:scale-110 transition-transform">
                             <Users className="h-5 w-5 text-blue-500" />
                         </div>
                         <div className="text-2xl font-black text-white">2k+</div>
                         <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest">{translations.courses_index_students_label || "Active"}</div>
-                    </div>
+                    </div> */}
 
                     <div className="bg-white/5 border border-white/10 p-5 rounded-3xl group/stat hover:bg-white/10 transition-colors">
                         <div className="bg-primary/10 w-10 h-10 flex items-center justify-center rounded-xl mb-3 group-hover/stat:scale-110 transition-transform">
                             <Clock className="h-5 w-5 text-primary" />
                         </div>
-                        <div className="text-2xl font-black text-white">12h</div>
+                        <div className="text-2xl font-black text-white">4h</div>
                         <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest">{translations.courses_index_duration_label || "Length"}</div>
                     </div>
                 </div>
@@ -158,16 +162,16 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
                 {/* Price & CTA */}
                 <div className="flex items-center gap-6 pt-6">
                     <div className="flex-shrink-0">
-                        <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">{translations.courses_index_price_label || "Investment"}</div>
+                        <div className="text-xs font-bold text-white uppercase tracking-widest mb-1">{translations.courses_index_price_label || "Investment"}</div>
                         <div className="text-4xl font-black text-white flex items-baseline gap-2">
                             {course.has_active_discount ? (
                                 <>
-                                    <span className="text-primary">
+                                    <span className="text-white">
                                         {Number(course.discounted_price) > 0
                                             ? <>{parseFloat(String(course.discounted_price)).toFixed(1)} <span className="text-lg font-bold opacity-60 uppercase">{translations.course_price_currency || 'USD'}</span></>
-                                            : <span className="text-emerald-500">{translations.course_price_free || 'FREE'}</span>}
+                                            : <span className="text-white">{translations.course_price_free || 'FREE'}</span>}
                                     </span>
-                                    <span className="text-xl font-bold text-neutral-500 line-through opacity-50">
+                                    <span className="text-xl font-bold text-white line-through ">
                                         {parseFloat(course.price.toString()).toFixed(1)}
                                     </span>
                                 </>
@@ -264,7 +268,11 @@ const CompactCourseCard = ({ course, translations, isRtl }: { course: Course, tr
                 )}
                 <div className="flex items-center gap-1">
                     <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                    <span className="text-xs font-black text-white">4.9</span>
+                    <span className="text-[10px] font-black text-white px-2">
+                        {Number(course.average_rating) > 0
+                            ? Number(course.average_rating).toFixed(1)
+                            : (translations.course_card_new || "New")}
+                    </span>
                 </div>
             </div>
 
@@ -299,6 +307,16 @@ export default function CoursesIndex({
     const isRtl = locale === 'ar';
 
     const [search, setSearch] = useState('');
+
+    const overallRating = useMemo(() => {
+        if (courses.length === 0) return "5.0";
+        const sum = courses.reduce((acc, course) => acc + (Number(course.average_rating) || 0), 0);
+        return (sum / courses.length).toFixed(1);
+    }, [courses]);
+
+    const newlyAddedCount = useMemo(() => {
+        return courses.filter(course => (Number(course.average_rating) || 0) === 0).length;
+    }, [courses]);
 
     const filteredCourses = useMemo(() => {
         return courses.filter(course =>
@@ -369,12 +387,15 @@ export default function CoursesIndex({
                                     <div className="text-4xl lg:text-5xl font-black text-white">{courses.length}</div>
                                     <div className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.3em]">{translations.courses_index_stat_courses || "Programs"}</div>
                                 </div>
+
+
+
                                 <div className="space-y-1">
-                                    <div className="text-4xl lg:text-5xl font-black text-white">2k+</div>
-                                    <div className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.3em]">{translations.courses_index_stat_students || "Graduates"}</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="text-4xl lg:text-5xl font-black text-white">4.9/5</div>
+                                    <div className={cn("font-black text-white transition-all", parseFloat(overallRating) > 0 ? "text-4xl lg:text-5xl" : "text-sm lg:text-base pt-2")}>
+                                        {parseFloat(overallRating) > 0
+                                            ? `${overallRating}/5`
+                                            : (translations.courses_index_no_ratings_yet || "Awaiting first reviews")}
+                                    </div>
                                     <div className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.3em]">{translations.courses_index_stat_rating || "Satisfaction"}</div>
                                 </div>
                             </div>

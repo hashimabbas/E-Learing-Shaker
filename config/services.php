@@ -51,4 +51,12 @@ return [
     'video' => [
         'streaming_method' => env('VIDEO_STREAMING_METHOD', 'php'),
     ],
+
+    'bunny' => [
+        'enabled' => env('BUNNY_CDN_ENABLED', false),
+        'domain' => env('BUNNY_CDN_DOMAIN'),
+        'token_key' => env('BUNNY_CDN_TOKEN_KEY'),
+        'origin_secret' => env('BUNNY_ORIGIN_SECRET'),
+    ],
 ];
+

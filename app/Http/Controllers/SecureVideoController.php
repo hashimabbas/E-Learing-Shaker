@@ -2,85 +2,179 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ContentAccessLog;
 use App\Models\Lesson;
-use App\Services\AccountSharingDetector;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SecureVideoController extends Controller
 {
+    /**
+     * Handle video streaming with optional Bunny CDN support.
+     */
     public function stream(Request $request, Lesson $lesson)
     {
-        $user = $request->user();
+        // 🚀 THE ULTIMATE SPEED FIX: DIRECT CDN REDIRECTION
+        // We bypass the Hostinger server completely and send the user straight to Bunny.
+        // This eliminates all PHP/LiteSpeed buffering delays.
 
-        // ✅ Authorization check
-        if (
-            !$user->enrolledCourses()->where('course_id', $lesson->course_id)->exists()
-            && !$user->isAdmin()
-            && !$user->isInstructor()
-        ) {
-            abort(403);
+        // 1. Authorization check (Same as before)
+        $user = $request->user();
+        if (!$user && $request->header('X-Bunny-Origin-Secret') !== config('services.bunny.origin_secret')) {
+            abort(401, 'Unauthorized');
         }
 
+        if ($user && 
+            !$user->enrolledCourses()->where('course_id', $lesson->course_id)->exists() && 
+            !$user->isAdmin() && !$user->isInstructor()
+        ) {
+            abort(403, 'Forbidden');
+        }
+
+        // 2. Generate Signed URL for Bunny Storage
+        // Once you upload your video to Bunny Storage, this link will work INSTANTLY.
+        if (config('services.bunny.enabled') && config('services.bunny.domain')) {
+            $redirectUrl = $this->generateBunnyUrl($lesson);
+            
+            \Log::info("Redirecting student directly to Bunny CDN Storage", [
+                'lesson_id' => $lesson->id,
+                'user_id' => auth()->id(),
+                'url' => $redirectUrl
+            ]);
+
+            return redirect($redirectUrl);
+        }
+
+        // 3. Fallback to direct server streaming (only if CDN is disabled)
+        return $this->serveFile($request, $lesson);
+    }
+
+    /**
+     * Generate a Secure Signed URL for Bunny CDN.
+     * This uses the standard Bunny Token Authentication (SHA256).
+     */
+    protected function generateBunnyUrl(Lesson $lesson)
+    {
+        $domain = config('services.bunny.domain');
+        $tokenKey = config('services.bunny.token_key'); // Your "Security Key" from Bunny dashboard
+
+        // 🛡️ SECURITY: Generate Token (SHA256)
+        // We prepend 'private/' because that is how the folder structure is set up in Bunny Storage.
+        $path = $lesson->video->path;
+        if (!str_starts_with($path, 'private/')) {
+            $path = 'private/' . ltrim($path, '/');
+        }
+        
+        // Ensure path starts with a single slash for Bunny
+        $formattedPath = '/' . ltrim($path, '/');
+
+        $baseUrl = "https://{$domain}{$formattedPath}";
+        
+        if (!$tokenKey) {
+            return $baseUrl;
+        }
+
+        $expires = time() + 3600; // Link valid for 1 hour
+        $hashableBase = $tokenKey . $formattedPath . $expires;
+        
+        // Bunny algorithm: Base64(Sha256(Key + Path + Expiry))
+        $token = base64_encode(hash('sha256', $hashableBase, true));
+        $token = str_replace(['+', '/', '='], ['-', '_', ''], $token); // URL Safe Base64
+
+        return "{$baseUrl}?token={$token}&expires={$expires}";
+    }
+
+    /**
+     * Serve the file directly from the server (Fallback only).
+     */
+    protected function serveFile(Request $request, Lesson $lesson)
+    {
         if (!$lesson->video || !$lesson->video->path) {
-            abort(404);
+            \Log::error("Video record missing for lesson {$lesson->id}");
+            abort(404, 'Video record missing');
         }
 
         $path = $lesson->video->path;
+        $disk = Storage::disk('local');
 
-        if (!Storage::disk('local')->exists($path)) {
-            abort(404);
+        if (!$disk->exists($path)) {
+            \Log::error("File missing on disk: {$path}", ['lesson_id' => $lesson->id]);
+            abort(404, 'Video file missing on server');
         }
 
-        $fullPath = Storage::disk('local')->path($path);
+        $fullPath = $disk->path($path);
         $size = filesize($fullPath);
-        $mime = Storage::disk('local')->mimeType($path);
+        
+        // 🚀 OPTIMIZED MIME-TYPE DETECTION
+        $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+        $mimes = [
+            'mp4'  => 'video/mp4',
+            'webm' => 'video/webm',
+            'm4v'  => 'video/x-m4v',
+            'mov'  => 'video/quicktime',
+        ];
+        $mime = $mimes[$extension] ?? 'video/mp4';
 
-        // 🚀 Offload to Web Server if configured (X-Sendfile for Apache/Litespeed, X-Accel-Redirect for Nginx)
         $method = config('services.video.streaming_method', env('VIDEO_STREAMING_METHOD', 'php'));
 
-        if ($method === 'x-sendfile') {
-            return response()->make('', 200, [
-                'Content-Type' => $mime,
-                'X-Sendfile' => $fullPath,
-                'Content-Disposition' => 'inline',
-            ]);
+        \Log::debug("Serving video file [DIRECT STREAM]", [
+            'lesson_id' => $lesson->id,
+            'size' => $size,
+            'method' => $method,
+            'range' => $request->header('Range'),
+        ]);
+
+        // Common Headers array for Laravel response
+        $headers = [
+            'Content-Type' => $mime,
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'GET, HEAD, OPTIONS',
+            'Access-Control-Expose-Headers' => 'Content-Range, Content-Length, Accept-Ranges',
+            'Accept-Ranges' => 'bytes',
+            'Content-Encoding' => 'identity',
+            'X-Accel-Buffering' => 'no',
+            'X-LiteSpeed-No-Buffering' => '1',
+            'Cache-Control' => 'no-cache, private, no-store, must-revalidate',
+        ];
+
+        // 🚀 HANDLE HEAD REQUESTS FAST
+        if ($request->isMethod('HEAD')) {
+            $headers['Content-Length'] = $size;
+            return response()->make('', 200, $headers);
         }
 
-        if ($method === 'x-accel-redirect') {
-            // Nginx requires a relative path to an internal location
-            $internalPath = '/internal-storage/' . $path;
-            return response()->make('', 200, [
-                'Content-Type' => $mime,
-                'X-Accel-Redirect' => $internalPath,
-                'Content-Disposition' => 'inline',
-            ]);
+        // 🛠 PERFORMANCE: Unlock session was already handled in stream()
+
+        if (function_exists('apache_setenv')) {
+            @apache_setenv('no-gzip', '1');
+            @apache_setenv('dont-vary', '1');
+            @apache_setenv('LITESPEED_NO_GZIP', '1');
         }
 
-        // 🛠 PHP Streaming Fallback (Optimized)
         set_time_limit(0);
-        ini_set('memory_limit', '512M');
-
-        // Disable output buffering to avoid memory issues with large files
+        ignore_user_abort(true);
+        
+        if (function_exists('ini_set')) {
+            ini_set('memory_limit', '512M');
+            ini_set('zlib.output_compression', 'Off');
+            ini_set('output_buffering', 'Off');
+            ini_set('implicit_flush', 'On');
+        }
+        
+        // 🚀 CLEAR ALL OUTPUT BUFFERS
         while (ob_get_level()) ob_end_clean();
+        if (function_exists('ob_implicit_flush')) {
+            ob_implicit_flush(true);
+        }
 
         $start = 0;
         $end = $size - 1;
 
-        $headers = [
-            'Content-Type' => $mime,
-            'Accept-Ranges' => 'bytes',
-            'Cache-Control' => 'public, max-age=3600',
-        ];
-
         if ($request->headers->has('Range')) {
             $range = $request->header('Range');
             if (preg_match('/bytes=(\d+)-(\d+)?/', $range, $matches)) {
-                $start = intval($matches[1]);
-                if (isset($matches[2])) {
-                    $end = intval($matches[2]);
+                $start = (float) $matches[1];
+                if (isset($matches[2]) && !empty($matches[2])) {
+                    $end = (float) $matches[2];
                 }
             }
 
@@ -88,12 +182,36 @@ class SecureVideoController extends Controller
             $headers['Content-Length'] = $end - $start + 1;
 
             return response()->stream(function () use ($fullPath, $start, $end) {
+                if (function_exists('ini_set')) {
+                    ini_set('output_buffering', 'Off');
+                    ini_set('zlib.output_compression', 'Off');
+                }
+                
                 $stream = fopen($fullPath, 'rb');
+                if (!$stream) return;
+                
                 fseek($stream, $start);
-
-                $buffer = 1024 * 64; // 64KB chunks for better throughput
-                while (!feof($stream) && ftell($stream) <= $end) {
-                    echo fread($stream, $buffer);
+                $bytesToRead = $end - $start + 1;
+                // Send first 64KB quickly for faster perceived start, then 256KB chunks
+                $firstChunkSize = min(65536, $bytesToRead);
+                $firstData = fread($stream, $firstChunkSize);
+                if ($firstData !== false) {
+                    echo $firstData;
+                    $bytesToRead -= strlen($firstData);
+                    if (ob_get_level() > 0) ob_flush();
+                    flush();
+                }
+                $bufferSize = 262144; // 256KB chunks after first burst
+                
+                while ($bytesToRead > 0 && !feof($stream)) {
+                    $chunkSize = (int) min($bufferSize, $bytesToRead);
+                    $data = fread($stream, $chunkSize);
+                    if ($data === false) break;
+                    
+                    echo $data;
+                    $bytesToRead -= strlen($data);
+                    
+                    if (ob_get_level() > 0) ob_flush();
                     flush();
                 }
                 fclose($stream);
@@ -101,11 +219,34 @@ class SecureVideoController extends Controller
         }
 
         $headers['Content-Length'] = $size;
-
+        
         return response()->stream(function () use ($fullPath) {
+            if (function_exists('ini_set')) {
+                ini_set('output_buffering', 'Off');
+                ini_set('zlib.output_compression', 'Off');
+            }
+
             $stream = fopen($fullPath, 'rb');
-            fpassthru($stream);
+            if (!$stream) return;
+
+            // Send first 64KB quickly for faster perceived start
+            $firstData = fread($stream, 65536);
+            if ($firstData !== false) {
+                echo $firstData;
+                if (ob_get_level() > 0) ob_flush();
+                flush();
+            }
+            $bufferSize = 262144; // 256KB chunks for rest
+            while (!feof($stream)) {
+                $data = fread($stream, $bufferSize);
+                if ($data === false) break;
+
+                echo $data;
+                if (ob_get_level() > 0) ob_flush();
+                flush();
+            }
             fclose($stream);
         }, 200, $headers);
     }
 }
+

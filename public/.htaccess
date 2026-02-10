@@ -1,3 +1,16 @@
+# 🚀 PERFORMANCE FIXES
+<IfModule mod_headers.c>
+    # Disable buffering for the video route
+    SetEnvIf Request_URI "^/secure/video/" no-gzip=1
+    SetEnvIf Request_URI "^/secure/video/" LITESPEED_NO_GZIP=1
+    
+    <If "%{REQUEST_URI} =~ m|^/secure/video/|">
+        Header set X-LiteSpeed-No-Buffering "1"
+        Header set X-Accel-Buffering "no"
+        Header set Cache-Control "no-cache, private, no-store, must-revalidate"
+    </If>
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

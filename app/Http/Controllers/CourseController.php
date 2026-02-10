@@ -226,7 +226,7 @@ class CourseController extends Controller
 
             // secure video
             if ($lesson->type === 'video' && $lesson->video && $lesson->video->path) {
-                $lessonArray['secure_video_url'] = $this->generateSignedResourceUrl($lesson->video->path, 5);
+                $lessonArray['secure_video_url'] = route('secure.video', $lesson->id);
             } else {
                 $lessonArray['secure_video_url'] = null;
             }

@@ -18,7 +18,8 @@ import {
     ChevronDown,
     Menu,
     X,
-    ClipboardCheck
+    ClipboardCheck,
+    Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MovingWatermark } from '@/components/moving-watermark';
@@ -51,6 +52,7 @@ export default function CoursePlayerIndex({
     const [resumeTime, setResumeTime] = useState<number | null>(null);
     const [autoResume, setAutoResume] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isVideoLoading, setIsVideoLoading] = useState(true);
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const hasAutoResumedRef = useRef(false);
@@ -71,6 +73,7 @@ export default function CoursePlayerIndex({
         setLastSavedTime(0);
         setShowResumePrompt(false);
         setResumeTime(null);
+        setIsVideoLoading(true);
     }, [currentLesson.id]);
 
     useEffect(() => {
@@ -194,13 +197,26 @@ export default function CoursePlayerIndex({
                                         key={currentLesson.id}
                                         ref={videoRef}
                                         src={currentLesson.secure_video_url ?? ''}
+                                        preload="auto"
                                         controls
                                         controlsList="nodownload"
                                         onTimeUpdate={handleVideoTimeUpdate}
                                         poster={course.thumbnail || ''}
                                         className="w-full h-full object-contain"
                                         onEnded={() => setVideoHasFinished(true)}
+                                        onLoadStart={() => setIsVideoLoading(true)}
+                                        onWaiting={() => setIsVideoLoading(true)}
+                                        onCanPlay={() => setIsVideoLoading(false)}
+                                        onCanPlayThrough={() => setIsVideoLoading(false)}
+                                        onError={() => setIsVideoLoading(false)}
                                     />
+                                    {isVideoLoading && (
+                                        <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-30 gap-4">
+                                            <Loader2 className="size-12 text-white animate-spin" />
+                                            <p className="text-white/90 text-sm font-medium">Loading video…</p>
+                                            <p className="text-white/60 text-xs">This may take a moment on shared hosting</p>
+                                        </div>
+                                    )}
                                     {showResumePrompt && resumeTime !== null && (
                                         <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-40">
                                             <Card className="max-w-xs border-none bg-slate-900 text-white shadow-2xl">
