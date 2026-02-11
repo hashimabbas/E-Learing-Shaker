@@ -32,7 +32,7 @@ import { cn, isSameUrl, resolveUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Menu, Search, ShoppingCart } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
@@ -186,11 +186,24 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
+                            <Link
+                                href={route('cart.index')}
+                                className="group relative mr-2 flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                            >
+                                <ShoppingCart className="size-5 opacity-80 group-hover:opacity-100" />
+                                {page.props.cart_count > 0 && (
+                                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-slate-900">
+                                        {page.props.cart_count}
+                                    </span>
+                                )}
+                            </Link>
+
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 className="group h-9 w-9 cursor-pointer"
                             >
+
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100" />
                             </Button>
                             <div className="hidden lg:flex">

@@ -79,6 +79,8 @@ class HandleInertiaRequests extends Middleware
             'notifications' => $user
                 ? $user->unreadNotifications()->get(['id', 'data', 'created_at'])
                 : [],
+            'cart_count' => $user && $user->cart ? $user->cart->items()->count() : 0,
         ];
+
     }
 }

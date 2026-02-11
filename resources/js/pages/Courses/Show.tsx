@@ -172,22 +172,31 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
         }
     };
 
+    const [processing, setProcessing] = useState(false);
+
     const handleEnrollOrPurchase = () => {
         if (!auth.user) { router.get(route('login')); return; }
         const price = Number(course.price);
 
         if (isNaN(price) || price === 0) {
+            setProcessing(true);
             router.post(route('courses.enroll.free', { course: course.slug }), {}, {
-                onSuccess: () => toast.success(translations.enrollment_success)
+                onSuccess: () => toast.success(translations.enrollment_success),
+                onFinish: () => setProcessing(false)
             });
             return;
         }
 
+        setProcessing(true);
         router.post(route('cart.store', { course: course.slug }), {}, {
             preserveScroll: true,
-            onSuccess: () => toast.success(translations.added_to_cart)
+            onSuccess: () => {
+                toast.success(translations.added_to_cart);
+            },
+            onFinish: () => setProcessing(false)
         });
     };
+
 
     return (
         <AppLayout>
@@ -512,11 +521,11 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                             )
                                         ) : (
                                             <>
-                                                <Button size="lg" className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30" onClick={handleEnrollOrPurchase}>
+                                                <Button size="lg" disabled={processing} className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30" onClick={handleEnrollOrPurchase}>
                                                     {Number(course.price) > 0 ? (
                                                         <>
-                                                            <ShoppingCart className="mr-3 size-6" />
-                                                            {translations.subscribe_now}
+                                                            <ShoppingCart className={cn("mr-3 size-6", processing && "animate-bounce")} />
+                                                            {processing ? translations.processing || 'Processing...' : translations.subscribe_now}
                                                         </>
                                                     ) : (
                                                         <>
@@ -525,6 +534,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                         </>
                                                     )}
                                                 </Button>
+
                                                 <Button size="lg" variant="outline" className="w-full h-14 rounded-2xl font-bold border-slate-200 dark:border-slate-800" onClick={handleWishlistToggle}>
                                                     <Heart className={cn("mr-3 size-6 transition-all", inWishlist ? "fill-red-500 text-red-500 scale-110" : "")} />
                                                     {inWishlist ? translations.wishlisted : translations.add_to_wishlist}

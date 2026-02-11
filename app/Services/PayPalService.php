@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class PayPalService
@@ -35,6 +36,11 @@ class PayPalService
             return $response->json()['access_token'];
         }
 
+        Log::error('PayPal Authentication Failed', [
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
+
         throw new Exception('PayPal Authentication Failed: ' . $response->body());
     }
 
@@ -51,7 +57,9 @@ class PayPalService
                 'purchase_units' => [
                     [
                         'reference_id' => $order->order_number,
+                        'custom_id' => $order->order_number,
                         'amount' => [
+                            'currency_code' => $order->currency ?? 'USD',
                             'value' => number_format($order->total_amount, 2, '.', ''),
                         ],
                     ],
@@ -65,8 +73,18 @@ class PayPalService
             ]);
 
         if ($response->successful()) {
+            Log::info('PayPal Order Created', [
+                'order_number' => $order->order_number,
+                'paypal_order_id' => $response->json()['id'] ?? 'N/A'
+            ]);
             return $response->json();
         }
+
+        Log::error('PayPal Create Order Failed', [
+            'order_number' => $order->order_number,
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
 
         throw new Exception('PayPal Create Order Failed: ' . $response->body());
     }
@@ -79,12 +97,25 @@ class PayPalService
         $accessToken = $this->getAccessToken();
 
         $response = Http::withToken($accessToken)
-            ->withHeaders(['Content-Type' => 'application/json'])
-            ->post("{$this->baseUrl}/v2/checkout/orders/{$paypalOrderId}/capture");
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+                'PayPal-Request-Id' => uniqid(),
+            ])
+            ->post("{$this->baseUrl}/v2/checkout/orders/{$paypalOrderId}/capture", (object)[]);
 
         if ($response->successful()) {
+            Log::info('PayPal Order Captured Successfully', [
+                'paypal_order_id' => $paypalOrderId,
+                'response' => $response->json()
+            ]);
             return $response->json();
         }
+
+        Log::error('PayPal Capture Failed', [
+            'paypal_order_id' => $paypalOrderId,
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
 
         throw new Exception('PayPal Capture Failed: ' . $response->body());
     }

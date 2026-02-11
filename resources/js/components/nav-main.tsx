@@ -48,14 +48,26 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     {item.icon && (
                                         <item.icon className={cn(
                                             "size-5 transition-all duration-300 group-hover/item:scale-110",
-                                            isActive ? "text-primary" : "text-muted-foreground/70 group-hover/item:text-sidebar-accent-foreground"
+                                            isActive ? "text-primary" : (item.isHighlighted ? "text-red-500 animate-pulse" : "text-muted-foreground/70 group-hover/item:text-sidebar-accent-foreground")
                                         )} />
                                     )}
-                                    <span className="truncate group-hover/item:translate-x-1 transition-transform duration-300">{item.title}</span>
+                                    <span className={cn(
+                                        "truncate group-hover/item:translate-x-1 transition-transform duration-300",
+                                        item.isHighlighted && !isActive && "text-red-600 font-black"
+                                    )}>
+                                        {item.title}
+                                    </span>
+
+                                    {item.badge !== undefined && item.badge > 0 && (
+                                        <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-1 ring-white/10">
+                                            {item.badge}
+                                        </span>
+                                    )}
 
                                     {/* Hover Shine Effect - subtle and theme-aware */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover/item:animate-[shimmer_1.5s_infinite]" />
                                 </Link>
+
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     );

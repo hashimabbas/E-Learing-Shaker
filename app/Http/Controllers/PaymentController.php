@@ -15,6 +15,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log; // NEW USE
 use App\Notifications\NewPurchaseNotification; // NEW USE
 use App\Models\User; // NEW USE
 
@@ -140,23 +141,39 @@ class PaymentController extends Controller
         // Ideally we should save the PayPal Order ID. But the `token` IS the order ID in v2 checkout flow mostly.
         
         try {
+            Log::info('PayPal Return Callback Initiated', [
+                'token' => $token,
+                'payer_id' => $request->query('PayerID')
+            ]);
+
             // Capture the order
             $captureData = $this->payPalService->captureOrder($token);
 
+            Log::debug('PayPal Capture Data Received', [
+                'capture_data' => $captureData
+            ]);
+
             if ($captureData['status'] === 'COMPLETED') {
-                // Find order by... wait, we need to know which order this is.
-                // The `reference_id` in createOrder was set to our order_number.
-                // createOrder response usually returns the ID, we should have saved it? 
-                // Alternatively, we can use the reference ID returned in capture response?
                 // Let's rely on finding the order via the reference_id in the purchase_units of capture response.
                 
-                $orderNumber = $captureData['purchase_units'][0]['reference_id'] ?? null;
+                $orderNumber = $captureData['purchase_units'][0]['reference_id'] ?? 
+                               $captureData['purchase_units'][0]['custom_id'] ?? null;
                 
+                Log::info('Attempting to find order for PayPal capture', [
+                    'order_number_from_paypal' => $orderNumber
+                ]);
+
                 if (!$orderNumber) {
+                     // Try to find by custom_id if we added it (we haven't yet, but good to check)
                      throw new Exception('Order reference not found in PayPal response.');
                 }
 
-                $order = Order::where('order_number', $orderNumber)->firstOrFail();
+                $order = Order::where('order_number', $orderNumber)->first();
+
+                if (!$order) {
+                    Log::error('Order not found after PayPal capture', ['order_number' => $orderNumber]);
+                    throw new Exception("Order {$orderNumber} not found.");
+                }
 
                 if ($order->status !== 'paid') {
                     $order->update([
@@ -180,11 +197,20 @@ class PaymentController extends Controller
                      // Email User
                      // Mail::to($order->user->email)->send(new OrderConfirmationMail($order));
                      Mail::to($order->user->email)->send(new \App\Mail\CourseEnrolledLocked($order));
+
+                     Log::info('PayPal Order Processed Successfully', [
+                         'order_number' => $order->order_number,
+                         'status' => $order->status
+                     ]);
                 }
 
                 return redirect()->route('orders.show', $order->order_number)->with('success', 'PayPal Payment successful!');
             }
         } catch (Exception $e) {
+            Log::error('PayPal Return Callback Error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->route('cart.index')->with('error', 'PayPal Payment failed: ' . $e->getMessage());
         }
 

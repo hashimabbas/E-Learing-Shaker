@@ -20,15 +20,20 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    badge?: number;
+    isHighlighted?: boolean;
 }
+
 
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    cart_count: number;
     [key: string]: unknown;
 }
+
 
 export interface User {
     id: number;
@@ -75,7 +80,12 @@ export interface Course {
     learning_outcomes?: string[];
     learning_outcomes_ar?: string[];
     localized_learning_outcomes?: string[];
+    has_active_discount?: boolean;
+    discounted_price?: string | number;
+    discount_percentage?: number;
+    preview_video_url?: string;
 }
+
 
 export interface Lesson {
     id: number;

@@ -191,8 +191,8 @@ I specialize in executing modern interior and exterior finishing works, with a h
     "about_role_verdan_position" => "Co-founder & CEO",
     "about_role_verdan_desc" => "A company specializing in providing luxury doors for homes and doors with innovative and distinctive solutions of high quality.",
     "about_role_100creators_title" => "100Creators",
-    "about_role_100creators_position" => "Chief Executive",
-    "about_role_100creators_desc" => "Designing and executing modern decoration works through managing a comprehensive team that includes engineers, workshop supervisors, technicians, and craftsmen.",
+    "about_role_100creators_position" => "Head of the Execution Department",
+    "about_role_100creators_desc" => "Executing modern decoration works through managing a comprehensive team that includes engineers, workshop supervisors, technicians, and craftsmen.",
     
     // Principles Section
     "about_principles_title" => "Principles I Work By",
