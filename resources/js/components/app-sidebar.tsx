@@ -37,8 +37,11 @@ import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
+import { useCart } from '@/hooks/use-cart';
+
 export function AppSidebar() {
-    const { auth, translations, locale, cart_count } = (usePage().props as unknown) as SharedData & { translations: any, locale: string, cart_count: number };
+    const { auth, translations, locale, cart_count: inertiaCartCount } = (usePage().props as unknown) as SharedData & { translations: any, locale: string, cart_count: number };
+    const { count: cartCount } = useCart();
 
     const user = auth.user;
     const { state, isMobile, setOpenMobile } = useSidebar();
@@ -60,8 +63,8 @@ export function AppSidebar() {
             title: translations.shopping_cart,
             href: route('cart.index'),
             icon: ShoppingCart,
-            badge: cart_count,
-            isHighlighted: cart_count > 0,
+            badge: cartCount,
+            isHighlighted: cartCount > 0,
         },
 
 

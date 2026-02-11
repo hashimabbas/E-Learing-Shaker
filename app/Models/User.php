@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Illuminate\Database\Eloquent\Relations\HasMany; // Add this
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -104,6 +105,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Course::class, 'course_user', 'user_id', 'course_id')
                     ->withTimestamps()
                     ->withPivot('progress', 'completed_at'); // If you add pivot data
+    }
+
+    public function cart(): HasOne
+    {
+        return $this->hasOne(Cart::class);
     }
 
     // Define relationship for wishlisted courses

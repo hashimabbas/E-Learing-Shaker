@@ -45,6 +45,7 @@ interface Course {
     has_active_discount?: boolean;
     discounted_price?: number | string;
     discount_percentage?: number;
+    is_enrolled?: boolean;
 }
 
 interface Props {
@@ -130,7 +131,7 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-4 lg:gap-8">
-                    <div className="bg-white/5 border border-white/10 p-5 rounded-3xl group/stat hover:bg-white/10 transition-colors">
+                    {/* <div className="bg-white/5 border border-white/10 p-5 rounded-3xl group/stat hover:bg-white/10 transition-colors">
                         <div className="bg-yellow-500/10 w-10 h-10 flex items-center justify-center rounded-xl mb-3 group-hover/stat:scale-110 transition-transform">
                             <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
                         </div>
@@ -140,7 +141,7 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
                                 : (translations.course_new_badge || "Newly Added")}
                         </div>
                         <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest">{translations.courses_index_rating_label || "Rating"}</div>
-                    </div>
+                    </div> */}
 
                     {/* <div className="bg-white/5 border border-white/10 p-5 rounded-3xl group/stat hover:bg-white/10 transition-colors">
                         <div className="bg-blue-500/10 w-10 h-10 flex items-center justify-center rounded-xl mb-3 group-hover/stat:scale-110 transition-transform">
@@ -154,7 +155,7 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
                         <div className="bg-primary/10 w-10 h-10 flex items-center justify-center rounded-xl mb-3 group-hover/stat:scale-110 transition-transform">
                             <Clock className="h-5 w-5 text-primary" />
                         </div>
-                        <div className="text-2xl font-black text-white">4h</div>
+                        <div className="text-2xl font-black text-white">4.5h</div>
                         <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest">{translations.courses_index_duration_label || "Length"}</div>
                     </div>
                 </div>
@@ -182,12 +183,19 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
                             )}
                         </div>
                     </div>
-                    <Link href={route('courses.show', { course: course.slug })} className="flex-1">
+                    <Link href={course.is_enrolled ? route('student.resume-course', { course: course.slug }) : route('courses.show', { course: course.slug })} className="flex-1">
                         <Button
                             size="lg"
-                            className="w-full h-16 rounded-[1.25rem] bg-primary text-white font-black text-xl shadow-[0_20px_50px_rgba(62,56,56,0.3)] hover:bg-yellow-500 hover:shadow-primary/40 hover:-translate-y-1 transition-all group/btn border-none"
+                            className={cn(
+                                "w-full h-16 rounded-[1.25rem] font-black text-xl shadow-[0_20px_50px_rgba(62,56,56,0.3)] hover:-translate-y-1 transition-all group/btn border-none",
+                                course.is_enrolled
+                                    ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                                    : "bg-primary text-white hover:bg-yellow-500 hover:shadow-primary/40"
+                            )}
                         >
-                            {translations.courses_index_enroll_now || "Get Started"}
+                            {course.is_enrolled
+                                ? (translations.courses_index_continue_learning || "Continue Learning")
+                                : (translations.courses_index_enroll_now || "Get Started")}
                             <ArrowRight className={cn("ml-3 h-6 w-6 group-hover/btn:translate-x-2 transition-transform", isRtl && "rotate-180 group-hover/btn:-translate-x-2")} />
                         </Button>
                     </Link>
@@ -251,8 +259,14 @@ const CompactCourseCard = ({ course, translations, isRtl }: { course: Course, tr
             </div>
 
             {/* Hover Play Overlay */}
-            <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-[1px]">
-                <div className="bg-white text-primary rounded-full p-4 transform scale-50 group-hover:scale-100 transition-all duration-500 shadow-2xl">
+            <div className={cn(
+                "absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-[1px]",
+                course.is_enrolled ? "bg-emerald-500/20" : "bg-primary/20"
+            )}>
+                <div className={cn(
+                    "rounded-full p-4 transform scale-50 group-hover:scale-100 transition-all duration-500 shadow-2xl",
+                    course.is_enrolled ? "bg-white text-emerald-600" : "bg-white text-primary"
+                )}>
                     <PlayCircle className="h-8 w-8 fill-current" />
                 </div>
             </div>
@@ -289,7 +303,12 @@ const CompactCourseCard = ({ course, translations, isRtl }: { course: Course, tr
                         <span className="text-sm font-bold text-neutral-400">{course.instructor.name}</span>
                     </div>
                 )}
-                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all group-hover:text-black text-white/40">
+                <div className={cn(
+                    "w-10 h-10 rounded-full border border-white/10 flex items-center justify-center transition-all group-hover:text-black",
+                    course.is_enrolled
+                        ? "group-hover:bg-emerald-500 group-hover:border-emerald-500 text-emerald-500/40"
+                        : "group-hover:bg-primary group-hover:border-primary text-white/40"
+                )}>
                     <ArrowRight className={cn("h-5 w-5", isRtl && "rotate-180")} />
                 </div>
             </div>
@@ -378,25 +397,6 @@ export default function CoursesIndex({
                                             onChange={(e) => setSearch(e.target.value)}
                                         />
                                     </div>
-                                </div>
-                            </div>
-
-                            {/* Trust Stats */}
-                            <div className="grid grid-cols-3 gap-8 pt-12 animate-in fade-in slide-in-from-bottom-20 duration-700 delay-500">
-                                <div className="space-y-1">
-                                    <div className="text-4xl lg:text-5xl font-black text-white">{courses.length}</div>
-                                    <div className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.3em]">{translations.courses_index_stat_courses || "Programs"}</div>
-                                </div>
-
-
-
-                                <div className="space-y-1">
-                                    <div className={cn("font-black text-white transition-all", parseFloat(overallRating) > 0 ? "text-4xl lg:text-5xl" : "text-sm lg:text-base pt-2")}>
-                                        {parseFloat(overallRating) > 0
-                                            ? `${overallRating}/5`
-                                            : (translations.courses_index_no_ratings_yet || "Awaiting first reviews")}
-                                    </div>
-                                    <div className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.3em]">{translations.courses_index_stat_rating || "Satisfaction"}</div>
                                 </div>
                             </div>
                         </div>

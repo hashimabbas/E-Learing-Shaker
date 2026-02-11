@@ -72,6 +72,13 @@ class CourseController extends Controller
     // }
     public function index(Request $request): Response
     {
+        $user = auth()->user();
+        $enrolledCourseIds = [];
+        
+        if ($user) {
+            $enrolledCourseIds = $user->enrolledCourses()->pluck('course_id')->toArray();
+        }
+
         $courses = Course::query()
             ->where('is_published', true)
             ->with([
@@ -79,14 +86,18 @@ class CourseController extends Controller
                 'category:id,name,slug'
             ])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($course) use ($enrolledCourseIds) {
+                $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
+                return $course;
+            });
 
         $categories = Cache::rememberForever('course_categories', function () {
             return Category::select('id', 'name', 'slug')->get();
         });
 
         return Inertia::render('Courses/Index', [
-            'courses' => $courses, // 👈 ARRAY
+            'courses' => $courses,
             'categories' => $categories,
         ]);
     }

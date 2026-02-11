@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { type SharedData } from '@/types';
 import { cn } from '@/lib/utils';
+import { useCart } from '@/hooks/use-cart';
 
 interface CartItem {
     id: number;
@@ -54,10 +55,18 @@ export default function CartIndex({ cart }: CartIndexProps) {
 
     useFlash();
     const [paymentMethod, setPaymentMethod] = React.useState(gateways?.thawani ? 'Thawani' : 'PayPal');
+    const { decrement, updateOptimistically } = useCart();
+
+    // Sync global cart count whenever this page loads with fresh server data
+    React.useEffect(() => {
+        updateOptimistically(cart.items.length);
+    }, [cart.items.length]);
+
     const [processing, setProcessing] = React.useState(false);
 
     const handleRemove = (slug: string) => {
         if (confirm(translations.cart_remove_confirm || 'Are you sure you want to remove this course from your cart?')) {
+            decrement(); // Optimistic update
             router.delete(route('cart.destroy', slug), {
                 preserveScroll: true,
             });

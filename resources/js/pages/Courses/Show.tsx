@@ -19,11 +19,13 @@ import {
     Users,
     Unlock,
     PlayCircle,
-    Award
+    Award,
+    BookOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { route } from 'ziggy-js';
+import { useCart } from '@/hooks/use-cart';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/input-error';
@@ -173,6 +175,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
     };
 
     const [processing, setProcessing] = useState(false);
+    const { increment } = useCart();
 
     const handleEnrollOrPurchase = () => {
         if (!auth.user) { router.get(route('login')); return; }
@@ -188,6 +191,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
         }
 
         setProcessing(true);
+        increment(); // Optimistic update
         router.post(route('cart.store', { course: course.slug }), {}, {
             preserveScroll: true,
             onSuccess: () => {
@@ -228,26 +232,9 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                             <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
                                 {locale === 'ar' ? course.title_ar : course.title}
                             </h1>
-                            <p className="text-lg leading-8 text-slate-300 mb-8 line-clamp-3 font-medium">
-                                {locale === 'ar' ? course.description_ar : course.description}
-                            </p>
 
                             <div className="flex flex-wrap items-center gap-8 text-sm">
-                                <div className="flex items-center gap-2">
-                                    <StarRating rating={course.average_rating} size={5} />
-                                    <span className="font-bold text-lg">
-                                        {Number(course.average_rating) > 0
-                                            ? course.average_rating.toFixed(1)
-                                            : (translations.course_no_rating_yet || "New Course")}
-                                    </span>
-                                    {Number(course.average_rating) > 0 && (
-                                        <span className="text-slate-400">({course.reviews_count} {translations.course_reviews})</span>
-                                    )}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Users className="size-5 text-primary" />
-                                    <span className="font-bold">{translations.course_students_count} {translations.course_students}</span>
-                                </div>
+
                                 <div className="text-slate-400">
                                     {translations.course_instructor}: <span className="text-white font-bold underline decoration-primary underline-offset-4">{instructor.name}</span>
                                 </div>
@@ -262,28 +249,67 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                 <div className="lg:grid lg:grid-cols-3 lg:gap-8 items-start">
                     {/* Content Column */}
                     <div className="lg:col-span-2 space-y-8">
-                        {/* TABS NAVIGATION */}
-                        <div className="sticky top-20 z-30 bg-white/40 dark:bg-slate-950/40 backdrop-blur-xl rounded-[2rem] border border-slate-200/50 dark:border-slate-800/50 p-1.5 flex overflow-x-auto scrollbar-hide shadow-2xl shadow-slate-200/20 dark:shadow-none mb-10" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-                            {[
-                                { id: 'description', label: translations.tab_description || 'Description' },
-                                { id: 'curriculum', label: `${translations.tab_curriculum || 'Curriculum'} (${course.lessons.length})` },
-                                { id: 'reviews', label: `${translations.tab_reviews || 'Reviews'} (${course.reviews_count})` },
-                                { id: 'instructor', label: translations.tab_instructor || 'Instructor' },
-                                { id: 'discussions', label: translations.tab_community || 'Community' },
-                            ].map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id as any)}
-                                    className={cn(
-                                        "flex-1 min-w-fit px-8 py-4 rounded-[1.5rem] text-sm font-black transition-all duration-500 whitespace-nowrap tracking-wide",
-                                        activeTab === tab.id
-                                            ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl"
-                                            : "text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
-                                    )}
-                                >
-                                    {tab.label}
-                                </button>
-                            ))}
+                        {/* REDESIGNED PREMIUM TABS NAVIGATION */}
+                        <div className="sticky top-24 z-30 mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+                            <div className="relative group/tabs">
+                                {/* Glow Background */}
+                                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 rounded-[2.5rem] blur-xl opacity-0 group-hover/tabs:opacity-100 transition duration-1000" />
+
+                                <div className="relative bg-slate-950/80 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 p-2 shadow-2xl flex items-center gap-1 overflow-x-auto scrollbar-hide" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                                    {[
+                                        { id: 'description', label: translations.tab_description || 'Description', icon: BookOpen },
+                                        { id: 'curriculum', label: translations.tab_curriculum || 'Curriculum', icon: PlayCircle, count: course.lessons.length },
+                                        { id: 'instructor', label: translations.tab_instructor || 'Instructor', icon: UserIcon },
+                                        { id: 'discussions', label: translations.tab_community || 'Community', icon: MessageCircle },
+                                    ].map((tab) => {
+                                        const isActive = activeTab === tab.id;
+                                        const Icon = tab.icon;
+
+                                        return (
+                                            <button
+                                                key={tab.id}
+                                                onClick={() => setActiveTab(tab.id as any)}
+                                                className={cn(
+                                                    "relative flex items-center gap-3 px-8 py-4 rounded-[2rem] text-sm font-black transition-all duration-500 whitespace-nowrap group animate-in fade-in",
+                                                    isActive
+                                                        ? "text-primary"
+                                                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                                                )}
+                                            >
+                                                {/* Active background indicator */}
+                                                {isActive && (
+                                                    <div className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-[2rem] animate-in zoom-in duration-500" />
+                                                )}
+
+                                                <Icon className={cn(
+                                                    "size-5 transition-all duration-500",
+                                                    isActive ? "text-primary scale-110 rotate-3" : "text-slate-500 group-hover:text-white group-hover:scale-110"
+                                                )} />
+
+                                                <span className="relative z-10 tracking-wide uppercase font-black text-xs">
+                                                    {tab.label}
+                                                </span>
+
+                                                {tab.count !== undefined && (
+                                                    <span className={cn(
+                                                        "ml-1 px-2 py-0.5 rounded-lg text-[10px] font-black border transition-all duration-500",
+                                                        isActive
+                                                            ? "bg-primary text-slate-950 border-primary shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                                                            : "bg-white/5 text-slate-400 border-white/10"
+                                                    )}>
+                                                        {tab.count}
+                                                    </span>
+                                                )}
+
+                                                {/* Bottom Active Glow */}
+                                                {isActive && (
+                                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-primary blur-sm rounded-full opacity-50" />
+                                                )}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         </div>
 
                         {/* TAB CONTENT */}
