@@ -40,7 +40,7 @@ export default function Register() {
                                     autoComplete="name"
                                     name="name"
                                     placeholder={translations.auth_name_placeholder || "Full name"}
-                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
+                                    className="h-12 rounded-xl border-slate-200 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError
                                     message={errors.name}
@@ -58,7 +58,7 @@ export default function Register() {
                                     autoComplete="email"
                                     name="email"
                                     placeholder={translations.auth_email_placeholder || "email@example.com"}
-                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
+                                    className="h-12 rounded-xl border-slate-200 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError message={errors.email} />
                             </div>
@@ -73,7 +73,7 @@ export default function Register() {
                                     autoComplete="new-password"
                                     name="password"
                                     placeholder={translations.auth_password || "Password"}
-                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
+                                    className="h-12 rounded-xl border-slate-200 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -90,7 +90,7 @@ export default function Register() {
                                     autoComplete="new-password"
                                     name="password_confirmation"
                                     placeholder={translations.auth_confirm_password || "Confirm password"}
-                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
+                                    className="h-12 rounded-xl border-slate-200 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError
                                     message={errors.password_confirmation}
@@ -99,7 +99,7 @@ export default function Register() {
 
                             <Button
                                 type="submit"
-                                className="mt-2 h-12 w-full rounded-xl text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-100"
+                                className="mt-2 h-12 w-full rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 text-base font-bold text-black border-none shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 transition-all hover:scale-[1.02] active:scale-100"
                                 tabIndex={5}
                                 data-test="register-user-button"
                             >
@@ -108,7 +108,7 @@ export default function Register() {
                             </Button>
                         </div>
 
-                        <div className="text-center text-sm text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div className="text-center text-sm text-slate-500 pt-4 border-t border-slate-100">
                             {translations.auth_already_have_account || "Already have an account?"}{' '}
                             <TextLink href={login()} className="font-bold text-primary hover:underline" tabIndex={6}>
                                 {translations.auth_login_btn || "Log in"}

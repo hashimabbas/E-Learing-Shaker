@@ -104,7 +104,7 @@ export default function TwoFactorChallenge() {
 
                             <Button
                                 type="submit"
-                                className="w-full"
+                                className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 text-base font-bold text-black border-none shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 transition-all hover:scale-[1.02] active:scale-100"
                                 disabled={processing}
                             >
                                 Continue
@@ -114,7 +114,7 @@ export default function TwoFactorChallenge() {
                                 <span>or you can </span>
                                 <button
                                     type="button"
-                                    className="cursor-pointer text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                    className="cursor-pointer text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current!"
                                     onClick={() =>
                                         toggleRecoveryMode(clearErrors)
                                     }

@@ -223,7 +223,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                 </div>
 
-                <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="relative z-10 mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
                     <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
                         <div className="max-w-2xl">
                             <div className="flex items-center gap-3 mb-6">
@@ -251,17 +251,17 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
             </div>
 
             {/* STICKY ENROLLMENT CARD */}
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative -mt-20 sm:-mt-28 md:-mt-32 lg:-mt-48 z-20 pb-12 sm:pb-16 lg:pb-24">
+            <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 relative -mt-20 sm:-mt-28 md:-mt-32 lg:-mt-48 z-20 pb-12 sm:pb-16 lg:pb-24">
                 <div className="lg:grid lg:grid-cols-3 lg:gap-8 items-start">
                     {/* Content Column */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* REDESIGNED PREMIUM TABS NAVIGATION */}
-                        <div className="sticky top-16 sm:top-20 lg:top-24 z-30 mb-6 sm:mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-                            <div className="relative group/tabs">
+                        <div className="sticky top-16 sm:top-20 lg:top-24 z-30 mb-6 sm:mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000 min-w-0">
+                            <div className="relative group/tabs min-w-0">
                                 {/* Glow Background */}
-                                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 rounded-[2.5rem] blur-xl opacity-0 group-hover/tabs:opacity-100 transition duration-1000" />
+                                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 rounded-[2.5rem] blur-xl opacity-0 group-hover/tabs:opacity-100 transition duration-1000 pointer-events-none" />
 
-                                <div className="relative bg-slate-950/80 backdrop-blur-2xl rounded-2xl sm:rounded-[2.5rem] border border-white/10 p-1.5 sm:p-2 shadow-2xl flex items-center gap-1 overflow-x-auto scrollbar-hide -mx-1 sm:mx-0" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                                <div className="relative bg-slate-950/80 backdrop-blur-2xl rounded-xl sm:rounded-[2.5rem] border border-white/10 p-1 sm:p-2 shadow-2xl flex items-center gap-0.5 sm:gap-1 overflow-x-auto overflow-y-hidden scrollbar-hide -mx-3 sm:mx-0 px-3 sm:px-0 sm:pl-0 snap-x snap-mandatory [-webkit-overflow-scrolling:touch]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                                     {[
                                         { id: 'description', label: translations.tab_description || 'Description', icon: BookOpen },
                                         { id: 'curriculum', label: translations.tab_curriculum || 'Curriculum', icon: PlayCircle, count: course.lessons.length },
@@ -276,7 +276,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                 key={tab.id}
                                                 onClick={() => setActiveTab(tab.id as any)}
                                                 className={cn(
-                                                    "relative flex items-center gap-2 sm:gap-3 px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-xl sm:rounded-[2rem] text-xs sm:text-sm font-black transition-all duration-500 whitespace-nowrap group animate-in fade-in shrink-0",
+                                                    "relative flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-6 md:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-[2rem] text-[11px] sm:text-sm font-black transition-all duration-500 whitespace-nowrap group animate-in fade-in shrink-0 snap-start",
                                                     isActive
                                                         ? "text-primary"
                                                         : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -288,17 +288,17 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                 )}
 
                                                 <Icon className={cn(
-                                                    "size-5 transition-all duration-500",
-                                                    isActive ? "text-primary scale-110 rotate-3" : "text-slate-500 group-hover:text-white group-hover:scale-110"
+                                                    "size-4 sm:size-5 transition-all duration-500 shrink-0",
+                                                    isActive ? "text-primary scale-110 sm:rotate-3" : "text-slate-500 group-hover:text-white group-hover:scale-110"
                                                 )} />
 
-                                                <span className="relative z-10 tracking-wide uppercase font-black text-xs">
+                                                <span className="relative z-10 tracking-wide uppercase font-black text-[11px] sm:text-xs truncate max-w-[5rem] sm:max-w-none">
                                                     {tab.label}
                                                 </span>
 
                                                 {tab.count !== undefined && (
                                                     <span className={cn(
-                                                        "ml-1 px-2 py-0.5 rounded-lg text-[10px] font-black border transition-all duration-500",
+                                                        "ml-0.5 sm:ml-1 px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] font-black border transition-all duration-500 shrink-0",
                                                         isActive
                                                             ? "bg-primary text-slate-950 border-primary shadow-[0_0_15px_rgba(255,255,255,0.3)]"
                                                             : "bg-white/5 text-slate-400 border-white/10"
@@ -319,16 +319,16 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                         </div>
 
                         {/* TAB CONTENT */}
-                        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm rounded-2xl sm:rounded-[3rem] border border-slate-200/50 dark:border-slate-800/50 p-5 sm:p-8 md:p-10 shadow-sm" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm rounded-xl sm:rounded-[3rem] border border-slate-200/50 dark:border-slate-800/50 p-4 sm:p-8 md:p-10 shadow-sm" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                             {activeTab === 'description' && (
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                                     <div className="mb-16">
-                                        <div className="flex items-center justify-between mb-10">
-                                            <h3 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                                        <div className="flex items-center justify-between gap-3 mb-6 sm:mb-10">
+                                            <h3 className="text-lg sm:text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white min-w-0">
                                                 {translations.what_you_will_master || "What you will master"}
                                             </h3>
-                                            <div className="size-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-                                                <PlayCircle className="size-6" />
+                                            <div className="size-10 sm:size-12 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                                                <PlayCircle className="size-5 sm:size-6" />
                                             </div>
                                         </div>
 
@@ -365,7 +365,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                     <div className="space-y-2">
                                         {course.lessons.map((lesson: Lesson, index: number) => (
                                             <div key={lesson.id} className="group flex items-center justify-between p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all duration-300">
-                                                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                                                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                                                     <div className="size-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                                                         {lesson.type === 'video' ? <Video className="size-5" /> : <FileText className="size-5" />}
                                                     </div>
@@ -426,8 +426,8 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                                     <div className="space-y-8">
                                         {course.reviews.map((review: any) => (
-                                            <div key={review.id} className="relative pl-10 sm:pl-12">
-                                                <div className="absolute left-0 top-0 size-8 sm:size-10 rounded-xl sm:rounded-2xl overflow-hidden ring-2 ring-slate-100 bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                                            <div key={review.id} className={cn("relative", locale === 'ar' ? "pr-10 sm:pr-12 pl-0" : "pl-10 sm:pl-12 pr-0")}>
+                                                <div className={cn("absolute top-0 size-8 sm:size-10 rounded-xl sm:rounded-2xl overflow-hidden ring-2 ring-slate-100 bg-slate-200 dark:bg-slate-800 flex items-center justify-center", locale === 'ar' ? "right-0" : "left-0")}>
                                                     {review.user.avatar ? <img src={review.user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="size-5 text-slate-400" />}
                                                 </div>
                                                 <div className="flex items-center justify-between mb-2">
@@ -523,8 +523,8 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                     <div className="absolute inset-0 ring-1 ring-inset ring-black/10 transition-all group-hover:ring-black/0 pointer-events-none" />
                                 </div>
 
-                                <div className="p-5 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
-                                    <div className="flex items-baseline gap-3">
+                                <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-8">
+                                    <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
                                         {course.has_active_discount ? (
                                             <>
                                                 <span className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white">

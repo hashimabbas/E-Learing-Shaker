@@ -34,11 +34,11 @@ export default function ConfirmPassword() {
 
                         <div className="flex items-center">
                             <Button
-                                className="w-full"
+                                className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 text-base font-bold text-black border-none shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 transition-all hover:scale-[1.02] active:scale-100"
                                 disabled={processing}
                                 data-test="confirm-password-button"
                             >
-                                {processing && <Spinner />}
+                                {processing && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
                                 Confirm password
                             </Button>
                         </div>

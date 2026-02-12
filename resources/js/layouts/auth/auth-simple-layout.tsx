@@ -21,7 +21,7 @@ export default function AuthSimpleLayout({
 
     return (
         <div
-            className="flex min-h-svh flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-950 p-6 md:p-10 relative overflow-hidden"
+            className="flex min-h-svh flex-col items-center justify-center bg-slate-50/50 p-6 md:p-10 relative overflow-hidden"
             dir={isRtl ? "rtl" : "ltr"}
         >
             {/* Background Decorative Elements */}
@@ -37,13 +37,13 @@ export default function AuthSimpleLayout({
                             href={welcome()}
                             className="flex flex-col items-center gap-2 group transition-transform hover:scale-105"
                         >
-                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white dark:bg-slate-900 shadow-xl shadow-primary/10 border border-slate-100 dark:border-slate-800 transition-all group-hover:shadow-primary/20">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-xl shadow-primary/10 border border-slate-100 transition-all group-hover:shadow-primary/20">
                                 <AppLogoIcon className="size-10 fill-primary" />
                             </div>
                         </Link>
 
                         <div className="space-y-2 text-center">
-                            <h1 className="text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400">
+                            <h1 className="text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-slate-900 via-slate-800 to-slate-600">
                                 {title}
                             </h1>
                             <p className="text-sm text-muted-foreground max-w-xs mx-auto">
@@ -52,7 +52,7 @@ export default function AuthSimpleLayout({
                         </div>
                     </div>
 
-                    <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-none p-8 md:p-10 rounded-3xl">
+                    <div className="bg-white/80 backdrop-blur-xl border border-white shadow-2xl shadow-slate-200/50 p-8 md:p-10 rounded-3xl">
                         {children}
                     </div>
 

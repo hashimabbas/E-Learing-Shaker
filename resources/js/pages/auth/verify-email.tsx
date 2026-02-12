@@ -25,8 +25,8 @@ export default function VerifyEmail({ status }: { status?: string }) {
             <Form {...send.form()} className="space-y-6 text-center">
                 {({ processing }) => (
                     <>
-                        <Button disabled={processing} variant="secondary">
-                            {processing && <Spinner />}
+                        <Button disabled={processing} className="h-12 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 text-base font-bold text-black border-none shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 transition-all hover:scale-[1.02] active:scale-100">
+                            {processing && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
                             Resend verification email
                         </Button>
 

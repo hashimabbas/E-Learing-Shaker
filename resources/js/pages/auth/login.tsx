@@ -51,7 +51,7 @@ export default function Login({
                                     tabIndex={1}
                                     autoComplete="email"
                                     placeholder={translations.auth_email_placeholder || "email@example.com"}
-                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
+                                    className="h-12 rounded-xl border-slate-200 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError message={errors.email} />
                             </div>
@@ -77,7 +77,7 @@ export default function Login({
                                     tabIndex={2}
                                     autoComplete="current-password"
                                     placeholder={translations.auth_password || "Password"}
-                                    className="h-12 rounded-xl border-slate-200 dark:border-slate-800 focus:ring-primary focus:border-primary transition-all"
+                                    className="h-12 rounded-xl border-slate-200 focus:ring-primary focus:border-primary transition-all"
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -89,12 +89,12 @@ export default function Login({
                                     tabIndex={3}
                                     className="h-5 w-5 rounded-md border-slate-300 text-primary focus:ring-primary"
                                 />
-                                <Label htmlFor="remember" className="text-sm font-medium text-slate-600 dark:text-slate-400 cursor-pointer">{translations.auth_remember_me || "Remember me"}</Label>
+                                <Label htmlFor="remember" className="text-sm font-medium text-slate-600 cursor-pointer">{translations.auth_remember_me || "Remember me"}</Label>
                             </div>
 
                             <Button
                                 type="submit"
-                                className="mt-4 h-12 w-full rounded-xl text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-100"
+                                className="mt-4 h-12 w-full rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 text-base font-bold text-black border-none shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 transition-all hover:scale-[1.02] active:scale-100"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
@@ -105,7 +105,7 @@ export default function Login({
                         </div>
 
                         {canRegister && (
-                            <div className="text-center text-sm text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <div className="text-center text-sm text-slate-500 pt-4 border-t border-slate-100">
                                 {translations.auth_no_account || "Don't have an account?"}{' '}
                                 <TextLink href={register()} className="font-bold text-primary hover:underline" tabIndex={5}>
                                     {translations.auth_signup || "Sign up"}

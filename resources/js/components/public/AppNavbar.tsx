@@ -72,17 +72,17 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                     </Link>
                                 ))}
                             </div>
-                            <div className="shrink-0 w-full min-w-0 p-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-border/50 bg-muted/30 dark:text-white">
+                            <div className="shrink-0 w-full min-w-0 p-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-border/50 bg-muted/30 ">
                                 {!auth.user ? (
                                     <div className="flex flex-col gap-3 w-full min-w-0">
                                         <Link href={login().url} onClick={() => setOpen(false)} className="w-full min-w-0">
-                                            <Button variant="outline" className="w-full min-w-0 h-12 rounded-xl font-bold ">
+                                            <Button className="w-full min-w-0 h-12 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 font-bold text-black border-none hover:brightness-110 shadow-lg shadow-amber-500/30 transition-all hover:scale-105">
                                                 {translations.nav_login || "Log In"}
                                             </Button>
                                         </Link>
                                         {canRegister && (
                                             <Link href={register().url} onClick={() => setOpen(false)} className="w-full min-w-0">
-                                                <Button className="w-full min-w-0 h-12 rounded-xl font-black shadow-lg shadow-primary/20 ">
+                                                <Button className="w-full min-w-0 h-12 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 font-bold text-black border-none hover:brightness-110 shadow-lg shadow-amber-500/30 transition-all hover:scale-105">
                                                     {translations.nav_signup || "Sign Up"}
                                                 </Button>
                                             </Link>
@@ -152,13 +152,13 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                     ) : (
                         <div className="hidden md:flex items-center gap-2">
                             <Link href={login().url}>
-                                <Button variant="ghost" size="sm" className="font-bold rounded-xl px-4 h-11 text-[#3e3838] hover:bg-black/5">
+                                <Button size="sm" className="font-bold rounded-2xl px-6 h-11 bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 text-black border-none hover:brightness-110 shadow-lg shadow-amber-500/30 transition-all hover:scale-105">
                                     {translations.nav_login || "Log In"}
                                 </Button>
                             </Link>
                             {canRegister && (
                                 <Link href={register().url}>
-                                    <Button size="sm" className="font-black rounded-xl px-6 h-11 shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+                                    <Button size="sm" className="font-bold rounded-2xl px-6 h-11 bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 text-black border-none hover:brightness-110 shadow-lg shadow-amber-500/30 transition-all hover:scale-105">
                                         {translations.nav_signup || "Sign Up"}
                                     </Button>
                                 </Link>
