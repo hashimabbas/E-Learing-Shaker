@@ -116,23 +116,41 @@ class Course extends Model
         return $this->hasMany(Discussion::class);
     }
 
-    // --- Accessor for Thumbnail URL ---
     public function getThumbnailUrlAttribute(): ?string
     {
-        return $this->getCdnUrl($this->thumbnail);
+        if (!$this->thumbnail) return null;
+
+        // 1. External URLs are returned as-is
+        if (str_starts_with($this->thumbnail, 'http')) {
+            return $this->thumbnail;
+        }
+
+        // 2. Return absolute path starting with / (domain-agnostic local URL)
+        // This ensures thumbnails are served from local storage/public folder directly.
+        $storageUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($this->thumbnail);
+        return parse_url($storageUrl, PHP_URL_PATH);
     }
 
     public function getPreviewVideoLinkAttribute(): ?string
     {
         if (!$this->preview_video_url) return null;
 
-        // 1. External URLs are returned as-is
+        // 1. External URLs – ensure they have a video extension for CDN (e.g. Bunny)
         if (str_starts_with($this->preview_video_url, 'http')) {
-            return $this->preview_video_url;
+            $url = $this->preview_video_url;
+            $path = parse_url($url, PHP_URL_PATH) ?: '';
+            $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            $videoExts = ['mp4', 'webm', 'm4v', 'mov', 'ogv'];
+            if (!in_array($ext, $videoExts) && !str_ends_with($path, '/')) {
+                $base = strtok($url, '?');
+                $query = parse_url($url, PHP_URL_QUERY);
+                $fragment = parse_url($url, PHP_URL_FRAGMENT);
+                $url = $base . '.mp4' . ($query ? '?' . $query : '') . ($fragment ? '#' . $fragment : '');
+            }
+            return $url;
         }
 
         // 2. Use the secure streaming route for all local/CDN files
-        // This solves symlink issues on shared hosting and supports CDN redirection.
         return route('courses.preview', $this->id);
     }
 

@@ -71,11 +71,15 @@ class SecureVideoController extends Controller
         // 2. Bunny CDN Redirection (Public folder)
         if (config('services.bunny.enabled') && config('services.bunny.domain')) {
             $domain = config('services.bunny.domain');
-            
-            // Replicate Course.php logic: /storage/courses/previews/... -> /public/courses/previews/...
-            // But here $path is just 'courses/previews/...'
+
             $bunnyPath = '/public/' . ltrim($path, '/');
-            
+            // Ensure path has a video extension – Bunny CDN requires exact filename match (e.g. preview.mp4)
+            $ext = strtolower(pathinfo($bunnyPath, PATHINFO_EXTENSION));
+            $videoExts = ['mp4', 'webm', 'm4v', 'mov', 'ogv'];
+            if (!in_array($ext, $videoExts)) {
+                $bunnyPath .= '.mp4';
+            }
+
             return redirect("https://{$domain}{$bunnyPath}");
         }
 
