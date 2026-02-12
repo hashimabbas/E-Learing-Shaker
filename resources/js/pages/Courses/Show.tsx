@@ -115,7 +115,7 @@ function ReviewForm({ courseSlug, hasSubmittedReview }: { courseSlug: string, ha
                 </div>
 
                 <div className="space-y-2">
-                    <Label className="text-sm font-semibold uppercase tracking-wider text-muted-foreground text-foreground">{translations.message_label || 'Message'}</Label>
+                    <Label className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{translations.message_label || 'Message'}</Label>
                     <Textarea
                         placeholder={translations.review_placeholder}
                         value={data.comment}
@@ -160,7 +160,10 @@ const isExternalVideo = (url?: string) => {
 export default function CoursesShow({ course, instructor, isEnrolled, inWishlist, lockedUntil }: CoursesShowProps) {
     const [activeTab, setActiveTab] = useState<'description' | 'curriculum' | 'reviews' | 'instructor' | 'discussions'>('description');
     const { auth, translations, locale } = usePage<SharedData & { translations: any, locale: string }>().props;
-    const outcomes = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
+    const outcomesEn = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
+    const outcomesAr = Array.isArray((course as any).learning_outcomes_ar) ? (course as any).learning_outcomes_ar : [];
+    const outcomes = locale === 'ar' ? outcomesAr : outcomesEn;
+    const outcomesToShow = outcomes.length > 0 ? outcomes : (locale === 'ar' ? outcomesEn : outcomesAr);
     const userHasReviewed = (course as any).user_has_reviewed || false;
 
     const [isScrolled, setIsScrolled] = useState(false);
@@ -212,37 +215,35 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
         <AppLayout>
             <Head title={course.title} />
 
-            {/* PREMIUM HERO SECTION */}
-            <div className="relative overflow-hidden bg-slate-950 text-white pb-24 pt-12 sm:pb-32 sm:pt-16 lg:pb-48 lg:pt-24 border-b border-white/5">
-                <div className="absolute inset-0 z-0">
+            {/* HERO SECTION - Light theme */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-white border-b border-slate-200/80 pb-24 pt-12 sm:pb-32 sm:pt-16 lg:pb-48 lg:pt-24">
+                <div className="absolute inset-0 z-0 opacity-30">
                     <img
                         src="/images/course-details-hero-bg.png"
-                        className="w-full h-full object-cover opacity-60"
+                        className="w-full h-full object-cover"
                         alt=""
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
                     <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
                         <div className="max-w-2xl">
                             <div className="flex items-center gap-3 mb-6">
-                                <span className="inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary ring-1 ring-inset ring-primary/30 uppercase tracking-widest">
+                                <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary ring-1 ring-inset ring-primary/20 uppercase tracking-widest">
                                     {translations.course_license}
                                 </span>
-                                <span className="flex items-center gap-1 text-sm text-slate-300">
+                                <span className="flex items-center gap-1 text-sm text-slate-600">
                                     <Globe className="size-4" /> {translations.course_language}
                                 </span>
                             </div>
 
-                            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight mb-4 sm:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight mb-4 sm:mb-6 text-slate-900">
                                 {locale === 'ar' ? course.title_ar : course.title}
                             </h1>
 
                             <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm">
-
-                                <div className="text-slate-400">
-                                    {translations.course_instructor}: <span className="text-white font-bold underline decoration-primary underline-offset-4">{instructor.name}</span>
+                                <div className="text-slate-600">
+                                    {translations.course_instructor}: <span className="text-slate-900 font-bold underline decoration-primary underline-offset-4">{instructor.name}</span>
                                 </div>
                             </div>
                         </div>
@@ -253,15 +254,15 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
             {/* STICKY ENROLLMENT CARD */}
             <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 relative -mt-20 sm:-mt-28 md:-mt-32 lg:-mt-48 z-20 pb-12 sm:pb-16 lg:pb-24">
                 <div className="lg:grid lg:grid-cols-3 lg:gap-8 items-start">
-                    {/* Content Column */}
-                    <div className="lg:col-span-2 space-y-8">
+                    {/* Content Column - min-w-0 prevents overflow in LTR/mobile grid */}
+                    <div className="lg:col-span-2 space-y-8 min-w-0">
                         {/* REDESIGNED PREMIUM TABS NAVIGATION */}
                         <div className="sticky top-16 sm:top-20 lg:top-24 z-30 mb-6 sm:mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000 min-w-0">
                             <div className="relative group/tabs min-w-0">
-                                {/* Glow Background */}
-                                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 rounded-[2.5rem] blur-xl opacity-0 group-hover/tabs:opacity-100 transition duration-1000 pointer-events-none" />
+                                {/* Subtle hover glow */}
+                                <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-amber-500/10 to-primary/10 rounded-[2.5rem] blur-xl opacity-0 group-hover/tabs:opacity-100 transition duration-1000 pointer-events-none" />
 
-                                <div className="relative bg-slate-950/80 backdrop-blur-2xl rounded-xl sm:rounded-[2.5rem] border border-white/10 p-1 sm:p-2 shadow-2xl flex items-center gap-0.5 sm:gap-1 overflow-x-auto overflow-y-hidden scrollbar-hide -mx-3 sm:mx-0 px-3 sm:px-0 sm:pl-0 snap-x snap-mandatory [-webkit-overflow-scrolling:touch]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                                <div className="relative bg-white/90 backdrop-blur-xl rounded-xl sm:rounded-[2.5rem] border border-slate-200/80 shadow-lg p-1 sm:p-2 flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-1 min-w-0 w-full max-w-full sm:overflow-x-auto sm:overflow-y-hidden scrollbar-hide -mx-3 sm:mx-0 px-3 sm:px-0 sm:pl-0 sm:snap-x sm:snap-mandatory [-webkit-overflow-scrolling:touch]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                                     {[
                                         { id: 'description', label: translations.tab_description || 'Description', icon: BookOpen },
                                         { id: 'curriculum', label: translations.tab_curriculum || 'Curriculum', icon: PlayCircle, count: course.lessons.length },
@@ -270,6 +271,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                     ].map((tab) => {
                                         const isActive = activeTab === tab.id;
                                         const Icon = tab.icon;
+                                        const mobileLabel = locale === 'ar' ? tab.label : (tab.id === 'description' ? (translations.tab_desc_short || 'Desc') : tab.id === 'curriculum' ? (translations.tab_curr_short || 'Sections') : tab.label);
 
                                         return (
                                             <button
@@ -279,7 +281,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                     "relative flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-6 md:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-[2rem] text-[11px] sm:text-sm font-black transition-all duration-500 whitespace-nowrap group animate-in fade-in shrink-0 snap-start",
                                                     isActive
                                                         ? "text-primary"
-                                                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                                                        : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                                                 )}
                                             >
                                                 {/* Active background indicator */}
@@ -289,19 +291,22 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                                                 <Icon className={cn(
                                                     "size-4 sm:size-5 transition-all duration-500 shrink-0",
-                                                    isActive ? "text-primary scale-110 sm:rotate-3" : "text-slate-500 group-hover:text-white group-hover:scale-110"
+                                                    isActive ? "text-primary scale-110 sm:rotate-3" : "text-slate-400 group-hover:text-slate-700 group-hover:scale-110"
                                                 )} />
 
-                                                <span className="relative z-10 tracking-wide uppercase font-black text-[11px] sm:text-xs truncate max-w-[5rem] sm:max-w-none">
+                                                <span className="relative z-10 tracking-wide uppercase font-black text-[11px] sm:text-xs hidden sm:inline">
                                                     {tab.label}
+                                                </span>
+                                                <span className="relative z-10 tracking-wide uppercase font-black text-[11px] sm:text-xs sm:hidden">
+                                                    {mobileLabel}
                                                 </span>
 
                                                 {tab.count !== undefined && (
                                                     <span className={cn(
                                                         "ml-0.5 sm:ml-1 px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] font-black border transition-all duration-500 shrink-0",
                                                         isActive
-                                                            ? "bg-primary text-slate-950 border-primary shadow-[0_0_15px_rgba(255,255,255,0.3)]"
-                                                            : "bg-white/5 text-slate-400 border-white/10"
+                                                            ? "bg-primary text-white border-primary shadow-sm"
+                                                            : "bg-slate-100 text-slate-500 border-slate-200"
                                                     )}>
                                                         {tab.count}
                                                     </span>
@@ -319,7 +324,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                         </div>
 
                         {/* TAB CONTENT */}
-                        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm rounded-xl sm:rounded-[3rem] border border-slate-200/50 dark:border-slate-800/50 p-4 sm:p-8 md:p-10 shadow-sm" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                        <div className="bg-white backdrop-blur-sm rounded-xl sm:rounded-[3rem] border border-slate-200/80 shadow-sm p-4 sm:p-8 md:p-10 min-w-0" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                             {activeTab === 'description' && (
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                                     <div className="mb-16">
@@ -333,7 +338,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
-                                            {(locale === 'ar' ? (course.learning_outcomes_ar || []) : outcomes).map((outcome: string, index: number) => (
+                                            {outcomesToShow.map((outcome: string, index: number) => (
                                                 <div
                                                     key={index}
                                                     className="flex items-center justify-between p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-[2rem] bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:border-primary/20 hover:bg-white dark:hover:bg-slate-800/40 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none group"
@@ -350,7 +355,10 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                     <Separator className="my-10" />
 
                                     <h3 className="text-xl sm:text-2xl font-black mb-4 sm:mb-6">{translations.course_overview}</h3>
-                                    <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-400 leading-loose">
+                                    <div
+                                        className="prose prose-slate dark:prose-invert max-w-none prose-p:max-w-none prose-p:break-words text-slate-600 dark:text-slate-400 leading-loose min-w-0 w-full"
+                                        style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+                                    >
                                         {locale === 'ar' ? course.description_ar : course.description}
                                     </div>
                                 </div>
@@ -496,8 +504,8 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                     {/* Sidebar Card */}
                     <div className="mt-8 sm:mt-12 lg:mt-0">
                         <div className="sticky top-16 sm:top-20 lg:top-24 space-y-6 animate-in slide-in-from-right-4 duration-700">
-                            <Card className="overflow-hidden border-none shadow-2xl rounded-2xl sm:rounded-[3rem] bg-white dark:bg-slate-900 group">
-                                <div className="relative aspect-video bg-slate-950">
+                            <Card className="overflow-hidden border-none shadow-lg rounded-2xl sm:rounded-[3rem] bg-white border border-slate-200/80 group">
+                                <div className="relative aspect-video bg-slate-100">
                                     {course.preview_video_link ? (
                                         isExternalVideo(course.preview_video_url) ? (
                                             <iframe
@@ -515,12 +523,12 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                             />
                                         )
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-600 group-hover:text-primary transition-colors cursor-pointer">
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 group-hover:text-primary transition-colors cursor-pointer">
                                             <PlayCircle className="size-20 mb-3 animate-pulse" />
                                             <span className="font-black uppercase tracking-widest text-xs">{translations.preview_course}</span>
                                         </div>
                                     )}
-                                    <div className="absolute inset-0 ring-1 ring-inset ring-black/10 transition-all group-hover:ring-black/0 pointer-events-none" />
+                                    <div className="absolute inset-0 ring-1 ring-inset ring-slate-200/50 transition-all pointer-events-none" />
                                 </div>
 
                                 <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-8">
@@ -555,14 +563,14 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                     </p>
                                                 </div>
                                             ) : (
-                                                <Button size="lg" className="w-full h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-black shadow-xl shadow-primary/30" onClick={() => router.get(route('student.resume-course', { course: course.slug }))}>
+                                                <Button size="lg" className="w-full h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-black bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20" onClick={() => router.get(route('student.resume-course', { course: course.slug }))}>
                                                     {translations.continue_masterclass}
                                                     <ArrowRight className="ml-3 size-6" />
                                                 </Button>
                                             )
                                         ) : (
                                             <>
-                                                <Button size="lg" disabled={processing} className="w-full h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-black shadow-xl shadow-primary/30" onClick={handleEnrollOrPurchase}>
+                                                <Button size="lg" disabled={processing} className="w-full h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-black bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20" onClick={handleEnrollOrPurchase}>
                                                     {Number(course.price) > 0 ? (
                                                         <>
                                                             <ShoppingCart className={cn("mr-3 size-6", processing && "animate-bounce")} />
