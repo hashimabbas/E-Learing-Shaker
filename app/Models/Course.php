@@ -139,31 +139,29 @@ class Course extends Model
             return $path;
         }
 
-        // 2. Local fallback/base generation
-        $url = "";
-        if (str_starts_with($path, 'images/')) {
-            $url = asset($path);
-        } else {
-            $url = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
-        }
+        // 2. Generate local path part (e.g. /storage/courses/...)
+        // We use Storage::url() but extract ONLY the path to be domain-agnostic.
+        // This prevents issues if APP_URL is misconfigured as 127.0.0.1 on the server.
+        $storageUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+        $urlPath = parse_url($storageUrl, PHP_URL_PATH);
 
         // 3. CDN Transformation
         if (config('services.bunny.enabled') && config('services.bunny.domain')) {
             $cdnDomain = config('services.bunny.domain');
-            $appUrl = config('app.url');
             
-            // Replace local APP_URL with CDN domain
-            $cdnUrl = str_replace($appUrl, "https://{$cdnDomain}", $url);
-            
-            // Fix potential non-https local URLs being replaced
-            if (!str_starts_with($cdnUrl, 'https://')) {
-                $cdnUrl = str_replace('http://', 'https://', $cdnUrl);
+            // ADJUSTMENT: The user's Bunny CDN setup uses /public/ instead of /storage/
+            // Link: https://shaker-elearning.b-cdn.net/public/courses/previews/...
+            // Laravel Default: /storage/courses/previews/...
+            $finalPath = $urlPath;
+            if (str_starts_with($urlPath, '/storage/')) {
+                $finalPath = '/public' . substr($urlPath, 8);
             }
 
-            return $cdnUrl;
+            return "https://{$cdnDomain}" . $finalPath;
         }
 
-        return $url;
+        // Return absolute path starting with / (domain-agnostic local URL)
+        return $urlPath;
     }
 
     public function getHasActiveDiscountAttribute(): bool
