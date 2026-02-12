@@ -50,13 +50,16 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                 <Menu className="size-6" />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side={isRtl ? "right" : "left"} className="w-[300px] p-0 flex flex-col bg-background/95 backdrop-blur-xl">
-                            <SheetHeader className="p-6 border-b border-border/50 text-left">
-                                <SheetTitle className="font-black text-xl tracking-tight">
+                        <SheetContent
+                            side={isRtl ? "right" : "left"}
+                            className="w-[min(300px,90vw)] max-w-[300px] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-xl gap-0"
+                        >
+                            <SheetHeader className="shrink-0 p-6 pb-4 border-b border-border/50 text-left rtl:text-right">
+                                <SheetTitle className="font-black text-xl tracking-tight pr-10">
                                     {translations.navbar_logo_text || "Shaker Shams"}
                                 </SheetTitle>
                             </SheetHeader>
-                            <div className="flex flex-col gap-2 p-4 pt-6">
+                            <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-2 p-4 pt-6">
                                 {navItems.map((item) => (
                                     <Link
                                         key={item.href}
@@ -68,25 +71,25 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                     </Link>
                                 ))}
                             </div>
-                            <div className="mt-auto p-6 border-t border-border/50 bg-muted/30 dark:text-white">
+                            <div className="shrink-0 w-full min-w-0 p-4 pt-4 border-t border-border/50 bg-muted/30 dark:text-white">
                                 {!auth.user ? (
-                                    <div className="flex flex-col gap-3 bg-primary">
-                                        <Link href={login().url} onClick={() => setOpen(false)}>
-                                            <Button variant="outline" className="w-full h-12 rounded-xl font-bold dark:text-white dark:bg-white">
+                                    <div className="flex flex-col gap-3 w-full min-w-0">
+                                        <Link href={login().url} onClick={() => setOpen(false)} className="w-full min-w-0">
+                                            <Button variant="outline" className="w-full min-w-0 h-12 rounded-xl font-bold dark:text-white dark:bg-white">
                                                 {translations.nav_login || "Log In"}
                                             </Button>
                                         </Link>
                                         {canRegister && (
-                                            <Link href={register().url} onClick={() => setOpen(false)}>
-                                                <Button className="w-full h-12 rounded-xl font-black shadow-lg shadow-primary/20 dark:text-white dark:bg-white">
+                                            <Link href={register().url} onClick={() => setOpen(false)} className="w-full min-w-0">
+                                                <Button className="w-full min-w-0 h-12 rounded-xl font-black shadow-lg shadow-primary/20 dark:text-white dark:bg-white">
                                                     {translations.nav_signup || "Sign Up"}
                                                 </Button>
                                             </Link>
                                         )}
                                     </div>
                                 ) : (
-                                    <Link href={dashboard().url} onClick={() => setOpen(false)}>
-                                        <Button className="w-full h-12 rounded-xl font-black dark:text-white dark:bg-white">
+                                    <Link href={dashboard().url} onClick={() => setOpen(false)} className="w-full min-w-0 block">
+                                        <Button className="w-full min-w-0 h-12 rounded-xl font-black dark:text-white dark:bg-white">
                                             {translations.nav_dashboard || "Go to Dashboard"}
                                         </Button>
                                     </Link>
