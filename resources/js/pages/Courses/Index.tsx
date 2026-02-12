@@ -60,7 +60,7 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
         <div className={cn("absolute top-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] opacity-40 group-hover:opacity-60 transition-opacity duration-1000 animate-pulse", isRtl ? "-left-48" : "-right-48")} />
         <div className={cn("absolute bottom-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse delay-700", isRtl ? "-right-48" : "-left-48")} />
 
-        <div className="relative z-10 grid lg:grid-cols-2 gap-8 p-8 lg:p-14">
+        <div className="relative z-10 grid lg:grid-cols-2 gap-6 sm:gap-8 p-5 sm:p-8 lg:p-14">
             {/* Course Image/Visual */}
             <div className={cn("flex items-center justify-center", isRtl ? "lg:order-2" : "lg:order-1")}>
                 <div className="relative w-full max-w-lg">
@@ -114,7 +114,7 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
 
                 {/* Title */}
                 <div className="space-y-4">
-                    <h2 className="text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight transition-colors">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-[1.1] tracking-tight transition-colors">
                         {course.localized_title || course.title}
                     </h2>
                     {course.instructor?.name && (
@@ -161,7 +161,7 @@ const FeaturedCourseCard = ({ course, translations, isRtl }: { course: Course, t
                 </div>
 
                 {/* Price & CTA */}
-                <div className="flex items-center gap-6 pt-6">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 pt-6">
                     <div className="flex-shrink-0">
                         <div className="text-xs font-bold text-white uppercase tracking-widest mb-1">{translations.courses_index_price_label || "Investment"}</div>
                         <div className="text-4xl font-black text-white flex items-baseline gap-2">
@@ -273,7 +273,7 @@ const CompactCourseCard = ({ course, translations, isRtl }: { course: Course, tr
         </div>
 
         {/* Course Info */}
-        <div className="p-7 flex flex-col flex-1 gap-4">
+        <div className="p-4 sm:p-6 md:p-7 flex flex-col flex-1 gap-4">
             <div className="flex items-center justify-between">
                 {course.category && (
                     <span className="bg-white/5 text-white/60 font-black text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-lg border border-white/5">
@@ -290,7 +290,7 @@ const CompactCourseCard = ({ course, translations, isRtl }: { course: Course, tr
                 </div>
             </div>
 
-            <h3 className="text-2xl font-black text-white line-clamp-2 leading-tight group-hover:text-primary transition-colors min-h-[3.5rem]">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-black text-white line-clamp-2 leading-tight group-hover:text-primary transition-colors min-h-[3rem] sm:min-h-[3.5rem]">
                 {course.localized_title || course.title}
             </h3>
 
@@ -352,7 +352,7 @@ export default function CoursesIndex({
 
             <div className={cn("min-h-screen bg-neutral-950", !isAuth && "pt-16")} dir={isRtl ? "rtl" : "ltr"}>
                 {/* Hero Section */}
-                <section className="relative overflow-hidden pt-20 pb-24 lg:pt-32 lg:pb-32">
+                <section className="relative overflow-hidden pt-16 pb-16 sm:pt-20 sm:pb-24 lg:pt-32 lg:pb-32">
                     {/* Advanced Background Effects */}
                     <div className="absolute inset-0 pointer-events-none">
                         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
@@ -360,7 +360,7 @@ export default function CoursesIndex({
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]" />
                     </div>
 
-                    <div className="container mx-auto px-4 relative z-10 text-center">
+                    <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center">
                         <div className="max-w-4xl mx-auto space-y-10">
                             <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
                                 <TrendingUp className="h-5 w-5 text-primary" />
@@ -370,7 +370,7 @@ export default function CoursesIndex({
                                 <div className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
                             </div>
 
-                            <h1 className="text-6xl lg:text-8xl font-black text-white tracking-tighter leading-[0.95] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-black text-white tracking-tighter leading-[0.95] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
                                 {translations.courses_index_hero_title_prefix || "LEVEL UP YOUR "}
                                 <span className="relative inline-block mt-2">
                                     <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-primary via-amber-400 to-primary">
@@ -380,7 +380,7 @@ export default function CoursesIndex({
                                 </span>
                             </h1>
 
-                            <p className="text-xl lg:text-2xl text-neutral-400 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-700 delay-200">
+                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-neutral-400 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-700 delay-200 px-2">
                                 {translations.courses_index_hero_description || "Join the ranks of elite professionals with our industry-leading mastery programs."}
                             </p>
 
@@ -389,9 +389,9 @@ export default function CoursesIndex({
                                 <div className="group relative">
                                     <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-blue-500/50 rounded-3xl blur opacity-25 group-focus-within:opacity-100 transition duration-500" />
                                     <div className="relative">
-                                        <Search className={cn("absolute top-1/2 -translate-y-1/2 h-6 w-6 text-neutral-500 group-focus-within:text-primary transition-colors", isRtl ? "right-6" : "left-6")} />
+                                        <Search className={cn("absolute top-1/2 -translate-y-1/2 h-5 w-5 sm:h-6 sm:w-6 text-neutral-500 group-focus-within:text-primary transition-colors", isRtl ? "right-4 sm:right-6" : "left-4 sm:left-6")} />
                                         <Input
-                                            className={cn("h-20 bg-neutral-900/80 backdrop-blur-xl border-white/10 rounded-[1.5rem] text-xl text-white placeholder:text-neutral-500 focus:border-primary/50 focus:ring-0 transition-all", isRtl ? "pr-16 pl-8" : "pl-16 pr-8")}
+                                            className={cn("h-14 sm:h-16 md:h-20 bg-neutral-900/80 backdrop-blur-xl border-white/10 rounded-xl sm:rounded-[1.5rem] text-base sm:text-lg md:text-xl text-white placeholder:text-neutral-500 focus:border-primary/50 focus:ring-0 transition-all", isRtl ? "pr-12 sm:pr-16 pl-6 sm:pl-8" : "pl-12 sm:pl-16 pr-6 sm:pr-8")}
                                             placeholder={translations.courses_index_search_placeholder || "What do you want to master today?"}
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
@@ -405,8 +405,8 @@ export default function CoursesIndex({
 
                 {/* Featured Course Section */}
                 {featuredCourse && (
-                    <section className="py-16 bg-neutral-950">
-                        <div className="container mx-auto px-4">
+                    <section className="py-10 sm:py-16 bg-neutral-950">
+                        <div className="container mx-auto px-4 sm:px-6">
                             <FeaturedCourseCard course={featuredCourse} translations={translations} isRtl={isRtl} />
                         </div>
                     </section>
@@ -414,16 +414,16 @@ export default function CoursesIndex({
 
                 {/* Other Courses Section */}
                 {otherCourses.length > 0 && (
-                    <section className="py-16 bg-neutral-900/50">
-                        <div className="container mx-auto px-4">
+                    <section className="py-10 sm:py-16 bg-neutral-900/50">
+                        <div className="container mx-auto px-4 sm:px-6">
                             <div className="mb-12">
-                                <h2 className="text-3xl lg:text-4xl font-black text-white mb-4">
+                                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-4">
                                     {translations.courses_index_more_courses || "More Courses"}
                                 </h2>
                                 <div className={cn("h-1 w-24 bg-gradient-to-r from-primary to-transparent rounded-full", isRtl && "bg-gradient-to-l")} />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                                 {otherCourses.map((course) => (
                                     <CompactCourseCard key={course.id} course={course} translations={translations} isRtl={isRtl} />
                                 ))}

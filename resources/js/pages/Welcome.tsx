@@ -67,12 +67,12 @@ interface WelcomeProps {
 // --- Sub-Components ---
 
 const StatItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string }) => (
-    <div className="group flex flex-col items-center rounded-2xl border border-border/50 bg-background p-8 text-center shadow-sm transition-all hover:border-primary/20 hover:shadow-md">
-        <div className="mb-4 rounded-2xl bg-primary/10 p-4 text-primary transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
-            <Icon className="h-8 w-8" />
+    <div className="group flex flex-col items-center rounded-xl sm:rounded-2xl border border-border/50 bg-background p-4 sm:p-6 md:p-8 text-center shadow-sm transition-all hover:border-primary/20 hover:shadow-md">
+        <div className="mb-2 sm:mb-4 rounded-xl sm:rounded-2xl bg-primary/10 p-3 sm:p-4 text-primary transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+            <Icon className="h-6 w-6 sm:h-8 sm:w-8" />
         </div>
-        <div className="text-4xl font-extrabold tracking-tight text-foreground">{value}</div>
-        <div className="mt-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
+        <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">{value}</div>
+        <div className="mt-1 sm:mt-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
     </div>
 );
 
@@ -95,9 +95,9 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
     const isRtl = locale === 'ar';
 
     return (
-        <section className="relative overflow-hidden pt-20 pb-32 lg:pt-28 lg:pb-48 bg-primary" dir={isRtl ? 'rtl' : 'ltr'}>
+        <section className="relative overflow-hidden pt-16 pb-24 sm:pt-20 sm:pb-32 lg:pt-28 lg:pb-48 bg-primary" dir={isRtl ? 'rtl' : 'ltr'}>
 
-            <div className="container relative z-10 mx-auto px-4">
+            <div className="container relative z-10 mx-auto px-4 sm:px-6">
                 <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
                     {/* Image Column (Visuals First on Mobile, but Logical Second in RTL if we want text first? No, normally heroes keep image on one side) */}
                     {/* Let's keep the image layout consistent but mirror the text alignment */}
@@ -125,7 +125,7 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                             <Badge variant="outline" className="border-amber-500/30 text-amber-400 bg-amber-500/5 px-4 py-1 text-sm font-bold uppercase tracking-widest mb-4">
                                 {translations.hero_badge || "Premium Architecture Learning"}
                             </Badge>
-                            <h1 className="text-5xl font-black tracking-tight text-white lg:text-7xl leading-[1.1]">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white lg:text-7xl leading-[1.1]">
                                 {translations.hero_title_prefix && (
                                     <span className="block text-neutral-400 text-3xl lg:text-5xl font-extrabold mb-2 tracking-normal" style={{ fontSize: '0.9rem' }}></span>
                                 )}
@@ -135,28 +135,28 @@ function HeroSection({ categories, featuredCourses }: WelcomeProps) {
                             </h1>
                         </div>
 
-                        <div className="mx-auto max-w-2xl text-lg leading-relaxed text-neutral-200 lg:mx-0 font-medium space-y-4">
+                        <div className="mx-auto max-w-2xl text-base sm:text-lg leading-relaxed text-neutral-200 lg:mx-0 font-medium space-y-4">
                             <p dangerouslySetInnerHTML={{ __html: translations.hero_bio_1 }} />
                             {/* {translations.hero_bio_2 && <p>{translations.hero_bio_2}</p>}
                             {translations.hero_bio_3 && <p>{translations.hero_bio_3}</p>} */}
                         </div>
 
-                        <div className={`flex flex-col gap-4 sm:flex-row sm:justify-center ${isRtl ? 'lg:justify-start' : 'lg:justify-start'} pt-4`}>
+                        <div className={`flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center ${isRtl ? 'lg:justify-start' : 'lg:justify-start'} pt-4`}>
                             <Link href={route('courses.index')}>
-                                <Button size="lg" className="h-16 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 px-10 text-lg font-bold text-black border-none hover:brightness-110 shadow-lg shadow-amber-500/30 transition-all hover:scale-105">
+                                <Button size="lg" className="w-full sm:w-auto h-14 sm:h-16 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 px-6 sm:px-10 text-base sm:text-lg font-bold text-black border-none hover:brightness-110 shadow-lg shadow-amber-500/30 transition-all hover:scale-105">
                                     {translations.cta_start_learning || "Start Learning Now"}
                                     <ArrowRight className={`mx-2 h-5 w-5 ${isRtl ? 'rotate-180' : ''}`} />
                                 </Button>
                             </Link>
                             <Link href={route('portfolio')}>
-                                <Button size="lg" variant="outline" className="h-16 rounded-2xl border-neutral-700 bg-transparent px-10 text-lg font-bold text-white hover:bg-white/5 transition-all">
+                                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 sm:h-16 rounded-2xl border-neutral-700 bg-transparent px-6 sm:px-10 text-base sm:text-lg font-bold text-white hover:bg-white/5 transition-all">
                                     {translations.cta_view_portfolio || "View Portfolio"}
                                 </Button>
                             </Link>
                         </div>
 
                         {/* Stats mini-bar */}
-                        <div className={`flex flex-wrap items-center justify-center ${isRtl ? 'lg:justify-start' : 'lg:justify-start'} gap-8 border-t border-neutral-800 pt-8 opacity-80`}>
+                        <div className={`flex flex-wrap items-center justify-center ${isRtl ? 'lg:justify-start' : 'lg:justify-start'} gap-4 sm:gap-8 border-t border-neutral-800 pt-6 sm:pt-8 opacity-80`}>
 
                             <div className="h-4 w-px bg-neutral-800" />
                             <div className="flex items-center gap-3">
@@ -183,31 +183,31 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
     const isRtl = locale === 'ar';
 
     return (
-        <section className="bg-white py-24 relative overflow-hidden" id="categories" dir={isRtl ? 'rtl' : 'ltr'}>
+        <section className="bg-white py-12 sm:py-16 md:py-24 relative overflow-hidden" id="categories" dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
             <div className={cn("absolute -top-24 h-96 w-96 rounded-full bg-primary/5 blur-3xl", isRtl ? "-left-24" : "-right-24")} />
             <div className={cn("absolute -bottom-24 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl", isRtl ? "-right-24" : "-left-24")} />
 
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="mb-16 text-center max-w-3xl mx-auto">
-                    <Badge variant="outline" className="mb-6 border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-bold uppercase tracking-widest text-primary shadow-sm backdrop-blur-sm">
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
+                <div className="mb-10 sm:mb-16 text-center max-w-3xl mx-auto px-2">
+                    <Badge variant="outline" className="mb-4 sm:mb-6 border-primary/20 bg-primary/5 px-4 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-widest text-primary shadow-sm backdrop-blur-sm">
                         {translations.explorer_badge || "Start Your Journey"}
                     </Badge>
-                    <h2 className="mb-6 text-4xl font-black tracking-tight text-foreground md:text-5xl lg:text-6xl">
+                    <h2 className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-foreground lg:text-6xl">
                         {translations.explorer_title_prefix || "Explore Our"} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-amber-600">{translations.explorer_title_suffix || "Courses"}</span>
                     </h2>
-                    <p className="text-lg text-muted-foreground font-medium leading-relaxed">
+                    <p className="text-base sm:text-lg text-muted-foreground font-medium leading-relaxed">
                         {translations.explorer_description || "Discover world-class content designed to help you master new skills, build your portfolio, and advance your career."}
                     </p>
                 </div>
 
                 {/* Category Tabs */}
-                <div className="mb-14 flex flex-wrap justify-center gap-3">
+                <div className="mb-8 sm:mb-14 flex flex-wrap justify-center gap-2 sm:gap-3">
                     <Button
                         variant={selectedCategorySlug === 'all' ? "default" : "ghost"}
                         onClick={() => setSelectedCategorySlug('all')}
-                        className={`h-11 rounded-full px-8 text-sm font-bold tracking-wide transition-all duration-300 ${selectedCategorySlug === 'all'
+                        className={`h-10 sm:h-11 rounded-full px-4 sm:px-6 md:px-8 text-xs sm:text-sm font-bold tracking-wide transition-all duration-300 ${selectedCategorySlug === 'all'
                             ? 'shadow-lg shadow-primary/25 ring-2 ring-primary/20'
                             : 'bg-background hover:bg-muted border border-transparent hover:border-border/50'
                             }`}
@@ -219,7 +219,7 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
                             key={cat.slug}
                             variant={cat.slug === selectedCategorySlug ? "default" : "ghost"}
                             onClick={() => setSelectedCategorySlug(cat.slug)}
-                            className={`h-11 rounded-full px-8 text-sm font-bold tracking-wide transition-all duration-300 ${cat.slug === selectedCategorySlug
+                            className={`h-10 sm:h-11 rounded-full px-4 sm:px-6 md:px-8 text-xs sm:text-sm font-bold tracking-wide transition-all duration-300 ${cat.slug === selectedCategorySlug
                                 ? 'shadow-lg shadow-primary/25 ring-2 ring-primary/20'
                                 : 'bg-background hover:bg-muted border border-transparent hover:border-border/50'
                                 }`}
@@ -231,8 +231,8 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
 
                 {/* Courses Grid */}
                 <div className={filteredCourses.length < 4
-                    ? "flex flex-wrap justify-center gap-8"
-                    : "grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                    ? "flex flex-wrap justify-center gap-4 sm:gap-8"
+                    : "grid gap-4 sm:gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                 }>
                     {filteredCourses.map((course: any) => (
                         <Link
@@ -275,7 +275,7 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
                             </div>
 
                             {/* Content */}
-                            <div className="flex flex-1 flex-col p-6 pt-5">
+                            <div className="flex flex-1 flex-col p-4 sm:p-6 pt-4 sm:pt-5">
                                 <div className="mb-4 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <div className="h-8 w-8 overflow-hidden rounded-full bg-primary/5 border border-primary/10 flex items-center justify-center">
@@ -293,7 +293,7 @@ const CourseExplorer = ({ categories, featuredCourses, selectedCategorySlug, set
                                     </div>
                                 </div>
 
-                                <h3 className="mb-3 line-clamp-2 text-xl font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-primary">
+                                <h3 className="mb-3 line-clamp-2 text-base sm:text-lg md:text-xl font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-primary">
                                     {course.localized_title || course.title}
                                 </h3>
 
@@ -352,9 +352,9 @@ const StatsSection = ({ newlyAddedCount }: { newlyAddedCount: number }) => {
     const { translations, locale } = (usePage().props as unknown) as SharedData & { translations: any, locale: string };
     const isRtl = locale === 'ar';
     return (
-        <section className="bg-secondary py-20" dir={isRtl ? 'rtl' : 'ltr'}>
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:gap-8">
+        <section className="bg-secondary py-12 sm:py-16 md:py-20" dir={isRtl ? 'rtl' : 'ltr'}>
+            <div className="container mx-auto px-4 sm:px-6">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-4 lg:gap-8">
                     <StatItem icon={Building2} label={translations.stats_years_experience || "Years Experience"} value="14+" />
                     <StatItem icon={CheckCircle2} label={translations.stats_projects_executed || "Projects Executed"} value="200+" />
                     <StatItem icon={BookOpen} label={translations.stats_specialized_courses || "Specialized Courses"} value="2" />
@@ -391,28 +391,26 @@ const FeaturesSection = () => {
     ];
 
     return (
-        <section className="relative bg-primary py-32 overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+        <section className="relative bg-primary py-16 sm:py-24 md:py-32 overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Background Decorations */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 blur-[100px] rounded-full" />
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white blur-[100px] rounded-full" />
 
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="flex flex-col lg:flex-row gap-20 items-center">
-
-
-                    <div className="flex-1 grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 w-full">
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
+                <div className="flex flex-col lg:flex-row gap-10 sm:gap-16 lg:gap-20 items-center">
+                    <div className="flex-1 grid gap-4 sm:gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 w-full">
                         {features.map((feature, i) => (
                             <div
                                 key={i}
                                 className={cn(
-                                    "group p-10 rounded-[3rem] border border-border/50 bg-white backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/20",
+                                    "group p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-[3rem] border border-border/50 bg-white backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-primary/20",
                                     i === 2 ? "sm:col-span-2 xl:col-span-1" : ""
                                 )}
                             >
                                 <div className={cn("mb-8 flex h-16 w-16 items-center justify-center rounded-[1.5rem] text-white shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3", feature.color)}>
                                     <feature.icon className="h-8 w-8" />
                                 </div>
-                                <h3 className="mb-4 text-2xl font-black tracking-tight">{feature.title}</h3>
+                                <h3 className="mb-3 sm:mb-4 text-xl sm:text-2xl font-black tracking-tight">{feature.title}</h3>
                                 <p className="text-muted-foreground font-medium leading-relaxed">
                                     {feature.desc}
                                 </p>
@@ -446,9 +444,9 @@ const FAQSection = () => {
     const isRtl = locale === 'ar';
 
     return (
-        <section className="bg-white py-20" dir={isRtl ? 'rtl' : 'ltr'}>
-            <div className="container mx-auto px-4 max-w-3xl">
-                <h2 className="mb-8 text-center text-3xl font-bold ">{translations.faq_title || "Frequently Asked Questions"}</h2>
+        <section className="bg-white py-12 sm:py-16 md:py-20" dir={isRtl ? 'rtl' : 'ltr'}>
+            <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
+                <h2 className="mb-6 sm:mb-8 text-center text-2xl sm:text-3xl font-bold">{translations.faq_title || "Frequently Asked Questions"}</h2>
                 <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="item-1">
                         <AccordionTrigger className={cn("font-bold", isRtl ? "text-right" : "text-left")}>{translations.faq_q1 || "How do I start learning?"}</AccordionTrigger>
@@ -474,28 +472,28 @@ const CTASection = () => {
     const isRtl = locale === 'ar';
 
     return (
-        <section className="relative overflow-hidden bg-white py-24" dir={isRtl ? 'rtl' : 'ltr'}>
+        <section className="relative overflow-hidden bg-white py-16 sm:py-20 md:py-24" dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Background Decorations */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full overflow-hidden pointer-events-none">
                 <div className={cn("absolute top-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px]", isRtl ? "left-0" : "right-0")} />
                 <div className={cn("absolute bottom-0 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px]", isRtl ? "right-0" : "left-0")} />
             </div>
 
-            <div className="container relative z-10 mx-auto px-4 text-center">
-                <h2 className="mb-6 text-4xl font-black md:text-5xl lg:text-6xl tracking-tight text-foreground">
+            <div className="container relative z-10 mx-auto px-4 sm:px-6 text-center">
+                <h2 className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-5xl font-black lg:text-6xl tracking-tight text-foreground">
                     {translations.cta_title || "Ready to Start Learning?"}
                 </h2>
-                <p className="mb-10 text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+                <p className="mb-6 sm:mb-10 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium px-2">
                     {translations.cta_desc || "Join thousands of students and transform your career today."}
                 </p>
-                <div className="flex flex-wrap justify-center gap-6">
-                    <Link href={register()}>
-                        <Button size="lg" className="h-16 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 px-10 text-lg font-bold text-black shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">
+                <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6">
+                    <Link href={register()} className="w-full sm:w-auto">
+                        <Button size="lg" className="w-full sm:w-auto h-14 sm:h-16 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-600 to-amber-700 px-8 sm:px-10 text-base sm:text-lg font-bold text-black shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">
                             {translations.cta_create_account || "Create Free Account"}
                         </Button>
                     </Link>
-                    <Link href={route('courses.index')}>
-                        <Button size="lg" variant="outline" className="h-16 rounded-2xl px-10 text-lg font-bold border-border hover:bg-accent transition-all">
+                    <Link href={route('courses.index')} className="w-full sm:w-auto">
+                        <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 sm:h-16 rounded-2xl px-8 sm:px-10 text-base sm:text-lg font-bold border-border hover:bg-accent transition-all">
                             {translations.cta_browse_catalog || "Browse Catalog"}
                         </Button>
                     </Link>

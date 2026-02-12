@@ -213,7 +213,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
             <Head title={course.title} />
 
             {/* PREMIUM HERO SECTION */}
-            <div className="relative overflow-hidden bg-slate-950 text-white pb-32 pt-16 lg:pb-48 lg:pt-24 border-b border-white/5">
+            <div className="relative overflow-hidden bg-slate-950 text-white pb-24 pt-12 sm:pb-32 sm:pt-16 lg:pb-48 lg:pt-24 border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img
                         src="/images/course-details-hero-bg.png"
@@ -223,7 +223,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                 </div>
 
-                <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
                         <div className="max-w-2xl">
                             <div className="flex items-center gap-3 mb-6">
@@ -235,11 +235,11 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                 </span>
                             </div>
 
-                            <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight mb-4 sm:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
                                 {locale === 'ar' ? course.title_ar : course.title}
                             </h1>
 
-                            <div className="flex flex-wrap items-center gap-8 text-sm">
+                            <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm">
 
                                 <div className="text-slate-400">
                                     {translations.course_instructor}: <span className="text-white font-bold underline decoration-primary underline-offset-4">{instructor.name}</span>
@@ -251,17 +251,17 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
             </div>
 
             {/* STICKY ENROLLMENT CARD */}
-            <div className="mx-auto max-w-7xl px-6 lg:px-8 relative -mt-32 lg:-mt-48 z-20 pb-24">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative -mt-20 sm:-mt-28 md:-mt-32 lg:-mt-48 z-20 pb-12 sm:pb-16 lg:pb-24">
                 <div className="lg:grid lg:grid-cols-3 lg:gap-8 items-start">
                     {/* Content Column */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* REDESIGNED PREMIUM TABS NAVIGATION */}
-                        <div className="sticky top-24 z-30 mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+                        <div className="sticky top-16 sm:top-20 lg:top-24 z-30 mb-6 sm:mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
                             <div className="relative group/tabs">
                                 {/* Glow Background */}
                                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 rounded-[2.5rem] blur-xl opacity-0 group-hover/tabs:opacity-100 transition duration-1000" />
 
-                                <div className="relative bg-slate-950/80 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 p-2 shadow-2xl flex items-center gap-1 overflow-x-auto scrollbar-hide" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                                <div className="relative bg-slate-950/80 backdrop-blur-2xl rounded-2xl sm:rounded-[2.5rem] border border-white/10 p-1.5 sm:p-2 shadow-2xl flex items-center gap-1 overflow-x-auto scrollbar-hide -mx-1 sm:mx-0" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                                     {[
                                         { id: 'description', label: translations.tab_description || 'Description', icon: BookOpen },
                                         { id: 'curriculum', label: translations.tab_curriculum || 'Curriculum', icon: PlayCircle, count: course.lessons.length },
@@ -276,7 +276,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                 key={tab.id}
                                                 onClick={() => setActiveTab(tab.id as any)}
                                                 className={cn(
-                                                    "relative flex items-center gap-3 px-8 py-4 rounded-[2rem] text-sm font-black transition-all duration-500 whitespace-nowrap group animate-in fade-in",
+                                                    "relative flex items-center gap-2 sm:gap-3 px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-xl sm:rounded-[2rem] text-xs sm:text-sm font-black transition-all duration-500 whitespace-nowrap group animate-in fade-in shrink-0",
                                                     isActive
                                                         ? "text-primary"
                                                         : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -319,12 +319,12 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                         </div>
 
                         {/* TAB CONTENT */}
-                        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm rounded-[3rem] border border-slate-200/50 dark:border-slate-800/50 p-10 shadow-sm" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm rounded-2xl sm:rounded-[3rem] border border-slate-200/50 dark:border-slate-800/50 p-5 sm:p-8 md:p-10 shadow-sm" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                             {activeTab === 'description' && (
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                                     <div className="mb-16">
                                         <div className="flex items-center justify-between mb-10">
-                                            <h3 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                                            <h3 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
                                                 {translations.what_you_will_master || "What you will master"}
                                             </h3>
                                             <div className="size-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
@@ -332,11 +332,11 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
                                             {(locale === 'ar' ? (course.learning_outcomes_ar || []) : outcomes).map((outcome: string, index: number) => (
                                                 <div
                                                     key={index}
-                                                    className="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:border-primary/20 hover:bg-white dark:hover:bg-slate-800/40 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none group"
+                                                    className="flex items-center justify-between p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-[2rem] bg-slate-50/50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 transition-all duration-500 hover:border-primary/20 hover:bg-white dark:hover:bg-slate-800/40 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none group"
                                                 >
                                                     <span className="text-base font-bold text-slate-700 dark:text-slate-300 transition-colors group-hover:text-slate-900 dark:group-hover:text-white">{outcome}</span>
                                                     <div className="size-6 rounded-full border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all group-hover:border-primary group-hover:bg-primary/5">
@@ -349,7 +349,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                                     <Separator className="my-10" />
 
-                                    <h3 className="text-2xl font-black mb-6">{translations.course_overview}</h3>
+                                    <h3 className="text-xl sm:text-2xl font-black mb-4 sm:mb-6">{translations.course_overview}</h3>
                                     <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-400 leading-loose">
                                         {locale === 'ar' ? course.description_ar : course.description}
                                     </div>
@@ -364,8 +364,8 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                     </div>
                                     <div className="space-y-2">
                                         {course.lessons.map((lesson: Lesson, index: number) => (
-                                            <div key={lesson.id} className="group flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all duration-300">
-                                                <div className="flex items-center gap-4">
+                                            <div key={lesson.id} className="group flex items-center justify-between p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary/30 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all duration-300">
+                                                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                                                     <div className="size-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                                                         {lesson.type === 'video' ? <Video className="size-5" /> : <FileText className="size-5" />}
                                                     </div>
@@ -374,7 +374,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                             <span className="text-xs font-bold text-muted-foreground/50">{translations.section} {index + 1}</span>
                                                             {lesson.is_free_preview && <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-wider border border-green-500/20">{translations.preview}</span>}
                                                         </div>
-                                                        <h4 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors">{lesson.title}</h4>
+                                                        <h4 className="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors line-clamp-2">{lesson.title}</h4>
                                                     </div>
                                                 </div>
                                                 {lesson.is_free_preview ? (
@@ -392,7 +392,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                 <div className="space-y-12 animate-in fade-in duration-500">
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 dark:border-slate-800 pb-8">
                                         <div className="space-y-1">
-                                            <h3 className="text-4xl font-black">
+                                            <h3 className="text-3xl sm:text-4xl font-black">
                                                 {Number(course.average_rating) > 0
                                                     ? course.average_rating.toFixed(1)
                                                     : (translations.course_no_rating_yet || "No ratings yet")}
@@ -426,8 +426,8 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                                     <div className="space-y-8">
                                         {course.reviews.map((review: any) => (
-                                            <div key={review.id} className="relative pl-12">
-                                                <div className="absolute left-0 top-0 size-10 rounded-2xl overflow-hidden ring-2 ring-slate-100 bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                                            <div key={review.id} className="relative pl-10 sm:pl-12">
+                                                <div className="absolute left-0 top-0 size-8 sm:size-10 rounded-xl sm:rounded-2xl overflow-hidden ring-2 ring-slate-100 bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
                                                     {review.user.avatar ? <img src={review.user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="size-5 text-slate-400" />}
                                                 </div>
                                                 <div className="flex items-center justify-between mb-2">
@@ -444,13 +444,13 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
 
                             {activeTab === 'instructor' && (
                                 <div className="space-y-8 animate-in fade-in duration-500">
-                                    <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-800/20 border border-slate-200/50 dark:border-slate-800/50">
-                                        <div className="size-32 rounded-[2rem] overflow-hidden bg-slate-200 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-slate-200/50 dark:shadow-none shrink-0 group">
+                                    <div className="flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8 p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-[2rem] bg-slate-50 dark:bg-slate-800/20 border border-slate-200/50 dark:border-slate-800/50">
+                                        <div className="size-24 sm:size-28 md:size-32 rounded-xl sm:rounded-[2rem] overflow-hidden bg-slate-200 dark:bg-slate-700 ring-2 sm:ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-slate-200/50 dark:shadow-none shrink-0 group">
                                             {instructor.avatar ? <img src={instructor.avatar} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" /> : <UserIcon className="size-16 m-8 text-slate-400" />}
                                         </div>
                                         <div className="text-center md:text-left space-y-4">
                                             <div>
-                                                <h3 className="text-2xl font-black text-slate-900 dark:text-white">{instructor.name}</h3>
+                                                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{instructor.name}</h3>
                                                 <p className="text-primary font-bold text-sm uppercase tracking-widest pt-1">{translations.instructor_title}</p>
                                             </div>
                                             <div className="flex items-center justify-center md:justify-start gap-6 py-2">
@@ -494,9 +494,9 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                     </div>
 
                     {/* Sidebar Card */}
-                    <div className="mt-12 lg:mt-0">
-                        <div className="sticky top-24 space-y-6 animate-in slide-in-from-right-4 duration-700">
-                            <Card className="overflow-hidden border-none shadow-2xl rounded-[3rem] bg-white dark:bg-slate-900 group">
+                    <div className="mt-8 sm:mt-12 lg:mt-0">
+                        <div className="sticky top-16 sm:top-20 lg:top-24 space-y-6 animate-in slide-in-from-right-4 duration-700">
+                            <Card className="overflow-hidden border-none shadow-2xl rounded-2xl sm:rounded-[3rem] bg-white dark:bg-slate-900 group">
                                 <div className="relative aspect-video bg-slate-950">
                                     {course.preview_video_link ? (
                                         isExternalVideo(course.preview_video_url) ? (
@@ -523,11 +523,11 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                     <div className="absolute inset-0 ring-1 ring-inset ring-black/10 transition-all group-hover:ring-black/0 pointer-events-none" />
                                 </div>
 
-                                <div className="p-8 space-y-8">
+                                <div className="p-5 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
                                     <div className="flex items-baseline gap-3">
                                         {course.has_active_discount ? (
                                             <>
-                                                <span className="text-4xl font-black text-slate-900 dark:text-white">
+                                                <span className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white">
                                                     {translations.course_price_currency || 'USD'} {Number(course.discounted_price).toFixed(2)}
                                                 </span>
                                                 <span className="text-sm font-bold text-slate-400 line-through">
@@ -536,7 +536,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                 <span className="text-xs font-black text-green-500 uppercase tracking-widest ml-auto">{course.discount_percentage}% OFF</span>
                                             </>
                                         ) : (
-                                            <span className="text-4xl font-black text-slate-900 dark:text-white">
+                                            <span className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white">
                                                 {Number(course.price) > 0 ? `${translations.course_price_currency || 'USD'} ${Number(course.price).toFixed(2)}` : translations.course_price_free || 'Free'}
                                             </span>
                                         )}
@@ -555,14 +555,14 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                     </p>
                                                 </div>
                                             ) : (
-                                                <Button size="lg" className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30" onClick={() => router.get(route('student.resume-course', { course: course.slug }))}>
+                                                <Button size="lg" className="w-full h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-black shadow-xl shadow-primary/30" onClick={() => router.get(route('student.resume-course', { course: course.slug }))}>
                                                     {translations.continue_masterclass}
                                                     <ArrowRight className="ml-3 size-6" />
                                                 </Button>
                                             )
                                         ) : (
                                             <>
-                                                <Button size="lg" disabled={processing} className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30" onClick={handleEnrollOrPurchase}>
+                                                <Button size="lg" disabled={processing} className="w-full h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-black shadow-xl shadow-primary/30" onClick={handleEnrollOrPurchase}>
                                                     {Number(course.price) > 0 ? (
                                                         <>
                                                             <ShoppingCart className={cn("mr-3 size-6", processing && "animate-bounce")} />
@@ -576,7 +576,7 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                                                     )}
                                                 </Button>
 
-                                                <Button size="lg" variant="outline" className="w-full h-14 rounded-2xl font-bold border-slate-200 dark:border-slate-800" onClick={handleWishlistToggle}>
+                                                <Button size="lg" variant="outline" className="w-full h-12 sm:h-14 rounded-xl sm:rounded-2xl font-bold border-slate-200 dark:border-slate-800" onClick={handleWishlistToggle}>
                                                     <Heart className={cn("mr-3 size-6 transition-all", inWishlist ? "fill-red-500 text-red-500 scale-110" : "")} />
                                                     {inWishlist ? translations.wishlisted : translations.add_to_wishlist}
                                                 </Button>

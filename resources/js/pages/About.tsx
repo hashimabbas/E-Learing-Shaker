@@ -13,14 +13,14 @@ export default function About() {
       <Head title={translations.about_meta_title || "About Me"} />
 
       {/* Hero / Intro Section */}
-      <section className="relative overflow-hidden pt-20 pb-32 lg:pt-32 lg:pb-48 bg-primary" dir={isRtl ? 'rtl' : 'ltr'}>
+      <section className="relative overflow-hidden pt-16 pb-24 sm:pt-20 sm:pb-32 lg:pt-32 lg:pb-48 bg-primary" dir={isRtl ? 'rtl' : 'ltr'}>
         {/* Background Effects */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] right-[-5%] h-[500px] w-[500px] rounded-full bg-amber-500/10 blur-[120px] opacity-50" />
           <div className="absolute bottom-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-blue-600/10 blur-[100px] opacity-50" />
         </div>
 
-        <div className="container relative z-10 mx-auto px-4">
+        <div className="container relative z-10 mx-auto px-4 sm:px-6">
           <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
             {/* Right Content (Text) - Placed first for mobile flow or traditional layout usage */}
             <div className={`order-2 ${isRtl ? 'lg:order-2' : 'lg:order-1'} space-y-8`}>
@@ -28,18 +28,18 @@ export default function About() {
                 <h2 className="text-amber-500 font-bold tracking-widest uppercase text-sm mb-4">
                   {translations.about_badge || "About Me"}
                 </h2>
-                <h1 className="text-4xl font-black tracking-tight text-white lg:text-6xl leading-[1.1] mb-6">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white lg:text-6xl leading-[1.1] mb-4 sm:mb-6">
                   {translations.about_hero_title_prefix || "I Turn Small Details Into "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600">
                     {translations.about_hero_title_highlight || "Exceptional Results"}
                   </span>.
                 </h1>
-                <p className="text-xl text-neutral-400 leading-relaxed font-light">
+                <p className="text-base sm:text-lg md:text-xl text-neutral-400 leading-relaxed font-light">
                   {translations.about_hero_quote || '"I believe that precision makes the difference."'}
                 </p>
               </div>
 
-              <div className="space-y-6 text-lg text-neutral-300">
+              <div className="space-y-4 sm:space-y-6 text-base sm:text-lg text-neutral-300">
                 <p>
                   {translations.about_intro_p1 || "I am an engineer specialized in the field of Modern Decoration, Home Facades, and execution."}
                 </p>
@@ -83,18 +83,18 @@ export default function About() {
       </section>
 
       {/* Roles / Companies Section */}
-      <section className="py-20 bg-secondary" dir={isRtl ? 'rtl' : 'ltr'}>
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-[#1a1a1a] mb-4">
+      <section className="py-12 sm:py-16 md:py-20 bg-secondary" dir={isRtl ? 'rtl' : 'ltr'}>
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] mb-4">
               {translations.about_roles_title || "Professional Roles"}
             </h2>
             <div className="h-1 w-20 bg-amber-600 mx-auto rounded-full"></div>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:gap-8 md:grid-cols-3">
             {/* Role 1 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-black backdrop-blur-sm border border-black/5 p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
+            <div className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-black backdrop-blur-sm border border-black/5 p-5 sm:p-6 md:p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400/10 text-amber-400 group-hover:bg-amber-400 group-hover:text-white transition-colors">
                 <Building2 className="h-7 w-7" />
               </div>
@@ -110,7 +110,7 @@ export default function About() {
             </div>
 
             {/* Role 2 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-black backdrop-blur-sm border border-black/5 p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
+            <div className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-black backdrop-blur-sm border border-black/5 p-5 sm:p-6 md:p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400/10 text-amber-400 group-hover:bg-amber-400 group-hover:text-white transition-colors">
                 <Briefcase className="h-7 w-7" />
               </div>
@@ -126,7 +126,7 @@ export default function About() {
             </div>
 
             {/* Role 3 */}
-            <div className="group relative overflow-hidden rounded-3xl bg-black backdrop-blur-sm border border-black/5 p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
+            <div className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-black backdrop-blur-sm border border-black/5 p-5 sm:p-6 md:p-8 transition-all hover:border-amber-600/30 hover:shadow-2xl hover:shadow-black/10">
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400/10 text-amber-400 group-hover:bg-amber-400 group-hover:text-white transition-colors">
                 <Award className="h-7 w-7" />
               </div>
@@ -145,12 +145,12 @@ export default function About() {
       </section>
 
       {/* Values Section */}
-      <section className="py-24 bg-primary" dir={isRtl ? 'rtl' : 'ltr'}>
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-white mb-16">
+      <section className="py-12 sm:py-16 md:py-24 bg-primary" dir={isRtl ? 'rtl' : 'ltr'}>
+        <div className="container mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-10 sm:mb-16">
             {translations.about_principles_title || "Principles I Work By"}
           </h2>
-          <div className="grid gap-10 md:grid-cols-3 max-w-5xl mx-auto">
+          <div className="grid gap-6 sm:gap-8 md:gap-10 md:grid-cols-3 max-w-5xl mx-auto">
             <div className="space-y-4">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 border border-white/10 shadow-inner">
                 <span className="text-2xl font-bold text-amber-500">1</span>
