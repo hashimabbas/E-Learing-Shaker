@@ -26,6 +26,8 @@ class CourseUpdateRequest extends FormRequest
             'category_id' => ['required', 'exists:categories,id'],
             'price' => 'required|numeric|min:0',
             'thumbnail_file' => ['nullable', 'image', 'max:5000'],
+            'preview_video_url' => 'nullable|string',
+            'preview_video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/quicktime', 'max:102400'], // max 100MB
             'learning_outcomes' => 'nullable|array',
             'learning_outcomes_ar' => 'nullable|array',
             'discount_percentage' => 'nullable|integer|min:0|max:100',

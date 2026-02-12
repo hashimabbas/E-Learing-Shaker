@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -120,6 +121,60 @@ class ChunkUploadController extends Controller
             Log::error("Chunked Upload Reassembly Failed: " . $e->getMessage(), ['lesson_id' => $lesson->id]);
             return response()->json(['error' => 'Database update failed'], 500);
         }
+
+        return response()->json([
+            'status' => 'completed',
+            'file_path' => $finalRelativePath,
+        ]);
+    }
+
+    /**
+     * Assemble chunks for course preview video.
+     */
+    public function finishCoursePreviewUpload(Request $request, Course $course)
+    {
+        set_time_limit(0);
+
+        $request->validate([
+            'file_id' => 'required|string',
+            'total_chunks' => 'required|integer',
+            'original_name' => 'required|string',
+        ]);
+
+        $fileId = $request->input('file_id');
+        $totalChunks = $request->input('total_chunks');
+        $originalName = $request->input('original_name');
+
+        $chunkDir = storage_path("app/private/chunks/{$fileId}");
+        
+        // Final destination: public disk for course previews
+        $finalRelativePath = "courses/previews/{$course->id}-preview-{$originalName}";
+        $finalAbsolutePath = storage_path("app/public/{$finalRelativePath}");
+
+        if (!is_dir(dirname($finalAbsolutePath))) {
+            mkdir(dirname($finalAbsolutePath), 0775, true);
+        }
+
+        $out = fopen($finalAbsolutePath, 'wb');
+        if (!$out) return response()->json(['error' => 'Failed to open output file'], 500);
+
+        for ($i = 0; $i < $totalChunks; $i++) {
+            $chunkFile = "{$chunkDir}/chunk_{$i}";
+            if (!file_exists($chunkFile)) {
+                fclose($out);
+                return response()->json(['error' => "Missing chunk {$i}"], 400);
+            }
+            $in = fopen($chunkFile, 'rb');
+            stream_copy_to_stream($in, $out);
+            fclose($in);
+            unlink($chunkFile);
+        }
+        fclose($out);
+
+        if (is_dir($chunkDir)) rmdir($chunkDir);
+
+        // Update database
+        $course->update(['preview_video_url' => $finalRelativePath]);
 
         return response()->json([
             'status' => 'completed',

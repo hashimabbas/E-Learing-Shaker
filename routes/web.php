@@ -202,6 +202,7 @@ Route::middleware(['auth', 'log.content', 'role:instructor|admin'])->prefix('ins
     // Chunked Upload Routes
     Route::post('upload-chunk', [ChunkUploadController::class, 'uploadChunk'])->name('upload_chunk');
     Route::post('lessons/{lesson}/finish-upload', [ChunkUploadController::class, 'finishUpload'])->name('finish_upload');
+    Route::post('courses/{course}/finish-preview-upload', [ChunkUploadController::class, 'finishCoursePreviewUpload'])->name('finish_course_preview_upload');
 
 
     // Quiz Management (Nested under Instructor scope)

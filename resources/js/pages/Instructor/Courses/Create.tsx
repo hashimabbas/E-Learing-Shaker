@@ -1,4 +1,5 @@
 // resources/js/pages/Instructor/Courses/Create.tsx
+import { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
@@ -23,7 +24,9 @@ import {
     LayoutList,
     ChevronRight,
     Rocket,
-    Trash2
+    Trash2,
+    Video,
+    Link as LinkIcon
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { route } from 'ziggy-js';
@@ -42,9 +45,12 @@ export default function InstructorCoursesCreate({ categories }: InstructorCourse
         price: 0,
         thumbnail_file: null as File | null,
         preview_video_url: '',
+        preview_video_file: null as File | null,
         learning_outcomes: [''] as string[],
         learning_outcomes_ar: [''] as string[],
     });
+
+    const [previewType, setPreviewType] = useState<'url' | 'upload'>('url');
 
     const handleAddOutcome = (language: 'en' | 'ar') => {
         const field = language === 'en' ? 'learning_outcomes' : 'learning_outcomes_ar';
@@ -356,18 +362,56 @@ export default function InstructorCoursesCreate({ categories }: InstructorCourse
                                                 <InputError message={errors.thumbnail_file} />
                                             </div>
 
-                                            {/* Preview Video URL */}
-                                            <div className="space-y-3">
-                                                <Label htmlFor="preview_video_url" className="text-base font-bold tracking-tight">Preview Video URL</Label>
-                                                <Input
-                                                    id="preview_video_url"
-                                                    placeholder="e.g. https://youtube.com/watch?v=..."
-                                                    className="h-14 text-lg font-medium border-muted-foreground/20 focus:border-primary px-5 rounded-xl shadow-inner bg-muted/10"
-                                                    value={data.preview_video_url}
-                                                    onChange={(e) => setData('preview_video_url', e.target.value)}
-                                                />
-                                                <p className="text-xs text-muted-foreground font-medium">A short teaser video to introduce the course.</p>
-                                                <InputError message={errors.preview_video_url} />
+                                            {/* Preview Video */}
+                                            <div className="space-y-4">
+                                                <div className="flex items-center justify-between">
+                                                    <Label className="text-base font-bold tracking-tight">Preview Video</Label>
+                                                    <div className="flex bg-muted/20 p-1 rounded-lg border">
+                                                        <Button
+                                                            type="button"
+                                                            variant={previewType === 'url' ? 'secondary' : 'ghost'}
+                                                            size="sm"
+                                                            className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md"
+                                                            onClick={() => setPreviewType('url')}
+                                                        >
+                                                            <LinkIcon className="w-3 h-3 mr-1" /> URL
+                                                        </Button>
+                                                        <Button
+                                                            type="button"
+                                                            variant={previewType === 'upload' ? 'secondary' : 'ghost'}
+                                                            size="sm"
+                                                            className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md"
+                                                            onClick={() => setPreviewType('upload')}
+                                                        >
+                                                            <Video className="w-3 h-3 mr-1" /> Upload
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                                {previewType === 'url' ? (
+                                                    <div className="space-y-3 animate-in fade-in duration-300">
+                                                        <Input
+                                                            id="preview_video_url"
+                                                            placeholder="e.g. https://youtube.com/watch?v=..."
+                                                            className="h-14 text-lg font-medium border-muted-foreground/20 focus:border-primary px-5 rounded-xl shadow-inner bg-muted/10 transition-all"
+                                                            value={data.preview_video_url}
+                                                            onChange={(e) => setData('preview_video_url', e.target.value)}
+                                                        />
+                                                        <p className="text-xs text-muted-foreground font-medium">Link to a video on YouTube or Vimeo.</p>
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-3 animate-in fade-in duration-300">
+                                                        <Input
+                                                            id="preview_video_file"
+                                                            type="file"
+                                                            accept="video/*"
+                                                            className="h-14 pt-3 text-lg font-medium border-muted-foreground/20 focus:border-primary px-5 rounded-xl shadow-inner bg-muted/10 cursor-pointer"
+                                                            onChange={(e) => setData('preview_video_file', e.target.files ? e.target.files[0] : null)}
+                                                        />
+                                                        <p className="text-xs text-muted-foreground font-medium">Upload a video file from your device (Max 100MB).</p>
+                                                    </div>
+                                                )}
+                                                <InputError message={errors.preview_video_url || errors.preview_video_file} />
                                             </div>
                                         </div>
                                     </CardContent>

@@ -7,20 +7,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     ArrowLeft,
     Edit2,
-    Video,
-    ListOrdered,
     PlusCircle,
     Trash2,
-    Settings,
-    FileText,
-    HelpCircle,
-    LayoutGrid,
+    Video,
+    ListOrdered,
     Users,
     BadgeDollarSign,
     CheckCircle2,
     Save,
     MoreHorizontal,
-    Play
+    Play,
+    LayoutList,
+    Sparkles,
+    Settings,
+    FileText,
+    HelpCircle,
+    LayoutGrid,
+    Link as LinkIcon,
+    Edit,
+    Upload,
+    Loader2,
+    Download
 } from 'lucide-react';
 import { useState } from 'react';
 import CurriculumItemEditor from '@/components/instructor/curriculum-item-editor';
@@ -38,6 +45,8 @@ import { route } from 'ziggy-js';
 import QuizManagerModal from '@/components/instructor/QuizManagerModal';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import axios from 'axios';
+import { Progress } from '@/components/ui/progress';
 
 interface InstructorCoursesEditProps {
     course: any;
@@ -190,12 +199,17 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
         description_ar: course.description_ar || '',
         category_id: course.category_id ? course.category_id.toString() : '',
         price: course.price || 0,
+        thumbnail_file: null as File | null,
+        preview_video_url: course.preview_video_url || '',
+        preview_video_file: null as File | null,
         learning_outcomes: (course.learning_outcomes?.length > 0 ? course.learning_outcomes : ['']) as string[],
         learning_outcomes_ar: (course.learning_outcomes_ar?.length > 0 ? course.learning_outcomes_ar : ['']) as string[],
         discount_percentage: course.discount_percentage || 0,
         discount_start_date: course.discount_start_date ? new Date(course.discount_start_date).toISOString().slice(0, 16) : '',
         discount_end_date: course.discount_end_date ? new Date(course.discount_end_date).toISOString().slice(0, 16) : '',
     });
+
+    const [previewType, setPreviewType] = useState(course.preview_video_url && !course.preview_video_url.startsWith('courses/') ? 'url' : 'upload');
 
     const handleAddOutcome = (language: 'en' | 'ar') => {
         const field = language === 'en' ? 'learning_outcomes' : 'learning_outcomes_ar';
@@ -219,14 +233,85 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
     const [contentModalOpen, setContentModalOpen] = useState(false);
     const [lessonForContent, setLessonForContent] = useState<any>(null);
     const [activeTab, setActiveTab] = useState('details');
+    const [isUploadingPreview, setIsUploadingPreview] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
-    const handleUpdateDetails = (e: React.FormEvent) => {
+    const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB Chunks
+
+    const handleChunkedPreviewUpload = async () => {
+        if (!data.preview_video_file) {
+            toast.error('Please select a video file.');
+            return;
+        }
+
+        const file = data.preview_video_file;
+        const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+        const fileId = `course-${course.id}-preview-${file.name}-${file.size}-${Date.now()}`.replace(/[^a-zA-Z0-9]/g, '-');
+
+        setIsUploadingPreview(true);
+        setUploadProgress(0);
+
+        try {
+            for (let index = 0; index < totalChunks; index++) {
+                const start = index * CHUNK_SIZE;
+                const end = Math.min(file.size, start + CHUNK_SIZE);
+                const chunk = file.slice(start, end);
+
+                const formData = new FormData();
+                formData.append('file', chunk);
+                formData.append('file_id', fileId);
+                formData.append('chunk_index', index.toString());
+                formData.append('total_chunks', totalChunks.toString());
+
+                await axios.post(route('instructor.upload_chunk'), formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    onUploadProgress: (progressEvent) => {
+                        const chunkProgress = (progressEvent.loaded / (progressEvent.total || chunk.size)) * 100;
+                        const overallProgress = ((index / totalChunks) * 100) + (chunkProgress / totalChunks);
+                        setUploadProgress(Math.round(overallProgress));
+                    }
+                });
+            }
+
+            // Finish upload
+            await axios.post(route('instructor.finish_course_preview_upload', course.id), {
+                file_id: fileId,
+                total_chunks: totalChunks,
+                original_name: file.name,
+            });
+
+            toast.success('Preview video uploaded successfully.');
+            setData('preview_video_file', null);
+            router.reload({ only: ['course'] });
+        } catch (error: any) {
+            console.error('Upload failed:', error);
+            toast.error(error.response?.data?.message || 'Upload failed. Please try again.');
+        } finally {
+            setIsUploadingPreview(false);
+            setUploadProgress(0);
+        }
+    };
+
+    const handleUpdateDetails = (e: React.FormEvent, tab?: string) => {
         e.preventDefault();
-        patch(route('instructor.courses.update', course.id), {
+
+        // Optimize: Don't send files if we're not in the media tab to avoid "Post Too Large" errors
+        const submittedData = { ...data, _method: 'patch' };
+        if (tab && tab !== 'media_assets') {
+            submittedData.thumbnail_file = null;
+            submittedData.preview_video_file = null;
+        }
+
+        router.post(route('instructor.courses.update', course.id), submittedData, {
             onSuccess: () => {
+                // Clear files from form state after successful save to keep requests small
+                if (tab === 'media_assets') {
+                    setData(d => ({ ...d, thumbnail_file: null, preview_video_file: null }));
+                }
                 router.reload({ only: ['course'] });
                 toast.success("Changes saved successfully.");
             },
+            forceFormData: true,
             preserveScroll: true,
         });
     };
@@ -248,7 +333,8 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
 
     const handleQuizCreated = () => {
         setContentModalOpen(false);
-        router.reload({ only: ['course'] }, {
+        router.reload({
+            only: ['course'],
             onSuccess: () => {
                 const newLesson = course.lessons.find((l: any) => l.id === lessonForContent.id);
                 if (newLesson && newLesson.quiz?.id) {
@@ -337,24 +423,26 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                         <div className="bg-muted/30 p-1.5 rounded-2xl inline-flex mb-8 border backdrop-blur-sm">
                             <TabsList className="bg-transparent h-auto gap-1">
                                 <TabsTrigger value="details" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
-                                    <Edit2 className='w-4 h-4' /> General Details
+                                    <Sparkles className='w-4 h-4' /> General
+                                </TabsTrigger>
+                                <TabsTrigger value="classification" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
+                                    <LayoutList className='w-4 h-4' /> Classification
+                                </TabsTrigger>
+                                <TabsTrigger value="pricing" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
+                                    <BadgeDollarSign className='w-4 h-4' /> Pricing
+                                </TabsTrigger>
+                                <TabsTrigger value="media_assets" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
+                                    <Video className='w-4 h-4' /> Media
                                 </TabsTrigger>
                                 <TabsTrigger value="curriculum" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
-                                    <ListOrdered className='w-4 h-4' /> Curriculum Builder
-                                </TabsTrigger>
-                                <TabsTrigger value="media" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
-                                    <Video className='w-4 h-4' /> Content Status
+                                    <ListOrdered className='w-4 h-4' /> Curriculum
                                 </TabsTrigger>
                                 <TabsTrigger value="quizzes" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
                                     <HelpCircle className='w-4 h-4' /> Assessments
                                 </TabsTrigger>
-                                <TabsTrigger value="offers" className="rounded-xl px-5 py-3 font-bold text-sm flex items-center gap-2 transition-all data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary">
-                                    <BadgeDollarSign className='w-4 h-4' /> Promotions
-                                </TabsTrigger>
                             </TabsList>
                         </div>
 
-                        {/* Details Tab */}
                         <TabsContent value="details" className="mt-0 animate-in fade-in slide-in-from-left-4 duration-500">
                             <Card className="border-none shadow-xl">
                                 <CardHeader className="bg-muted/30 pb-6 rounded-t-xl border-b">
@@ -369,7 +457,7 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-8">
-                                    <form onSubmit={handleUpdateDetails} className="space-y-8 max-w-4xl">
+                                    <form onSubmit={(e) => handleUpdateDetails(e, 'details')} className="space-y-8 max-w-4xl">
                                         <div className="space-y-3">
                                             <Label htmlFor="title" className="text-base font-bold tracking-tight">Title</Label>
                                             <Input
@@ -494,21 +582,78 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                                 ))}
                                             </div>
                                         </div>
+                                        <Button
+                                            type="submit"
+                                            size="lg"
+                                            disabled={processing}
+                                            className="h-14 rounded-full px-10 font-black tracking-tight text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                                        >
+                                            {processing ? 'Saving...' : <><Save className="mr-2 h-5 w-5" /> Save General Details</>}
+                                        </Button>
+                                    </form>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+
+                        <TabsContent value="classification" className="mt-0 animate-in fade-in slide-in-from-left-4 duration-500">
+                            <Card className="border-none shadow-xl">
+                                <CardHeader className="bg-muted/30 pb-6 rounded-t-xl border-b">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 rounded-lg bg-background text-primary border shadow-sm">
+                                            <LayoutList className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-xl font-bold italic tracking-tight uppercase">Classification</CardTitle>
+                                            <CardDescription>Organize your course in the catalog.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="p-8">
+                                    <form onSubmit={(e) => handleUpdateDetails(e, 'classification')} className="space-y-8 max-w-xl">
+                                        <div className="space-y-3">
+                                            <Label htmlFor="category_id" className="text-base font-bold tracking-tight">Category</Label>
+                                            <Select onValueChange={(value) => setData('category_id', value)} value={data.category_id}>
+                                                <SelectTrigger id="category_id" className="h-14 rounded-xl border-muted-foreground/20 text-lg font-medium px-5 bg-muted/10">
+                                                    <SelectValue placeholder="Select a Category" />
+                                                </SelectTrigger>
+                                                <SelectContent className="rounded-xl">
+                                                    {categories.map(cat => (<SelectItem key={cat.id} value={cat.id.toString()} className="text-base py-3">{cat.name}</SelectItem>))}
+                                                </SelectContent>
+                                            </Select>
+                                            <InputError message={errors.category_id} />
+                                        </div>
+                                        <Button
+                                            type="submit"
+                                            size="lg"
+                                            disabled={processing}
+                                            className="h-14 rounded-full px-10 font-black tracking-tight text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                                        >
+                                            {processing ? 'Saving...' : <><Save className="mr-2 h-5 w-5" /> Update Category</>}
+                                        </Button>
+                                    </form>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+
+                        {/* Pricing Tab */}
+                        <TabsContent value="pricing" className="mt-0 animate-in fade-in slide-in-from-left-4 duration-500">
+                            <Card className="border-none shadow-xl">
+                                <CardHeader className="bg-muted/30 pb-6 rounded-t-xl border-b">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 rounded-lg bg-background text-primary border shadow-sm">
+                                            <BadgeDollarSign className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-xl font-bold italic tracking-tight uppercase">Pricing & Promotions</CardTitle>
+                                            <CardDescription>Manage your course value and offers.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="p-8">
+                                    <form onSubmit={(e) => handleUpdateDetails(e, 'pricing')} className="space-y-8 max-w-4xl">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <div className="space-y-3">
-                                                <Label htmlFor="category_id" className="text-base font-bold tracking-tight">Category</Label>
-                                                <Select onValueChange={(value) => setData('category_id', value)} value={data.category_id}>
-                                                    <SelectTrigger id="category_id" className="h-14 rounded-xl border-muted-foreground/20 text-lg font-medium px-5 bg-muted/10">
-                                                        <SelectValue placeholder="Select a Category" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className="rounded-xl">
-                                                        {categories.map(cat => (<SelectItem key={cat.id} value={cat.id.toString()} className="text-base py-3">{cat.name}</SelectItem>))}
-                                                    </SelectContent>
-                                                </Select>
-                                                <InputError message={errors.category_id} />
-                                            </div>
-                                            <div className="space-y-3">
-                                                <Label htmlFor="price" className="text-base font-bold tracking-tight">Price (USD)</Label>
+                                                <Label htmlFor="price" className="text-base font-bold tracking-tight">Base Price (USD)</Label>
                                                 <div className="relative">
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-black text-muted-foreground">USD</div>
                                                     <Input
@@ -518,23 +663,213 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                                                         min="0"
                                                         className="h-14 rounded-xl border-muted-foreground/20 text-xl font-black pl-16 pr-5 bg-muted/10 shadow-inner"
                                                         value={data.price}
-                                                        onChange={(e) => setData('price', parseFloat(e.target.value))}
+                                                        onChange={(e) => setData('price', e.target.value === '' ? 0 : parseFloat(e.target.value))}
                                                         required
                                                     />
                                                 </div>
                                                 <InputError message={errors.price} />
                                             </div>
+                                            <div className="space-y-3">
+                                                <Label htmlFor="discount_percentage" className="text-base font-bold tracking-tight">Discount Percentage (%)</Label>
+                                                <div className="relative">
+                                                    <Input
+                                                        id="discount_percentage"
+                                                        type="number"
+                                                        min="0"
+                                                        max="100"
+                                                        className="h-14 rounded-xl border-muted-foreground/20 text-xl font-black px-5 bg-muted/10 shadow-inner"
+                                                        value={data.discount_percentage}
+                                                        onChange={(e) => setData('discount_percentage', e.target.value === '' ? 0 : parseInt(e.target.value))}
+                                                    />
+                                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-black text-muted-foreground">%</div>
+                                                </div>
+                                                <InputError message={errors.discount_percentage} />
+                                            </div>
                                         </div>
-                                        <Separator className="my-8 border-dashed" />
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                            <div className="space-y-3">
+                                                <Label htmlFor="discount_start_date" className="text-base font-bold tracking-tight">Offer Start</Label>
+                                                <Input
+                                                    id="discount_start_date"
+                                                    type="datetime-local"
+                                                    className="h-14 rounded-xl border-muted-foreground/20 font-medium px-5 bg-muted/10 shadow-inner"
+                                                    value={data.discount_start_date}
+                                                    onChange={(e) => setData('discount_start_date', e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <Label htmlFor="discount_end_date" className="text-base font-bold tracking-tight">Offer End</Label>
+                                                <Input
+                                                    id="discount_end_date"
+                                                    type="datetime-local"
+                                                    className="h-14 rounded-xl border-muted-foreground/20 font-medium px-5 bg-muted/10 shadow-inner"
+                                                    value={data.discount_end_date}
+                                                    onChange={(e) => setData('discount_end_date', e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <Label className="text-base font-bold tracking-tight">Final Price</Label>
+                                                <div className="h-14 flex items-center px-5 rounded-xl bg-green-50 border border-green-100 text-green-700 font-black text-xl">
+                                                    USD {(data.price * (1 - (data.discount_percentage / 100))).toFixed(2)}
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <Button
                                             type="submit"
                                             size="lg"
                                             disabled={processing}
                                             className="h-14 rounded-full px-10 font-black tracking-tight text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
                                         >
-                                            {processing ? 'Saving...' : <><Save className="mr-2 h-5 w-5" /> Save Changes</>}
+                                            {processing ? 'Saving...' : <><Save className="mr-2 h-5 w-5" /> Update Pricing</>}
                                         </Button>
                                     </form>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+
+                        {/* Media Tab */}
+                        <TabsContent value="media_assets" className="mt-0 animate-in fade-in slide-in-from-left-4 duration-500">
+                            <Card className="border-none shadow-xl">
+                                <CardHeader className="bg-muted/30 pb-6 rounded-t-xl border-b">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 rounded-lg bg-background text-primary border shadow-sm">
+                                            <Sparkles className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-xl font-bold italic tracking-tight uppercase">Media & Preview</CardTitle>
+                                            <CardDescription>Visual assets for your course.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="p-8">
+                                    <div className="space-y-10 max-w-4xl">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                            {/* Thumbnail */}
+                                            <div className="space-y-4">
+                                                <Label className="text-base font-bold tracking-tight">Course Thumbnail</Label>
+                                                <div className="aspect-video rounded-2xl overflow-hidden border-2 border-dashed border-muted-foreground/20 relative group">
+                                                    {course.thumbnail_url ? (
+                                                        <img src={course.thumbnail_url} alt="Course Thumbnail" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-muted/20 flex flex-col items-center justify-center text-muted-foreground">
+                                                            <Sparkles className="w-10 h-10 mb-2 opacity-20" />
+                                                            <span className="text-xs font-bold uppercase tracking-widest">No Thumbnail</span>
+                                                        </div>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                        <Label htmlFor="thumbnail_file" className="cursor-pointer bg-white text-black px-4 py-2 rounded-full font-bold text-xs">Change Image</Label>
+                                                    </div>
+                                                </div>
+                                                <Input
+                                                    id="thumbnail_file"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={(e) => setData('thumbnail_file', e.target.files ? e.target.files[0] : null)}
+                                                />
+                                                {data.thumbnail_file && (
+                                                    <div className="flex items-center justify-between bg-primary/5 p-3 rounded-xl border border-primary/20">
+                                                        <p className="text-xs font-bold text-primary flex items-center gap-2">
+                                                            <CheckCircle2 className="w-4 h-4" /> {data.thumbnail_file.name}
+                                                        </p>
+                                                        <Button
+                                                            size="sm"
+                                                            onClick={(e) => handleUpdateDetails(e as any, 'media_assets')}
+                                                            disabled={processing}
+                                                            className="h-8 rounded-lg text-[10px] font-black uppercase"
+                                                        >
+                                                            {processing ? 'Saving...' : 'Upload Now'}
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                                <p className="text-xs text-muted-foreground font-medium">Recommended: 1280x720px (JPG/PNG). Max 5MB.</p>
+                                                <InputError message={errors.thumbnail_file} />
+                                            </div>
+
+                                            {/* Preview Video */}
+                                            <div className="space-y-4">
+                                                <div className="flex items-center justify-between">
+                                                    <Label className="text-base font-bold tracking-tight">Preview Video</Label>
+                                                    <div className="flex bg-muted/20 p-1 rounded-lg border">
+                                                        <Button
+                                                            type="button"
+                                                            variant={previewType === 'url' ? 'secondary' : 'ghost'}
+                                                            size="sm"
+                                                            className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md"
+                                                            onClick={() => setPreviewType('url')}
+                                                        >
+                                                            <LinkIcon className="w-3 h-3 mr-1" /> URL
+                                                        </Button>
+                                                        <Button
+                                                            type="button"
+                                                            variant={previewType === 'upload' ? 'secondary' : 'ghost'}
+                                                            size="sm"
+                                                            className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md"
+                                                            onClick={() => setPreviewType('upload')}
+                                                        >
+                                                            <Video className="w-3 h-3 mr-1" /> Upload
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                                {previewType === 'url' ? (
+                                                    <div className="space-y-3 animate-in fade-in duration-300">
+                                                        <div className="flex gap-2">
+                                                            <Input
+                                                                id="preview_video_url"
+                                                                placeholder="YouTube / Vimeo Link"
+                                                                className="h-14 text-lg font-medium border-muted-foreground/20 rounded-xl px-5 bg-muted/10 shadow-inner"
+                                                                value={data.preview_video_url}
+                                                                onChange={(e) => setData('preview_video_url', e.target.value)}
+                                                            />
+                                                            <Button
+                                                                onClick={(e) => handleUpdateDetails(e as any, 'media_assets')}
+                                                                disabled={processing}
+                                                                className="h-14 rounded-xl px-6 font-bold"
+                                                            >
+                                                                <Save className="w-4 h-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-3 animate-in fade-in duration-300">
+                                                        <Input
+                                                            id="preview_video_file"
+                                                            type="file"
+                                                            accept="video/*"
+                                                            className="h-14 pt-3 text-lg font-medium border-muted-foreground/20 rounded-xl px-5 bg-muted/10 cursor-pointer"
+                                                            onChange={(e) => setData('preview_video_file', e.target.files ? e.target.files[0] : null)}
+                                                            disabled={isUploadingPreview}
+                                                        />
+                                                        {isUploadingPreview && (
+                                                            <div className="space-y-2">
+                                                                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                                                    <span>Uploading...</span>
+                                                                    <span>{uploadProgress}%</span>
+                                                                </div>
+                                                                <Progress value={uploadProgress} className="h-2" />
+                                                            </div>
+                                                        )}
+                                                        {data.preview_video_file && !isUploadingPreview && (
+                                                            <Button
+                                                                className="w-full h-12 rounded-xl font-bold bg-primary shadow-lg"
+                                                                onClick={handleChunkedPreviewUpload}
+                                                            >
+                                                                <Upload className="w-4 h-4 mr-2" /> Start Chunked Upload (60MB+)
+                                                            </Button>
+                                                        )}
+                                                        {course.preview_video_url && course.preview_video_url.startsWith('courses/') && !isUploadingPreview && (
+                                                            <p className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full w-fit">Current: Video Uploaded</p>
+                                                        )}
+                                                    </div>
+                                                )}
+                                                <InputError message={errors.preview_video_url || errors.preview_video_file} />
+                                                <p className="text-xs text-muted-foreground font-medium">A teaser video shown to non-enrolled students. Max 100MB.</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -564,8 +899,8 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                             </Card>
                         </TabsContent>
 
-                        {/* Media Tab (Simplified view) */}
-                        <TabsContent value="media" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {/* Content Audit Tab */}
+                        <TabsContent value="content_audit" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <Card className="border-none shadow-xl">
                                 <CardHeader className="bg-muted/30 pb-6 rounded-t-xl border-b">
                                     <div className="flex items-center gap-3">
@@ -603,95 +938,48 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                             </Card>
                         </TabsContent>
 
-                        {/* Quizzes Tab */}
-                        <TabsContent value="quizzes" className="mt-0 animate-in fade-in zoom-in-95 duration-500">
-                            {/* ... existing content ... */}
-                        </TabsContent>
-
-                        {/* Offers Tab */}
-                        <TabsContent value="offers" className="mt-0 animate-in fade-in slide-in-from-right-4 duration-500">
+                        {/* Assessments Tab */}
+                        <TabsContent value="quizzes" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <Card className="border-none shadow-xl">
                                 <CardHeader className="bg-muted/30 pb-6 rounded-t-xl border-b">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 rounded-lg bg-background text-green-600 border shadow-sm">
-                                            <BadgeDollarSign className="h-5 w-5" />
+                                        <div className="p-2 rounded-lg bg-background text-primary border shadow-sm">
+                                            <HelpCircle className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <CardTitle className="text-xl font-bold italic tracking-tight uppercase">Promotion & Offers</CardTitle>
-                                            <CardDescription>Increase enrollments by setting temporary discounts.</CardDescription>
+                                            <CardTitle className="text-xl font-bold italic tracking-tight uppercase">Master Assessments</CardTitle>
+                                            <CardDescription>Validate Student Knowledge.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-8">
-                                    <form onSubmit={handleUpdateDetails} className="space-y-8 max-w-2xl">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            <div className="space-y-3">
-                                                <Label htmlFor="discount_percentage" className="text-base font-bold tracking-tight">Discount Percentage (%)</Label>
-                                                <div className="relative">
-                                                    <Input
-                                                        id="discount_percentage"
-                                                        type="number"
-                                                        min="0"
-                                                        max="100"
-                                                        className="h-14 rounded-xl border-muted-foreground/20 text-xl font-black px-5 bg-muted/10 shadow-inner"
-                                                        value={data.discount_percentage}
-                                                        onChange={(e) => setData('discount_percentage', parseInt(e.target.value))}
-                                                    />
-                                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-black text-muted-foreground">%</div>
+                                    <div className="space-y-6">
+                                        {course.lessons.map((lesson: any) => (
+                                            <div key={lesson.id} className="flex items-center justify-between p-4 rounded-xl border bg-muted/10 hover:bg-muted/20 transition-colors">
+                                                <div className="space-y-1">
+                                                    <p className="font-bold text-sm tracking-tight">{lesson.title}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider">
+                                                            {lesson.quiz ? 'Has Assessment' : 'No Assessment'}
+                                                        </Badge>
+                                                        {lesson.quiz && (
+                                                            <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-primary/20">
+                                                                {lesson.quiz.questions?.length || 0} Questions
+                                                            </Badge>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                <InputError message={errors.discount_percentage} />
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    onClick={() => handleOpenContentModal(lesson)}
+                                                    className="rounded-lg font-bold text-xs hover:bg-primary hover:text-white transition-all"
+                                                >
+                                                    {lesson.quiz ? 'Edit Assessment' : 'Setup Assessment'}
+                                                </Button>
                                             </div>
-
-                                            <div className="space-y-3">
-                                                <Label className="text-base font-bold tracking-tight">Final Price</Label>
-                                                <div className="h-14 flex items-center px-5 rounded-xl bg-orange-50 border border-orange-100 text-orange-700 font-black text-xl">
-                                                    USD {(data.price * (1 - (data.discount_percentage / 100))).toFixed(2)}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            <div className="space-y-3">
-                                                <Label htmlFor="discount_start_date" className="text-base font-bold tracking-tight">Offer Start Date</Label>
-                                                <Input
-                                                    id="discount_start_date"
-                                                    type="datetime-local"
-                                                    className="h-14 rounded-xl border-muted-foreground/20 font-medium px-5 bg-muted/10"
-                                                    value={data.discount_start_date}
-                                                    onChange={(e) => setData('discount_start_date', e.target.value)}
-                                                />
-                                                <InputError message={errors.discount_start_date} />
-                                            </div>
-
-                                            <div className="space-y-3">
-                                                <Label htmlFor="discount_end_date" className="text-base font-bold tracking-tight">Offer End Date</Label>
-                                                <Input
-                                                    id="discount_end_date"
-                                                    type="datetime-local"
-                                                    className="h-14 rounded-xl border-muted-foreground/20 font-medium px-5 bg-muted/10"
-                                                    value={data.discount_end_date}
-                                                    onChange={(e) => setData('discount_end_date', e.target.value)}
-                                                />
-                                                <InputError message={errors.discount_end_date} />
-                                            </div>
-                                        </div>
-
-                                        <div className="bg-blue-50 dark:bg-blue-900/20 p-5 rounded-2xl border border-blue-100 dark:border-blue-800 flex gap-4">
-                                            <HelpCircle className="h-6 w-6 text-blue-600 shrink-0" />
-                                            <div className="text-sm text-blue-800 dark:text-blue-300 font-medium leading-relaxed">
-                                                Instructors can use offers to boost sales. Discounts are automatically applied during the specified time range. Set percentage to **0** to disable any active offer.
-                                            </div>
-                                        </div>
-
-                                        <Button
-                                            type="submit"
-                                            size="lg"
-                                            disabled={processing}
-                                            className="h-14 rounded-full px-10 font-black tracking-tight text-lg shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
-                                        >
-                                            {processing ? 'Saving...' : <><Save className="mr-2 h-5 w-5" /> Update Offer Details</>}
-                                        </Button>
-                                    </form>
+                                        ))}
+                                    </div>
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -745,7 +1033,7 @@ export default function InstructorCoursesEdit({ course, categories }: Instructor
                         )}
                     </div>
                 </DialogContent>
-            </Dialog>
-        </AppLayout>
+            </Dialog >
+        </AppLayout >
     );
 }

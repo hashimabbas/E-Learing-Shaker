@@ -71,6 +71,11 @@ class InstructorCourseController extends Controller
             $thumbnailPath = $request->file('thumbnail_file')->store('courses/thumbnails', 'public');
         }
 
+        $previewVideoUrl = $validated['preview_video_url'] ?? null;
+        if ($request->hasFile('preview_video_file')) {
+            $previewVideoUrl = $request->file('preview_video_file')->store('courses/previews', 'public');
+        }
+
         $course = Course::create([
             'user_id' => auth()->id(),
             'title' => $validated['title'],
@@ -134,6 +139,16 @@ class InstructorCourseController extends Controller
         // Optional: ownership / policy check
         // $this->authorize('update', $course);
 
+        $thumbnailPath = $course->thumbnail;
+        if ($request->hasFile('thumbnail_file')) {
+            $thumbnailPath = $request->file('thumbnail_file')->store('courses/thumbnails', 'public');
+        }
+
+        $previewVideoUrl = $request->preview_video_url;
+        if ($request->hasFile('preview_video_file')) {
+            $previewVideoUrl = $request->file('preview_video_file')->store('courses/previews', 'public');
+        }
+
         $course->update([
             'title' => $request->title,
             'title_ar' => $request->title_ar,
@@ -141,6 +156,8 @@ class InstructorCourseController extends Controller
             'description_ar' => $request->description_ar,
             'category_id' => $request->category_id,
             'price' => $request->price,
+            'thumbnail' => $thumbnailPath,
+            'preview_video_url' => $previewVideoUrl,
             'learning_outcomes' => $request->learning_outcomes,
             'learning_outcomes_ar' => $request->learning_outcomes_ar,
             'discount_percentage' => $request->discount_percentage,
@@ -148,7 +165,7 @@ class InstructorCourseController extends Controller
             'discount_end_date' => $request->discount_end_date,
         ]);
 
-        return back()->with('success', 'Course updated successfully.');
+        return back()->with('success', 'Course details updated successfully.');
     }
     // ... (update, destroy methods would follow similar logic)
 

@@ -42,7 +42,8 @@ interface CoursesShowProps {
         reviews_count: number,
         average_rating: number,
         learning_outcomes: string[],
-        preview_video_url?: string
+        preview_video_url?: string,
+        preview_video_link?: string
     };
     instructor: Instructor;
     isEnrolled: boolean;
@@ -149,6 +150,11 @@ const getEmbedUrl = (url?: string) => {
     }
 
     return url;
+};
+
+const isExternalVideo = (url?: string) => {
+    if (!url) return false;
+    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
 };
 
 export default function CoursesShow({ course, instructor, isEnrolled, inWishlist, lockedUntil }: CoursesShowProps) {
@@ -492,13 +498,22 @@ export default function CoursesShow({ course, instructor, isEnrolled, inWishlist
                         <div className="sticky top-24 space-y-6 animate-in slide-in-from-right-4 duration-700">
                             <Card className="overflow-hidden border-none shadow-2xl rounded-[3rem] bg-white dark:bg-slate-900 group">
                                 <div className="relative aspect-video bg-slate-950">
-                                    {course.preview_video_url ? (
-                                        <iframe
-                                            src={getEmbedUrl(course.preview_video_url)}
-                                            className="w-full h-full"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
-                                        />
+                                    {course.preview_video_link ? (
+                                        isExternalVideo(course.preview_video_url) ? (
+                                            <iframe
+                                                src={getEmbedUrl(course.preview_video_url)}
+                                                className="w-full h-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                        ) : (
+                                            <video
+                                                src={course.preview_video_link}
+                                                controls
+                                                className="w-full h-full object-contain"
+                                                poster={course.thumbnail_url || undefined}
+                                            />
+                                        )
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center text-slate-600 group-hover:text-primary transition-colors cursor-pointer">
                                             <PlayCircle className="size-20 mb-3 animate-pulse" />

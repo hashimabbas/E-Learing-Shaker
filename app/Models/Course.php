@@ -12,7 +12,7 @@ class Course extends Model
 {
     use HasFactory;
     
-    protected $appends = ['thumbnail_url', 'localized_title', 'localized_description', 'localized_learning_outcomes', 'has_active_discount', 'discounted_price'];
+    protected $appends = ['thumbnail_url', 'preview_video_link', 'localized_title', 'localized_description', 'localized_learning_outcomes', 'has_active_discount', 'discounted_price'];
 
     protected $fillable = [
         'user_id',
@@ -119,17 +119,51 @@ class Course extends Model
     // --- Accessor for Thumbnail URL ---
     public function getThumbnailUrlAttribute(): ?string
     {
-        if ($this->thumbnail) {
-            if (str_starts_with($this->thumbnail, 'http')) {
-                return $this->thumbnail;
-            }
-            // If it starts with images/, it's likely in the public/images folder
-            if (str_starts_with($this->thumbnail, 'images/')) {
-                return '/' . $this->thumbnail;
-            }
-            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->thumbnail);
+        return $this->getCdnUrl($this->thumbnail);
+    }
+
+    public function getPreviewVideoLinkAttribute(): ?string
+    {
+        return $this->getCdnUrl($this->preview_video_url);
+    }
+
+    /**
+     * Helper to generate CDN-compatible URLs.
+     */
+    protected function getCdnUrl($path)
+    {
+        if (!$path) return null;
+
+        // 1. External URLs are returned as-is
+        if (str_starts_with($path, 'http')) {
+            return $path;
         }
-        return null;
+
+        // 2. Local fallback/base generation
+        $url = "";
+        if (str_starts_with($path, 'images/')) {
+            $url = asset($path);
+        } else {
+            $url = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+        }
+
+        // 3. CDN Transformation
+        if (config('services.bunny.enabled') && config('services.bunny.domain')) {
+            $cdnDomain = config('services.bunny.domain');
+            $appUrl = config('app.url');
+            
+            // Replace local APP_URL with CDN domain
+            $cdnUrl = str_replace($appUrl, "https://{$cdnDomain}", $url);
+            
+            // Fix potential non-https local URLs being replaced
+            if (!str_starts_with($cdnUrl, 'https://')) {
+                $cdnUrl = str_replace('http://', 'https://', $cdnUrl);
+            }
+
+            return $cdnUrl;
+        }
+
+        return $url;
     }
 
     public function getHasActiveDiscountAttribute(): bool
