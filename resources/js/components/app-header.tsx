@@ -27,6 +27,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { UserMenuContent } from '@/components/user-menu-content';
+import { useCart } from '@/hooks/use-cart';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, isSameUrl, resolveUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
@@ -67,6 +68,7 @@ interface AppHeaderProps {
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
+    const { count: cartCount } = useCart();
     const getInitials = useInitials();
     return (
         <>
@@ -191,9 +193,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 className="group relative mr-2 flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                             >
                                 <ShoppingCart className="size-5 opacity-80 group-hover:opacity-100" />
-                                {page.props.cart_count > 0 && (
-                                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-slate-900">
-                                        {page.props.cart_count}
+                                {cartCount > 0 && (
+                                    <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-slate-900">
+                                        {cartCount > 99 ? '99+' : cartCount}
                                     </span>
                                 )}
                             </Link>
