@@ -52,7 +52,8 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                         </SheetTrigger>
                         <SheetContent
                             side={isRtl ? "right" : "left"}
-                            className="w-[min(300px,90vw)] max-w-[300px] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-xl gap-0"
+                            dir={isRtl ? "rtl" : "ltr"}
+                            className="!w-full sm:!max-w-[300px] sm:!w-[300px] h-full min-h-[100dvh] max-h-[100dvh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-xl gap-0 rtl:[&>button]:left-4 rtl:[&>button]:right-auto"
                         >
                             <SheetHeader className="shrink-0 p-6 pb-4 border-b border-border/50 text-left rtl:text-right">
                                 <SheetTitle className="font-black text-xl tracking-tight pr-10">
@@ -71,17 +72,17 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                     </Link>
                                 ))}
                             </div>
-                            <div className="shrink-0 w-full min-w-0 p-4 pt-4 border-t border-border/50 bg-muted/30 dark:text-white">
+                            <div className="shrink-0 w-full min-w-0 p-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-border/50 bg-muted/30 dark:text-white">
                                 {!auth.user ? (
                                     <div className="flex flex-col gap-3 w-full min-w-0">
                                         <Link href={login().url} onClick={() => setOpen(false)} className="w-full min-w-0">
-                                            <Button variant="outline" className="w-full min-w-0 h-12 rounded-xl font-bold dark:text-white dark:bg-white">
+                                            <Button variant="outline" className="w-full min-w-0 h-12 rounded-xl font-bold ">
                                                 {translations.nav_login || "Log In"}
                                             </Button>
                                         </Link>
                                         {canRegister && (
                                             <Link href={register().url} onClick={() => setOpen(false)} className="w-full min-w-0">
-                                                <Button className="w-full min-w-0 h-12 rounded-xl font-black shadow-lg shadow-primary/20 dark:text-white dark:bg-white">
+                                                <Button className="w-full min-w-0 h-12 rounded-xl font-black shadow-lg shadow-primary/20 ">
                                                     {translations.nav_signup || "Sign Up"}
                                                 </Button>
                                             </Link>
@@ -89,7 +90,7 @@ export default function AppNavbar({ canRegister }: AppNavbarProps) {
                                     </div>
                                 ) : (
                                     <Link href={dashboard().url} onClick={() => setOpen(false)} className="w-full min-w-0 block">
-                                        <Button className="w-full min-w-0 h-12 rounded-xl font-black dark:text-white dark:bg-white">
+                                        <Button className="w-full min-w-0 h-12 rounded-xl font-black ">
                                             {translations.nav_dashboard || "Go to Dashboard"}
                                         </Button>
                                     </Link>
