@@ -24,9 +24,8 @@ export default function Appearance() {
                 <div className="space-y-6">
                     <HeadingSmall
                         title="Appearance settings"
-                        description="Update your account's appearance settings"
+                        description="The system uses a standard light theme optimized for all devices."
                     />
-                    <AppearanceTabs />
                 </div>
             </SettingsLayout>
         </AppLayout>
