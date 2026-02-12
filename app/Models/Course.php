@@ -124,7 +124,16 @@ class Course extends Model
 
     public function getPreviewVideoLinkAttribute(): ?string
     {
-        return $this->getCdnUrl($this->preview_video_url);
+        if (!$this->preview_video_url) return null;
+
+        // 1. External URLs are returned as-is
+        if (str_starts_with($this->preview_video_url, 'http')) {
+            return $this->preview_video_url;
+        }
+
+        // 2. Use the secure streaming route for all local/CDN files
+        // This solves symlink issues on shared hosting and supports CDN redirection.
+        return route('courses.preview', $this->id);
     }
 
     /**

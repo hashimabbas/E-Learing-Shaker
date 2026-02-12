@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lesson;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,7 +32,6 @@ class SecureVideoController extends Controller
         }
 
         // 2. Generate Signed URL for Bunny Storage
-        // Once you upload your video to Bunny Storage, this link will work INSTANTLY.
         if (config('services.bunny.enabled') && config('services.bunny.domain')) {
             $redirectUrl = $this->generateBunnyUrl($lesson);
             
@@ -44,8 +44,43 @@ class SecureVideoController extends Controller
             return redirect($redirectUrl);
         }
 
-        // 3. Fallback to direct server streaming (only if CDN is disabled)
-        return $this->serveFile($request, $lesson);
+        // 3. Fallback to direct server streaming
+        if (!$lesson->video || !$lesson->video->path) {
+            abort(404, 'Video record missing');
+        }
+
+        return $this->serveFileFromPath($request, $lesson->video->path, 'local');
+    }
+
+    /**
+     * Handle course preview streaming.
+     */
+    public function preview(Request $request, Course $course)
+    {
+        $path = $course->preview_video_url;
+
+        if (!$path) {
+            abort(404, 'Preview video not found');
+        }
+
+        // 1. External URLs (YouTube/Vimeo)
+        if (str_starts_with($path, 'http')) {
+            return redirect($path);
+        }
+
+        // 2. Bunny CDN Redirection (Public folder)
+        if (config('services.bunny.enabled') && config('services.bunny.domain')) {
+            $domain = config('services.bunny.domain');
+            
+            // Replicate Course.php logic: /storage/courses/previews/... -> /public/courses/previews/...
+            // But here $path is just 'courses/previews/...'
+            $bunnyPath = '/public/' . ltrim($path, '/');
+            
+            return redirect("https://{$domain}{$bunnyPath}");
+        }
+
+        // 3. Local streaming fallback (Public disk for previews)
+        return $this->serveFileFromPath($request, $path, 'public');
     }
 
     /**
@@ -84,20 +119,14 @@ class SecureVideoController extends Controller
     }
 
     /**
-     * Serve the file directly from the server (Fallback only).
+     * Serve a file directly from the server with anti-buffering headers.
      */
-    protected function serveFile(Request $request, Lesson $lesson)
+    protected function serveFileFromPath(Request $request, string $path, string $diskName)
     {
-        if (!$lesson->video || !$lesson->video->path) {
-            \Log::error("Video record missing for lesson {$lesson->id}");
-            abort(404, 'Video record missing');
-        }
-
-        $path = $lesson->video->path;
-        $disk = Storage::disk('local');
+        $disk = Storage::disk($diskName);
 
         if (!$disk->exists($path)) {
-            \Log::error("File missing on disk: {$path}", ['lesson_id' => $lesson->id]);
+            \Log::error("File missing on disk [{$diskName}]: {$path}");
             abort(404, 'Video file missing on server');
         }
 
@@ -116,14 +145,7 @@ class SecureVideoController extends Controller
 
         $method = config('services.video.streaming_method', env('VIDEO_STREAMING_METHOD', 'php'));
 
-        \Log::debug("Serving video file [DIRECT STREAM]", [
-            'lesson_id' => $lesson->id,
-            'size' => $size,
-            'method' => $method,
-            'range' => $request->header('Range'),
-        ]);
-
-        // Common Headers array for Laravel response
+        // Common Headers
         $headers = [
             'Content-Type' => $mime,
             'Access-Control-Allow-Origin' => '*',
@@ -141,8 +163,6 @@ class SecureVideoController extends Controller
             $headers['Content-Length'] = $size;
             return response()->make('', 200, $headers);
         }
-
-        // 🛠 PERFORMANCE: Unlock session was already handled in stream()
 
         if (function_exists('apache_setenv')) {
             @apache_setenv('no-gzip', '1');
@@ -192,16 +212,7 @@ class SecureVideoController extends Controller
                 
                 fseek($stream, $start);
                 $bytesToRead = $end - $start + 1;
-                // Send first 64KB quickly for faster perceived start, then 256KB chunks
-                $firstChunkSize = min(65536, $bytesToRead);
-                $firstData = fread($stream, $firstChunkSize);
-                if ($firstData !== false) {
-                    echo $firstData;
-                    $bytesToRead -= strlen($firstData);
-                    if (ob_get_level() > 0) ob_flush();
-                    flush();
-                }
-                $bufferSize = 262144; // 256KB chunks after first burst
+                $bufferSize = 262144; // 256KB chunks
                 
                 while ($bytesToRead > 0 && !feof($stream)) {
                     $chunkSize = (int) min($bufferSize, $bytesToRead);
@@ -229,14 +240,7 @@ class SecureVideoController extends Controller
             $stream = fopen($fullPath, 'rb');
             if (!$stream) return;
 
-            // Send first 64KB quickly for faster perceived start
-            $firstData = fread($stream, 65536);
-            if ($firstData !== false) {
-                echo $firstData;
-                if (ob_get_level() > 0) ob_flush();
-                flush();
-            }
-            $bufferSize = 262144; // 256KB chunks for rest
+            $bufferSize = 262144; // 256KB chunks
             while (!feof($stream)) {
                 $data = fread($stream, $bufferSize);
                 if ($data === false) break;

@@ -59,6 +59,7 @@ Route::post('/contact', [SupportController::class, 'submitContact'])->name('supp
 
 // Video Streaming Route (Handle auth inside controller to support CDN origin bypass)
 Route::get('/secure/video/{lesson}', [SecureVideoController::class, 'stream'])->name('secure.video');
+Route::get('/preview/course/{course}', [SecureVideoController::class, 'preview'])->name('courses.preview');
 
 Route::post('/courses/{course:slug}/enroll-free', [CourseEnrollmentController::class, 'enrollFree'])
     ->middleware('auth')
