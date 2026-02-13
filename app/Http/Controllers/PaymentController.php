@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log; // NEW USE
 use App\Notifications\NewPurchaseNotification; // NEW USE
 use App\Models\User; // NEW USE
+use App\Mail\PayPalPurchaseSuccessMail;
 
 class PaymentController extends Controller
 {
@@ -196,7 +197,7 @@ class PaymentController extends Controller
                      
                      // Email User
                      // Mail::to($order->user->email)->send(new OrderConfirmationMail($order));
-                     Mail::to($order->user->email)->send(new \App\Mail\CourseEnrolledLocked($order));
+                     Mail::to($order->user->email)->send(new PayPalPurchaseSuccessMail($order));
 
                      Log::info('PayPal Order Processed Successfully', [
                          'order_number' => $order->order_number,

@@ -387,8 +387,8 @@ I specialize in executing modern interior and exterior finishing works, with a h
 
     // Cart Terms of Use
     "cart_terms_title" => "Terms of Use",
-    "cart_terms_subtitle" => "Understand your rights and responsibilities.",
+    "cart_terms_subtitle" => "Understand your rights.",
     "cart_terms_policy_title" => "Content Access Policy",
-    "cart_terms_policy_desc" => "For PayPal or Card payments, access is activated 24 hours after registration for security verification. Bank Transfer payments provide immediate access once approved by our team.",
-    "cart_terms_footer" => "This period allows us to verify payments and transfers. You will receive a notification and email once your content is accessible.",
+    "cart_terms_policy_desc" => "To ensure the highest quality of learning and to maintain the security of our educational systems, access to all videos is activated within 24 hours of successful registration.",
+    "cart_terms_footer" => "This period allows us to verify payment transactions via PayPal or direct bank transfer.",
 ];
