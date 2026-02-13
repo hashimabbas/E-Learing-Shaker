@@ -12,7 +12,9 @@ import {
     Tag,
     Lock,
     Heart,
-    Star
+    Star,
+    Clock,
+    FileText
 } from 'lucide-react';
 import { useFlash } from '@/hooks/use-flash';
 import { route } from 'ziggy-js';
@@ -129,11 +131,11 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                                                 {item.course.localized_title || item.course.title}
                                                             </Link>
                                                             <p className="text-sm text-muted-foreground">{translations.cart_by || "By"} {item.course.instructor?.name || 'Expert Instructor'}</p>
-                                                            <div className="flex items-center gap-1 mt-1 text-sm font-medium">
+                                                            {/* <div className="flex items-center gap-1 mt-1 text-sm font-medium">
                                                                 <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
                                                                 <span>{item.course.average_rating ? Number(item.course.average_rating).toFixed(1) : '4.8'}</span>
                                                                 <span className="text-muted-foreground font-normal">(1,234 {translations.cart_ratings || "ratings"})</span>
-                                                            </div>
+                                                            </div> */}
                                                         </div>
                                                         <div className={cn("shrink-0", isRtl ? "text-left" : "text-right")}>
                                                             <div className="text-2xl font-black text-primary">
@@ -175,6 +177,38 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                         </Button>
                                     </Link>
                                 </div>
+
+                                {/* Terms of Use Card */}
+                                <Card className="mt-8 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent overflow-hidden border-2 shadow-sm">
+                                    <CardContent className="p-6 space-y-4">
+                                        <div className="flex items-center gap-3 text-primary">
+                                            <div className="p-2 bg-primary/10 rounded-lg">
+                                                <FileText className="h-5 w-5" />
+                                            </div>
+                                            <h3 className="text-xl font-bold">{translations.cart_terms_title || "Terms of Use"}</h3>
+                                        </div>
+                                        <p className="text-sm font-semibold text-muted-foreground leading-relaxed">
+                                            {translations.cart_terms_subtitle || "Understand your rights and responsibilities."}
+                                        </p>
+
+                                        <div className="space-y-3 bg-white/50 p-4 rounded-xl border border-primary/5">
+                                            <div className="flex items-start gap-3">
+                                                <Clock className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                                                <div className="space-y-2">
+                                                    <h4 className="font-bold text-sm text-primary">
+                                                        {translations.cart_terms_policy_title || "24-Hour Content Activation Policy"}
+                                                    </h4>
+                                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                                        {translations.cart_terms_policy_desc || "To ensure the highest quality of learning and maintain the integrity of our systems, access to all videos is activated 24 hours after successful registration."}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground italic border-t pt-3 mt-3">
+                                                {translations.cart_terms_footer || "This period allows us to verify payments and transfers. You will receive a notification and email once your content is accessible."}
+                                            </p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </div>
 
                             {/* Summary Sidebar */}
@@ -264,9 +298,9 @@ export default function CartIndex({ cart }: CartIndexProps) {
                                                     <Input placeholder={translations.cart_coupon_placeholder || "Enter Coupon Code"} className={cn("h-11", isRtl ? "pl-20" : "pr-20")} />
                                                     <Button variant="ghost" className={cn("absolute top-1 h-9 font-bold text-primary px-4", isRtl ? "left-1" : "right-1")}>{translations.cart_apply_coupon || "Apply"}</Button>
                                                 </div>
-                                                <div className="flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground">
+                                                {/* <div className="flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground">
                                                     <ShieldCheck className="h-4 w-4 text-green-600" /> {translations.cart_guarantee || "30-Day Money-Back Guarantee"}
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -304,6 +338,6 @@ export default function CartIndex({ cart }: CartIndexProps) {
                     )}
                 </div>
             </div>
-        </AppLayout>
+        </AppLayout >
     );
 }

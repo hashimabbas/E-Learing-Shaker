@@ -14,6 +14,7 @@ use App\Models\UserLessonProgress;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Traits\GeneratesSignedUrls; // <--- NEW USE
 use Illuminate\Http\RedirectResponse;
+use App\Models\Order;
 
 
 class CourseController extends Controller
@@ -145,11 +146,21 @@ class CourseController extends Controller
 
         $lockedUntil = null;
         if ($course->price > 0 && $isEnrolled && auth()->check() && !auth()->user()->isInstructor() && !auth()->user()->isAdmin()) {
-             $enrollment = auth()->user()->enrolledCourses()->where('course_id', $course->id)->first()->pivot;
-             $enrollmentTime = \Carbon\Carbon::parse($enrollment->created_at);
-             $unlocksAt = $enrollmentTime->copy()->addHours(24);
-             if (now()->lessThan($unlocksAt)) {
-                 $lockedUntil = $unlocksAt->toIso8601String();
+             $user = auth()->user();
+             // Skip 24h lock if payment was made via Bank Transfer
+             $isBankTransfer = Order::where('user_id', $user->id)
+                ->where('status', 'paid')
+                ->where('payment_method', 'Bank Transfer')
+                ->whereHas('items', fn($q) => $q->where('course_id', $course->id))
+                ->exists();
+
+             if (!$isBankTransfer) {
+                 $enrollment = $user->enrolledCourses()->where('course_id', $course->id)->first()->pivot;
+                 $enrollmentTime = \Carbon\Carbon::parse($enrollment->created_at);
+                 $unlocksAt = $enrollmentTime->copy()->addHours(24);
+                 if (now()->lessThan($unlocksAt)) {
+                     $lockedUntil = $unlocksAt->toIso8601String();
+                 }
              }
         }
 
@@ -180,13 +191,22 @@ class CourseController extends Controller
 
         // --- NEW: 24-Hour verification Check ---
         if ($course->price > 0 && !$user->isInstructor() && !$user->isAdmin()) {
-            $enrollment = $user->enrolledCourses()->where('course_id', $course->id)->first()->pivot;
-            $enrollmentTime = \Carbon\Carbon::parse($enrollment->created_at);
-            $unlockTime = $enrollmentTime->copy()->addHours(24);
+            // Skip 24h lock if payment was made via Bank Transfer
+            $isBankTransfer = Order::where('user_id', $user->id)
+                ->where('status', 'paid')
+                ->where('payment_method', 'Bank Transfer')
+                ->whereHas('items', fn($q) => $q->where('course_id', $course->id))
+                ->exists();
 
-            if (now()->lessThan($unlockTime)) {
-                 return redirect()->route('courses.show', $course->slug)
-                    ->with('error', 'Content access is locked for verification until ' . $unlockTime->format('M d, Y h:i A'));
+            if (!$isBankTransfer) {
+                $enrollment = $user->enrolledCourses()->where('course_id', $course->id)->first()->pivot;
+                $enrollmentTime = \Carbon\Carbon::parse($enrollment->created_at);
+                $unlockTime = $enrollmentTime->copy()->addHours(24);
+
+                if (now()->lessThan($unlockTime)) {
+                     return redirect()->route('courses.show', $course->slug)
+                        ->with('error', 'Content access is locked for verification until ' . $unlockTime->format('M d, Y h:i A'));
+                }
             }
         }
         // ----------------------------------------

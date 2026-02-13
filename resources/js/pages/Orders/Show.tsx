@@ -16,10 +16,10 @@ interface OrdersShowProps {
 }
 
 const statusMap = {
-    pending: { color: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900', icon: XCircle },
-    paid: { color: 'text-green-600 bg-green-100 dark:bg-green-900', icon: CheckCircle },
-    failed: { color: 'text-red-600 bg-red-100 dark:bg-red-900', icon: XCircle },
-    refunded: { color: 'text-blue-600 bg-blue-100 dark:bg-blue-900', icon: XCircle },
+    pending: { color: 'text-yellow-600 bg-yellow-100', icon: XCircle },
+    paid: { color: 'text-green-600 bg-green-100', icon: CheckCircle },
+    failed: { color: 'text-red-600 bg-red-100', icon: XCircle },
+    refunded: { color: 'text-blue-600 bg-blue-100', icon: XCircle },
 };
 
 export default function OrdersShow({ order, success, error }: OrdersShowProps) {
@@ -38,7 +38,7 @@ export default function OrdersShow({ order, success, error }: OrdersShowProps) {
                     </div>
                 )}
 
-                <div className="bg-white dark:bg-neutral-800 border rounded-xl p-8 shadow-2xl">
+                <div className="bg-white border rounded-xl p-8 shadow-2xl">
 
                     <div className="flex justify-between items-center mb-6 border-b pb-4">
                         <h1 className="text-2xl font-bold">Order Details</h1>
@@ -61,7 +61,7 @@ export default function OrdersShow({ order, success, error }: OrdersShowProps) {
                                 <span className="w-2 h-8 bg-primary rounded-full"></span>
                                 Bank Transfer Instructions
                             </h3>
-                            <div className="bg-white dark:bg-black p-4 rounded-lg border shadow-sm mb-6">
+                            <div className="bg-white p-4 rounded-lg border shadow-sm mb-6">
                                 <h4 className="font-semibold text-muted-foreground mb-3 text-sm uppercase tracking-wider">Account Details</h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm">
                                     <div className="space-y-1">

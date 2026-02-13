@@ -384,4 +384,11 @@ I specialize in executing modern interior and exterior finishing works, with a h
     "auth_confirm_password" => "Confirm password",
     "auth_register_btn" => "Create account",
     "auth_already_have_account" => "Already have an account?",
+
+    // Cart Terms of Use
+    "cart_terms_title" => "Terms of Use",
+    "cart_terms_subtitle" => "Understand your rights and responsibilities.",
+    "cart_terms_policy_title" => "Content Access Policy",
+    "cart_terms_policy_desc" => "For PayPal or Card payments, access is activated 24 hours after registration for security verification. Bank Transfer payments provide immediate access once approved by our team.",
+    "cart_terms_footer" => "This period allows us to verify payments and transfers. You will receive a notification and email once your content is accessible.",
 ];
